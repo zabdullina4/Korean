@@ -46,3 +46,28 @@ export function phone(digits: string): string {
 export function formatWon(n: number): string {
   return `${n.toLocaleString('en-US')}원`;
 }
+
+// Исконные числа: счёт предметов, возраст, часы.
+const NATIVE_ONES = ['', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉'];
+const NATIVE_TENS = ['', '열', '스물', '서른', '마흔', '쉰', '예순', '일흔', '여든', '아흔'];
+/** Перед счётным словом 하나/둘/셋/넷/스물 укорачиваются. */
+const COUNTER_ONES = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉'];
+
+export function native(n: number): string {
+  if (!Number.isInteger(n) || n < 1 || n > 99) throw new Error(`Исконные числа: 1–99, получено ${n}`);
+  return NATIVE_TENS[Math.floor(n / 10)] + NATIVE_ONES[n % 10];
+}
+
+export function nativeCounter(n: number): string {
+  if (!Number.isInteger(n) || n < 1 || n > 99) throw new Error(`Исконные числа: 1–99, получено ${n}`);
+  const t = Math.floor(n / 10);
+  const o = n % 10;
+  if (t === 2 && o === 0) return '스무';
+  return NATIVE_TENS[t] + COUNTER_ONES[o];
+}
+
+/** Время: часы — исконными, минуты — сино-корейскими. 3:30 → 세 시 삼십 분 */
+export function clock(h: number, m: number): string {
+  const hh = ((h + 11) % 12) + 1;
+  return m ? `${nativeCounter(hh)} 시 ${sino(m)} 분` : `${nativeCounter(hh)} 시`;
+}

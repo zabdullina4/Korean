@@ -31,6 +31,8 @@ export interface ExamDef {
   pass: number;
   /** Сколько раз можно прослушать аудио в задании. */
   plays: number;
+  /** Шкала результата, как на настоящем экзамене (TOPIK I — 200 баллов). */
+  scale?: number;
   make(seed: number): ExamSection[];
 }
 

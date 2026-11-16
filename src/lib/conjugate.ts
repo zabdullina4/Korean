@@ -78,3 +78,110 @@ export function haeyoDistractors(verb: string): string[] {
   const cands = [stem + '어요', stem + '아요', stem + '요', stem.endsWith('하') ? stem + '여요' : '', right.endsWith('워요') ? right.replace(/워요$/, '와요') : ''];
   return [...new Set(cands.filter((c) => c && c !== right))];
 }
+
+// ---------- Другие формы 1급 ----------
+
+export type Form = 'past' | 'formal' | 'formalQ' | 'seyo' | 'future' | 'lkkayo' | 'want' | 'an' | 'ji';
+
+const addJong = (syl: string, jong: string) => {
+  const d = decompose(syl)!;
+  return compose(d.cho, d.jung, jong)!;
+};
+
+/** Основа для окончаний на 으: 먹 → 먹으, 가 → 가, 살 → 사(ㄹ выпадает перед ㅅ/ㅂ/ㄴ), 돕 → 도우, 듣 → 들으. */
+function stemForEu(verb: string, before: 'ㅅ' | 'ㄹ'): { base: string; vowelEnd: boolean } {
+  const stem = stemOf(verb);
+  const last = stem[stem.length - 1];
+  const s = decompose(last)!;
+  if (!s.jong) return { base: stem, vowelEnd: true };
+  if (s.jong === 'ㄹ') return before === 'ㅅ' ? { base: replaceLast(stem, compose(s.cho, s.jung)!), vowelEnd: true } : { base: stem, vowelEnd: false };
+  if (s.jong === 'ㅂ' && IRREGULAR_B.has(stem)) return { base: replaceLast(stem, compose(s.cho, s.jung)!) + '우', vowelEnd: true };
+  if (s.jong === 'ㄷ' && IRREGULAR_D.has(stem)) return { base: replaceLast(stem, compose(s.cho, s.jung, 'ㄹ')!) + '으', vowelEnd: true };
+  if (s.jong === 'ㅅ' && IRREGULAR_S.has(stem)) return { base: replaceLast(stem, compose(s.cho, s.jung)!) + '으', vowelEnd: true };
+  if (s.jong === 'ㅎ' && IRREGULAR_H.has(stem)) return { base: replaceLast(stem, compose(s.cho, s.jung)!), vowelEnd: true };
+  return { base: stem + '으', vowelEnd: true };
+}
+
+/** Основа + ㄹ (будущее, -까요): 가 → 갈, 먹으 → 먹을, 살 → 살. */
+function withL(verb: string): string {
+  const stem = stemOf(verb);
+  const s = decompose(stem[stem.length - 1])!;
+  if (s.jong === 'ㄹ') return stem;
+  const { base } = stemForEu(verb, 'ㄹ');
+  return replaceLast(base, addJong(base[base.length - 1], 'ㄹ'));
+}
+
+export function conj(verb: string, form: Form): string {
+  const stem = stemOf(verb);
+  const last = stem[stem.length - 1];
+  const s = decompose(last)!;
+  switch (form) {
+    case 'past': {
+      if (verb === '이다') return '이었어요';
+      const info = haeyo(verb).slice(0, -1); // 가, 먹어, 해, 마셔
+      return replaceLast(info, addJong(info[info.length - 1], 'ㅆ')) + '어요';
+    }
+    case 'formal':
+    case 'formalQ': {
+      const tail = form === 'formal' ? '니다' : '니까';
+      if (!s.jong) return replaceLast(stem, addJong(last, 'ㅂ')) + tail;
+      if (s.jong === 'ㄹ') return replaceLast(stem, compose(s.cho, s.jung, 'ㅂ')!) + tail;
+      return stem + '습' + tail;
+    }
+    case 'seyo': {
+      const { base } = stemForEu(verb, 'ㅅ');
+      return base + '세요';
+    }
+    case 'future':
+      return withL(verb) + ' 거예요';
+    case 'lkkayo':
+      return withL(verb) + '까요';
+    case 'want':
+      return stem + '고 싶어요';
+    case 'an':
+      if (stem.length > 1 && stem.endsWith('하') && !['좋아하', '싫어하'].includes(stem)) return `${stem.slice(0, -1)} 안 해요`;
+      return `안 ${haeyo(verb)}`;
+    case 'ji':
+      return stem + '지 않아요';
+  }
+}
+
+/** Правдоподобные ошибки для каждой формы (не совпадают с верной). */
+export function conjDistractors(verb: string, form: Form): string[] {
+  const stem = stemOf(verb);
+  const right = conj(verb, form);
+  const s = decompose(stem[stem.length - 1])!;
+  const vowel = !s.jong;
+  let c: string[] = [];
+  switch (form) {
+    case 'past':
+      c = [stem + '었어요', stem + '았어요', haeyo(verb)];
+      break;
+    case 'formal':
+      c = vowel ? [stem + '습니다', stem + '니다'] : [stem + '읍니다', stem + '니다'];
+      break;
+    case 'formalQ':
+      c = vowel ? [stem + '습니까', stem + '니까'] : [stem + '읍니까', stem + '니까'];
+      break;
+    case 'seyo':
+      c = [vowel ? stem + '으세요' : stem + '세요', stem + '으세요', haeyo(verb)];
+      break;
+    case 'future':
+      c = [vowel ? stem + '을 거예요' : stem + ' 거예요', stem + '는 거예요', haeyo(verb)];
+      break;
+    case 'lkkayo':
+      c = [vowel ? stem + '을까요' : stem + '까요', haeyo(verb).slice(0, -1) + '까요'];
+      break;
+    case 'want':
+      c = [stem + '기 싶어요', haeyo(verb).slice(0, -1) + '고 싶어요', stem + '고 싶어해요'];
+      break;
+    case 'an':
+      // Для N+하다 норма — «공부 안 해요»; «안 공부해요» оставляем как ловушку.
+      c = [`안 ${haeyo(verb)}`, `${haeyo(verb)} 안`, `안 ${verb}`];
+      break;
+    case 'ji':
+      c = [stem + '지 안아요', stem + '지 않어요'];
+      break;
+  }
+  return [...new Set(c.filter((x) => x && x !== right))];
+}

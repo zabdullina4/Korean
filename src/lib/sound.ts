@@ -33,16 +33,22 @@ export function canSpeak(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
 }
 
-/** Произнести корейский текст. Возвращает false, если в браузере нет синтеза речи. */
+/** Произнести корейский текст. Строки через \n — реплики диалога: голоса чередуются.
+ *  Возвращает false, если в браузере нет синтеза речи. */
 export function speak(text: string, rate = 0.8): boolean {
   if (!canSpeak()) return false;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR';
-  u.rate = rate;
-  const v = koreanVoice();
-  if (v) u.voice = v;
+  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('ko'));
   window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
+  text.split('\n').forEach((line, i) => {
+    const u = new SpeechSynthesisUtterance(line.replace(/^[^:]{1,6}:\s*/, ''));
+    u.lang = 'ko-KR';
+    u.rate = rate;
+    const v = voices.length > 1 ? voices[i % 2] : voices[0];
+    if (v) u.voice = v;
+    // Второй собеседник — выше голосом, если голос в системе один.
+    if (voices.length < 2 && i % 2) u.pitch = 1.35;
+    window.speechSynthesis.speak(u);
+  });
   return true;
 }
 

@@ -50,3 +50,31 @@ describe('экзамен 예비반', () => {
     expect(retakeStatus({ ...g.attempt, passed: false }, { [n.id]: answered }).ok).toBe(true);
   });
 });
+
+import { TOPIK1_BANKS, topik1Exam } from '../content/exams/topik1';
+
+describe('экзамен 1급 · TOPIK I', () => {
+  it('во всех банках по 4 разных варианта, правильный — первый', () => {
+    for (const [name, bank] of Object.entries(TOPIK1_BANKS))
+      for (const [, opts] of bank) {
+        expect(opts, name).toHaveLength(4);
+        expect(new Set(opts).size, `${name}: ${opts.join(' / ')}`).toBe(4);
+      }
+  });
+
+  it('15 заданий на аудирование и 20 на чтение, ответ сохраняется после перемешивания', () => {
+    for (let a = 0; a < 5; a++) {
+      const secs = topik1Exam.make(seedFor(topik1Exam.id, a));
+      expect(secs.map((s) => s.questions.length)).toEqual([15, 20]);
+      const listenAll = secs[0].questions.every((q) => q.kind === 'choice' && !!q.item.audio);
+      expect(listenAll).toBe(true);
+    }
+    // правильный ответ после перемешивания указывает на исходный первый вариант
+    const banks = Object.values(TOPIK1_BANKS).flat();
+    for (const q of topik1Exam.make(7).flatMap((s) => s.questions)) {
+      if (q.kind !== 'choice') continue;
+      const raw = banks.find(([body]) => body === (q.item.audio ?? q.item.prompt))!;
+      expect(q.item.options[q.item.answer]).toBe(raw[1][0]);
+    }
+  });
+});

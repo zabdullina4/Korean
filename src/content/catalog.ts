@@ -5,18 +5,24 @@ import { aniyeyo, eunneun, iyeyo } from './grade1/unit1';
 import { igeot, isseoyo, ui } from './grade1/unit2';
 import { eeseo, eulreul, presentTense } from './grade1/unit3';
 import { prices, sinoNumbers } from './grade1/unit4';
+import { nativeNumbers, negationAn, negationMot, pastTense, telling, weekend } from './grade1/unit5-7';
+import { announcement, formal, future, lkkayo, seyo, want } from './grade1/unit8-10';
 import { reasonAseoNiga } from './grade2/reason';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
+import { topik1Exam } from './exams/topik1';
 import type { Grade, Lesson } from './types';
 
 const G0 = [vowelsBasic, vowelsY, consonantsBasic, consonantsTriples, syllableBlocks, batchim];
-const G1 = [iyeyo, eunneun, aniyeyo, igeot, isseoyo, ui, presentTense, eulreul, eeseo, sinoNumbers, prices];
+const G1 = [
+  ...[iyeyo, eunneun, aniyeyo, igeot, isseoyo, ui, presentTense, eulreul, eeseo, sinoNumbers, prices],
+  ...[nativeNumbers, telling, pastTense, weekend, negationAn, negationMot, future, want, seyo, lkkayo, formal, announcement],
+];
 
 export const LESSONS: Lesson[] = [...G0, ...G1, reasonAseoNiga];
 
 /** Переводной экзамен каждого класса. */
-export const EXAMS: Record<number, ExamDef> = { 0: prepExam };
+export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam };
 export const EXAM_BY_ID: Record<string, ExamDef> = Object.fromEntries(Object.values(EXAMS).map((e) => [e.id, e]));
 
 export const LESSON_BY_ID: Record<string, Lesson> = Object.fromEntries(LESSONS.map((l) => [l.id, l]));
@@ -41,12 +47,12 @@ export const GRADES: Grade[] = [
       { grade: 1, n: 2, title: 'Вещи и семья', titleKr: '물건과 가족', lessons: [igeot.id, isseoyo.id, ui.id] },
       { grade: 1, n: 3, title: 'Мой день', titleKr: '하루', lessons: [presentTense.id, eulreul.id, eeseo.id] },
       { grade: 1, n: 4, title: 'Числа и цены', titleKr: '숫자와 가격', lessons: [sinoNumbers.id, prices.id] },
-      { grade: 1, n: 5, title: 'Время и исконные числа', titleKr: '시간', lessons: [] },
-      { grade: 1, n: 6, title: 'Прошедшее время', titleKr: '과거', lessons: [] },
-      { grade: 1, n: 7, title: 'Отрицание 안 / 못', titleKr: '부정', lessons: [] },
-      { grade: 1, n: 8, title: 'Планы и желания', titleKr: '계획', lessons: [] },
-      { grade: 1, n: 9, title: 'Просьбы и предложения', titleKr: '부탁', lessons: [] },
-      { grade: 1, n: 10, title: 'Официальный стиль 합니다', titleKr: '격식체', lessons: [] },
+      { grade: 1, n: 5, title: 'Время и исконные числа', titleKr: '시간', lessons: [nativeNumbers.id, telling.id] },
+      { grade: 1, n: 6, title: 'Прошедшее время', titleKr: '과거', lessons: [pastTense.id, weekend.id] },
+      { grade: 1, n: 7, title: 'Отрицание 안 / 못', titleKr: '부정', lessons: [negationAn.id, negationMot.id] },
+      { grade: 1, n: 8, title: 'Планы и желания', titleKr: '계획', lessons: [future.id, want.id] },
+      { grade: 1, n: 9, title: 'Просьбы и предложения', titleKr: '부탁', lessons: [seyo.id, lkkayo.id] },
+      { grade: 1, n: 10, title: 'Официальный стиль 합니다', titleKr: '격식체', lessons: [formal.id, announcement.id] },
     ],
   },
   {

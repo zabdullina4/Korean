@@ -9,6 +9,12 @@ describe('контент', () => {
     for (const l of LESSONS) expect(l.steps.length).toBeGreaterThan(0);
   });
 
+  it('1급 заполнен: 10 юнитов, в каждом есть уроки', () => {
+    const g1 = GRADES[1];
+    expect(g1.units).toHaveLength(10);
+    for (const u of g1.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
+  });
+
   it('все уроки из программы существуют', () => {
     const ids = new Set(LESSONS.map((l) => l.id));
     for (const g of GRADES) for (const u of g.units) for (const id of u.lessons) expect(ids.has(id)).toBe(true);
@@ -17,7 +23,12 @@ describe('контент', () => {
   it('ответы в заданиях указывают на существующий вариант', () => {
     for (const l of LESSONS)
       for (const s of l.steps)
-        if (s.kind === 'choice') for (const it of s.items) expect(it.options[it.answer], `${l.id}: ${it.prompt}`).toBeDefined();
+        if (s.kind === 'choice')
+          for (const it of s.items) {
+            expect(it.options[it.answer], `${l.id}: ${it.prompt}`).toBeDefined();
+            expect(it.options.length, `${l.id}: ${it.prompt}`).toBeGreaterThanOrEqual(2);
+            expect(new Set(it.options).size, `${l.id}: ${it.prompt} — повтор вариантов`).toBe(it.options.length);
+          }
   });
 
   it('сборка предложений решаема из доступных блоков', () => {

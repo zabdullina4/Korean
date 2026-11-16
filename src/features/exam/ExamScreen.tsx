@@ -58,7 +58,7 @@ export function ExamScreen() {
           <div className={`stamp${attempt.passed ? ' pass' : ''}`}>
             {attempt.passed ? '합격' : '불합격'}
             <small>
-              {attempt.correct} / {attempt.total} · {pct}%
+              {exam.scale ? `${Math.round((attempt.correct / attempt.total) * exam.scale)} / ${exam.scale}` : `${attempt.correct} / ${attempt.total} · ${pct}%`}
             </small>
           </div>
           <p style={{ textAlign: 'center', margin: '0 0 14px' }}>
@@ -66,8 +66,13 @@ export function ExamScreen() {
               ? s.promoted === exam.grade + 1
                 ? `Поздравляем! Вы переведены в ${GRADES[exam.grade + 1].name}.`
                 : 'Экзамен сдан.'
-              : `Для зачёта нужно ${Math.round(exam.pass * 100)}%. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
+              : `Для зачёта нужно ${Math.round(exam.pass * 100)}%${exam.scale ? ` (${Math.round(exam.pass * exam.scale)} из ${exam.scale})` : ''}. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
           </p>
+          {exam.scale === 200 && (
+            <p style={{ textAlign: 'center', margin: '0 0 14px', fontSize: 13, color: 'var(--ink-2)' }}>
+              {topikLevel(Math.round((attempt.correct / attempt.total) * 200))}
+            </p>
+          )}
           <div className="gb" style={{ margin: 0 }}>
             {attempt.sections.map((sec) => {
               const def = sectionName(sec.key);
@@ -147,10 +152,10 @@ export function ExamScreen() {
               <span className="r-kr">{sec.kr}</span> · {sec.ru} — {sec.questions.length} заданий
             </span>
           ))}
-          <span className="cl" style={{ ['--i' as string]: 3 }}>
-            Время: {exam.minutes} мин · зачёт от {Math.round(exam.pass * 100)}%
+          <span className="cl" style={{ ['--i' as string]: preview.length }}>
+            Время: {exam.minutes} мин · зачёт от {Math.round(exam.pass * 100)}%{exam.scale ? ` (${Math.round(exam.pass * exam.scale)}/${exam.scale})` : ''}
           </span>
-          <span className="cl" style={{ ['--i' as string]: 4 }}>
+          <span className="cl" style={{ ['--i' as string]: preview.length + 1 }}>
             Аудио можно прослушать {exam.plays} раза
           </span>
         </div>
@@ -193,6 +198,13 @@ export function ExamScreen() {
       </div>
     </div>
   );
+}
+
+/** Пороги настоящего TOPIK I: 80 баллов — 1급, 140 — 2급. */
+function topikLevel(score: number) {
+  if (score >= 140) return `На настоящем TOPIK I ${score} баллов — это уровень 2급 (от 140).`;
+  if (score >= 80) return `На настоящем TOPIK I ${score} баллов — это уровень 1급 (от 80).`;
+  return `На настоящем TOPIK I ${score} баллов — ниже 1급 (нужно 80).`;
 }
 
 function sectionName(key: string) {
@@ -294,13 +306,13 @@ function Question({ q, answer, onAnswer }: { q: ExamQuestion; answer: Answer; on
     const it = q.item;
     return (
       <>
+        {it.ru && it.prompt !== '___' && <h4 className="exam-ins">{it.ru}</h4>}
         {it.prompt !== '___' && (
-          <p className={`q${/^[\p{Script=Hangul}\s]+$/u.test(it.prompt) ? '' : ' text'}`}>
+          <p className={`q${/^[\p{Script=Hangul}\s]+$/u.test(it.prompt) ? '' : ' text'}${it.prompt.length > 40 ? ' passage' : ''}`}>
             <Rich text={it.prompt} />
-            {it.ru && <span className="ru">{it.ru}</span>}
           </p>
         )}
-        {it.prompt === '___' && <p className="q text">Что прозвучало?</p>}
+        {it.prompt === '___' && <p className="q text">{it.ru ?? 'Что прозвучало?'}</p>}
         <div className="opts omr">
           {it.options.map((o, j) => (
             <button key={o} className={`opt wide${answer === j ? ' marked' : ''}`} aria-pressed={answer === j} onClick={() => onAnswer(j)}>

@@ -309,3 +309,6 @@ a{color:inherit}
 .promo b{font-family:var(--f-disp);font-weight:400;font-size:22px;display:block}
 .promo p{margin:2px 0 0;font-size:13px;color:var(--chalk-2)}
 .promo button{margin-left:auto;background:none;border:1px solid var(--chalk-2);color:var(--chalk);border-radius:999px;padding:6px 12px;font-size:12px;flex:none}
+.note-item .kr{white-space:pre-line}
+.exam-ins{margin:0 0 6px;font-size:13px;font-weight:500;color:var(--ink-2)}
+.q.passage{font-family:var(--f-kr);font-size:17px;line-height:1.7;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}

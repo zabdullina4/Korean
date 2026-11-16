@@ -1,6 +1,6 @@
 // Генераторы заданий: формы и числа считаются движком, а не пишутся руками — без опечаток.
-import { haeyo, haeyoDistractors, stemOf } from '../lib/conjugate';
-import { formatWon, sino } from '../lib/numbers';
+import { conj, conjDistractors, haeyo, haeyoDistractors, stemOf, type Form } from '../lib/conjugate';
+import { clock, formatWon, native, nativeCounter, sino } from '../lib/numbers';
 import { hash, rng, shuffle } from '../lib/random';
 import type { ChoiceItem } from './types';
 
@@ -33,4 +33,42 @@ export function priceListenItem(n: number): ChoiceItem {
 export function numberItem(n: number): ChoiceItem {
   const near = [n + 10 > 99 ? n - 10 : n + 10, n % 10 ? n - (n % 10) + ((n % 10) % 9) + 1 : n + 1].filter((x) => x !== n && x > 0);
   return { prompt: String(n), ...ordered(sino(n), [...new Set(near)].slice(0, 2).map(sino), `n${n}`), why: `${n} — [[kr|${sino(n)}]].`, errorType: 'vocab' };
+}
+
+const FORM_RULE: Record<Form, (right: string, verb: string) => string> = {
+  past: (r, v) => `Прошедшее: форма -아/어요 + ㅆ → ${v} → [[kr|${r}]].`,
+  formal: (r) => `После гласной и ㄹ — -ㅂ니다, после согласной — -습니다: [[kr|${r}]].`,
+  formalQ: (r) => `Вопрос в стиле 합니다: [[kr|${r}]].`,
+  seyo: (r) => `После гласной -세요, после согласной -으세요, ㄹ выпадает: [[kr|${r}]].`,
+  future: (r) => `После гласной -ㄹ 거예요, после согласной -을 거예요: [[kr|${r}]].`,
+  lkkayo: (r) => `После гласной -ㄹ까요, после согласной -을까요: [[kr|${r}]].`,
+  want: (r) => `Основа + -고 싶어요: [[kr|${r}]].`,
+  an: (r) => (r.includes(' 안 ') ? `У глаголов «существительное + 하다» 안 встаёт перед 하다: [[kr|${r}]].` : `안 ставится перед глаголом: [[kr|${r}]].`),
+  ji: (r) => `Основа + -지 않아요: [[kr|${r}]].`,
+};
+
+export function formItem(verb: string, form: Form, ru: string): ChoiceItem {
+  const right = conj(verb, form);
+  return { prompt: verb, ru, ...ordered(right, conjDistractors(verb, form).slice(0, 2), `${form}:${verb}`), why: FORM_RULE[form](right, verb), errorType: 'ending' };
+}
+
+export function counterItem(n: number, noun: string, counter: string, ru: string): ChoiceItem {
+  const right = `${noun} ${nativeCounter(n)} ${counter}`;
+  const wrong = [`${noun} ${native(n)} ${counter}`, `${noun} ${sino(n)} ${counter}`].filter((x) => x !== right);
+  return { prompt: ru, ...ordered(right, [...new Set(wrong)], `c${n}${counter}`), why: `С ${counter} — исконное число в счётной форме: [[kr|${nativeCounter(n)} ${counter}]].`, errorType: 'vocab' };
+}
+
+const hhmm = (h: number, m: number) => `${h}:${String(m).padStart(2, '0')}`;
+
+export function clockItem(h: number, m: number): ChoiceItem {
+  const right = clock(h, m);
+  const hh = ((h + 11) % 12) + 1;
+  const wrong = [m ? `${sino(hh)} 시 ${sino(m)} 분` : `${sino(hh)} 시`, m ? `${nativeCounter(hh)} 시 ${native(m > 99 ? 1 : m)} 분` : `${native(hh)} 시`];
+  return { prompt: hhmm(h, m), ru: 'Как сказать время?', ...ordered(right, [...new Set(wrong)].filter((x) => x !== right), `t${h}${m}`), why: `Часы — исконными (${nativeCounter(hh)} 시), минуты — сино-корейскими: [[kr|${right}]].`, errorType: 'vocab' };
+}
+
+export function clockListenItem(h: number, m: number): ChoiceItem {
+  const right = hhmm(h, m);
+  const wrong = [hhmm(h, (m + 20) % 60), hhmm(((h + 1) % 12) + 1, m)];
+  return { prompt: '___', audio: clock(h, m), ru: 'Который час?', ...ordered(right, wrong, `lt${h}${m}`), why: `Звучало [[kr|${clock(h, m)}]].`, errorType: 'vocab' };
 }
