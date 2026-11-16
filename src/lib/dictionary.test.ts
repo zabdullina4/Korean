@@ -20,6 +20,14 @@ describe('морфологический разбор', () => {
     expect(forms('가셨어요')).toContain('가다: 가다 + -시- + -었- + -어요');
   });
 
+  it('формы 2급', () => {
+    expect(forms('만나기로')).toContain('만나다: 만나다 + -기로');
+    expect(forms('먹으러')).toContain('먹다: 먹다 + -으러');
+    expect(forms('적이')).toContain('적: 적 + 이');
+    expect(forms('먹어야')).toContain('먹다: 먹다 + -어야');
+    expect(forms('있으면')).toContain('있다: 있다 + -으면');
+  });
+
   it('нерегулярные и неоднозначные формы', () => {
     const a = analyze('도와요');
     expect(a[0].lemma).toBe('돕다');

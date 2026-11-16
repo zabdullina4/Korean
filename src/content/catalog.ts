@@ -8,6 +8,7 @@ import { prices, sinoNumbers } from './grade1/unit4';
 import { nativeNumbers, negationAn, negationMot, pastTense, telling, weekend } from './grade1/unit5-7';
 import { announcement, formal, future, lkkayo, seyo, want } from './grade1/unit8-10';
 import { reasonAseoNiga } from './grade2/reason';
+import { butIf, canDo, experience, mustDo, plans, progressive, reo, tryIt } from './grade2/unit1-4';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -19,7 +20,9 @@ const G1 = [
   ...[nativeNumbers, telling, pastTense, weekend, negationAn, negationMot, future, want, seyo, lkkayo, formal, announcement],
 ];
 
-export const LESSONS: Lesson[] = [...G0, ...G1, reasonAseoNiga];
+const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, reasonAseoNiga];
+
+export const LESSONS: Lesson[] = [...G0, ...G1, ...G2];
 
 /** Переводной экзамен каждого класса. */
 export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam };
@@ -59,7 +62,18 @@ export const GRADES: Grade[] = [
     n: 2,
     name: '2급',
     ru: 'Начальная школа · 2 класс',
-    units: [{ grade: 2, n: 7, title: 'Здоровье', titleKr: '건강', lessons: [reasonAseoNiga.id] }],
+    units: [
+      { grade: 2, n: 1, title: 'Опыт', titleKr: '경험', lessons: [tryIt.id, experience.id] },
+      { grade: 2, n: 2, title: 'Возможность и обязанность', titleKr: '능력과 의무', lessons: [canDo.id, mustDo.id] },
+      { grade: 2, n: 3, title: 'Связки', titleKr: '연결', lessons: [progressive.id, butIf.id] },
+      { grade: 2, n: 4, title: 'Цели и намерения', titleKr: '목적과 계획', lessons: [reo.id, plans.id] },
+      { grade: 2, n: 5, title: 'Описание: определительные формы', titleKr: '묘사', lessons: [] },
+      { grade: 2, n: 6, title: 'Время: когда, до, после', titleKr: '시간', lessons: [] },
+      { grade: 2, n: 7, title: 'Здоровье и причины', titleKr: '건강', lessons: [reasonAseoNiga.id] },
+      { grade: 2, n: 8, title: 'Почтительность', titleKr: '높임말', lessons: [] },
+      { grade: 2, n: 9, title: 'Обещания и выбор', titleKr: '약속', lessons: [] },
+      { grade: 2, n: 10, title: 'Живая речь', titleKr: '대화', lessons: [] },
+    ],
   },
   { n: 3, name: '3급', ru: 'Средняя школа · 1 класс', units: [] },
   { n: 4, name: '4급', ru: 'Средняя школа · 2 класс', units: [] },
@@ -73,7 +87,7 @@ export function gradeLessons(grade: number): Lesson[] {
   return g ? g.units.flatMap((u) => u.lessons.map((id) => LESSON_BY_ID[id])) : [];
 }
 
-/** Уроки 2급 пока доступны только как превью: программа класса ещё не наполнена. */
-export function isPreviewLesson(l: Lesson): boolean {
-  return l.grade === 2;
+/** Урок старшего класса открывается как превью: прогресс не сохраняется. */
+export function isPreviewLesson(l: Lesson, currentGrade: number): boolean {
+  return l.grade > currentGrade;
 }

@@ -59,7 +59,7 @@ export function LessonPlayer() {
   const autoReady = step && (step.kind === 'board' || step.kind === 'dialogue');
   const canGo = done || autoReady || ready;
   const score = Math.max(50, 100 - errors * 7);
-  const preview = isPreviewLesson(lesson) && lesson.grade > school.grade;
+  const preview = isPreviewLesson(lesson, school.grade);
 
   const next = () => {
     if (done) {

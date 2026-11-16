@@ -81,7 +81,10 @@ export function haeyoDistractors(verb: string): string[] {
 
 // ---------- Другие формы 1급 ----------
 
-export type Form = 'past' | 'formal' | 'formalQ' | 'seyo' | 'future' | 'lkkayo' | 'want' | 'an' | 'ji';
+export type Form =
+  | 'past' | 'formal' | 'formalQ' | 'seyo' | 'future' | 'lkkayo' | 'want' | 'an' | 'ji'
+  // 2급
+  | 'tryPast' | 'trySeyo' | 'experience' | 'can' | 'cannot' | 'must' | 'progressive' | 'jiman' | 'myeon' | 'reo' | 'ryeogo' | 'giro';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -110,6 +113,16 @@ function withL(verb: string): string {
   const { base } = stemForEu(verb, 'ㄹ');
   return replaceLast(base, addJong(base[base.length - 1], 'ㄹ'));
 }
+
+/** Основа + ㄴ (определение прошедшего, -(으)ㄴ 적이 있다): 가 → 간, 먹으 → 먹은, 살 → 산, 듣 → 들은, 돕 → 도운. */
+function withN(verb: string): string {
+  const { base } = stemForEu(verb, 'ㅅ');
+  return replaceLast(base, addJong(base[base.length - 1], 'ㄴ'));
+}
+
+/** Основа для -(으)면, -(으)러, -(으)려고: основа на ㄹ сохраняет ㄹ и не берёт 으. */
+const euKeepL = (verb: string) => stemForEu(verb, 'ㄹ').base;
+const info = (verb: string) => haeyo(verb).slice(0, -1);
 
 export function conj(verb: string, form: Form): string {
   const stem = stemOf(verb);
@@ -143,6 +156,30 @@ export function conj(verb: string, form: Form): string {
       return `안 ${haeyo(verb)}`;
     case 'ji':
       return stem + '지 않아요';
+    case 'tryPast':
+      return `${info(verb)} 봤어요`;
+    case 'trySeyo':
+      return `${info(verb)} 보세요`;
+    case 'experience':
+      return `${withN(verb)} 적이 있어요`;
+    case 'can':
+      return `${withL(verb)} 수 있어요`;
+    case 'cannot':
+      return `${withL(verb)} 수 없어요`;
+    case 'must':
+      return `${info(verb)}야 해요`;
+    case 'progressive':
+      return `${stem}고 있어요`;
+    case 'jiman':
+      return `${stem}지만`;
+    case 'myeon':
+      return `${euKeepL(verb)}면`;
+    case 'reo':
+      return `${euKeepL(verb)}러 가요`;
+    case 'ryeogo':
+      return `${euKeepL(verb)}려고 해요`;
+    case 'giro':
+      return `${stem}기로 했어요`;
   }
 }
 
@@ -181,6 +218,42 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'ji':
       c = [stem + '지 안아요', stem + '지 않어요'];
+      break;
+    case 'tryPast':
+      c = [`${stem}아 봤어요`, `${stem}어 봤어요`, `${stem}기 봤어요`];
+      break;
+    case 'trySeyo':
+      c = [`${stem}아 보세요`, `${stem}어 보세요`, `${stem}기 보세요`];
+      break;
+    case 'experience':
+      c = [vowel ? `${stem}은 적이 있어요` : `${stem} 적이 있어요`, `${stem}는 적이 있어요`, `${withL(verb)} 적이 있어요`];
+      break;
+    case 'can':
+    case 'cannot': {
+      const tail = form === 'can' ? '수 있어요' : '수 없어요';
+      c = [vowel ? `${stem}을 ${tail}` : `${stem} ${tail}`, `${stem}는 ${tail}`, `${stem}고 ${tail}`];
+      break;
+    }
+    case 'must':
+      c = [`${stem}야 해요`, `${stem}고 해야 해요`, `${stem}${vowel ? '어' : '아'}야 해요`];
+      break;
+    case 'progressive':
+      c = [`${stem}는 있어요`, `${stem}기 있어요`, `${stem}고 있다요`];
+      break;
+    case 'jiman':
+      c = [`${info(verb)}지만`, `${stem}치만`];
+      break;
+    case 'myeon':
+      c = [vowel ? `${stem}으면` : `${stem}면`, `${info(verb)}면`];
+      break;
+    case 'reo':
+      c = [vowel ? `${stem}으러 가요` : `${stem}러 가요`, `${stem}려 가요`, `${stem}기 가요`];
+      break;
+    case 'ryeogo':
+      c = [vowel ? `${stem}으려고 해요` : `${stem}려고 해요`, `${stem}러고 해요`];
+      break;
+    case 'giro':
+      c = [`${stem}기를 했어요`, `${stem}고로 했어요`];
       break;
   }
   return [...new Set(c.filter((x) => x && x !== right))];

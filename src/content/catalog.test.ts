@@ -15,6 +15,12 @@ describe('контент', () => {
     for (const u of g1.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
   });
 
+  it('2급: 10 юнитов в программе, первые четыре заполнены', () => {
+    const g2 = GRADES[2];
+    expect(g2.units).toHaveLength(10);
+    for (const u of g2.units.slice(0, 4)) expect(u.lessons.length, u.title).toBeGreaterThan(0);
+  });
+
   it('все уроки из программы существуют', () => {
     const ids = new Set(LESSONS.map((l) => l.id));
     for (const g of GRADES) for (const u of g.units) for (const id of u.lessons) expect(ids.has(id)).toBe(true);
