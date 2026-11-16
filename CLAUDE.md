@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-«한국어 학교» — a Korean-language school for Russian speakers (Hangul → TOPIK 6급), built as a React + TypeScript + Vite web app/PWA. All UI text, lesson explanations and commit-facing docs are in **Russian**; learning content is Korean. Design rationale and the full curriculum plan live in `docs/01–07` (methodology, school system, curriculum, modules, algorithms, UX, roadmap) — read them before adding a new grade or feature. `prototype/index.html` is the original static mock-up, not used by the app.
+«한국어 학교» — a Korean-language school for Russian speakers (Hangul → TOPIK 6급), built as a React + TypeScript + Vite web app/PWA. All UI text, lesson explanations and commit-facing docs are in **Russian**; learning content is Korean. Design rationale and the full curriculum plan live in `docs/01–07`; `docs/08-grammar-coverage.md` maps every grammar point to its lesson (checked against Korean Grammar in Use) (methodology, school system, curriculum, modules, algorithms, UX, roadmap) — read them before adding a new grade or feature. `prototype/index.html` is the original static mock-up, not used by the app.
 
 ## Commands
 
@@ -27,11 +27,11 @@ npm run build:artifact      # build with in-memory router → dist-artifact/page
 
 ## Architecture
 
-**Content is data; forms are computed.** Lessons are plain `Lesson` objects (`src/content/types.ts`) in `src/content/gradeN/*.ts`, registered in `src/content/catalog.ts` (`LESSONS`, `GRADES` with units, `EXAMS` keyed by grade). A lesson is a list of `Step`s; `kind` selects the renderer in `src/features/lesson/LessonPlayer.tsx` + `steps/` (board, dialogue, letters, choice, build, compose, hanja, wongoji, write). Adding a step kind means: extend the `Step` union, add a component, add it to the player's switch and `STEP_LABEL`, and decide whether it is `autoReady`.
+**Content is data; forms are computed.** Lessons are plain `Lesson` objects (`src/content/types.ts`) in `src/content/gradeN/*.ts` (`extra.ts` holds lessons added after the grammar audit), registered in `src/content/catalog.ts` (`LESSONS`, `GRADES` with units, `EXAMS` keyed by grade). A lesson is a list of `Step`s; `kind` selects the renderer in `src/features/lesson/LessonPlayer.tsx` + `steps/` (board, dialogue, letters, choice, build, compose, hanja, wongoji, write). Adding a step kind means: extend the `Step` union, add a component, add it to the player's switch and `STEP_LABEL`, and decide whether it is `autoReady`.
 
 **New words are taught before they are tested.** `catalog.ts` maps every lesson through `withVocab()` (`src/content/vocab.ts`), which inserts a `words` step (flashcards: Korean → translation, pronunciation, audio) after the first letters step, or else after the first board/dialogue, and always before the first choice/build step that mentions a lesson word. Don't add vocabulary quizzes without listing the words in `lesson.words`; the content test `testedBeforeTaught` fails otherwise. A lesson may place its own `words` step, and then no step is injected.
 
-**Conjugation engine** (`src/lib/conjugate.ts`) is the core: `haeyo()`, `conj(verb, form)` and `conjDistractors(verb, form)` for ~80 `Form`s across 0–4급, with irregular classes (ㅂ/ㄷ/ㅅ/ㅎ/르, ㄹ-stems, ㅡ-drop) handled via `stemForEu`, `withL`, `withN`, `neunda`, `eum`. Exercises are generated from it via `src/content/gen.ts` (`formItem`, `attrItem`, `counterItem`, `clockItem`, …) whose `FORM_RULE` record must have an entry for every `Form` (TypeScript enforces this). Numbers (`sino`, `native`, `nativeCounter`, `clock`) are in `src/lib/numbers.ts`.
+**Conjugation engine** (`src/lib/conjugate.ts`) is the core: `haeyo()`, `conj(verb, form)` and `conjDistractors(verb, form)` for ~130 `Form`s across 0–4급, with irregular classes (ㅂ/ㄷ/ㅅ/ㅎ/르, ㄹ-stems, ㅡ-drop) handled via `stemForEu`, `withL`, `withN`, `neunda`, `eum`. Exercises are generated from it via `src/content/gen.ts` (`formItem`, `attrItem`, `counterItem`, `clockItem`, …) whose `FORM_RULE` record must have an entry for every `Form` (TypeScript enforces this). Numbers (`sino`, `native`, `nativeCounter`, `clock`) are in `src/lib/numbers.ts`.
 
 **Distractor rule:** wrong options must be ungrammatical or clearly wrong given the Russian prompt. Several "distractors" have turned out to be valid Korean (e.g. 놀고 가요, 좋을 날, 추운 때, 사진을 찍으면 좋습니다) — when adding forms or exam items, dump the generated options and review them, and leave a comment when a candidate is deliberately excluded.
 

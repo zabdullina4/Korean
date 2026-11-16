@@ -10,6 +10,8 @@ import { announcement, formal, future, lkkayo, seyo, want } from './grade1/unit8
 import { andGo, particlesAlso, particlesTo, pleaseDo } from './grade1/extra';
 import { compare, irregulars, knowHow, looks, sequence, sinceNow, suggestGunyo, wishes } from './grade2/extra';
 import { reasonAseoNiga } from './grade2/reason';
+import { asSoonHabit, completion, insteadWhile, maybeFear, reportedShort, stateReady, tendency } from './grade3/extra';
+import { asMuchAs, evenAny, justAbout, notOnly, reasons3, shouldHave, talkEndings } from './grade4/extra';
 import { butIf, canDo, experience, mustDo, plans, progressive, reo, tryIt } from './grade2/unit1-4';
 import { attrAdj, attrTense, attrVerb } from './grade2/unit5';
 import { beforeAfter, when, whileDoing } from './grade2/unit6';
@@ -42,11 +44,15 @@ const G2 = [
   ...[knowHow, sequence, compare, wishes, looks, irregulars, sinceNow, suggestGunyo],
 ];
 
-const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga, passive, causative, deoragoyo, deon, hanja1, hanja2, wongoji, writing53];
+const G3 = [
+  ...[handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga, passive, causative, deoragoyo, deon, hanja1, hanja2, wongoji, writing53],
+  ...[reportedShort, maybeFear, tendency, stateReady, completion, asSoonHabit, insteadWhile],
+];
 
 const G4 = [
   ...[evenIf, evenThough, whereas, yesBut, suddenBusy, thanksBlame, ifOnly, supposeIf, geodeunJana, tendeGeonde, deoniAtdeoni],
   ...[dorokGoja, gyeom, degree, gimanHamyeon, idioms, proverbs, hanjaSociety, hanjaCulture, essayPlan, essay54],
+  ...[evenAny, notOnly, reasons3, shouldHave, talkEndings, justAbout, asMuchAs],
 ];
 
 // Каждому уроку добавляется шаг «Новые слова» перед первым заданием на эти слова (см. vocab.ts).
@@ -109,11 +115,11 @@ export const GRADES: Grade[] = [
     ru: 'Средняя школа · 1 класс · TOPIK II',
     units: [
       { grade: 3, n: 1, title: 'Письменный стиль', titleKr: '한다체', lessons: [handa.id, handaRules.id] },
-      { grade: 3, n: 2, title: 'Косвенная речь', titleKr: '간접 화법', lessons: [reportedStatement.id, reportedOther.id] },
-      { grade: 3, n: 3, title: 'Предположение', titleKr: '추측', lessons: [seems.id, inference.id] },
-      { grade: 3, n: 4, title: 'Изменения: -게 되다, -아/어지다', titleKr: '변화', lessons: [geDoeda.id, eojida.id] },
+      { grade: 3, n: 2, title: 'Косвенная речь', titleKr: '간접 화법', lessons: [reportedStatement.id, reportedOther.id, reportedShort.id] },
+      { grade: 3, n: 3, title: 'Предположение', titleKr: '추측', lessons: [seems.id, inference.id, maybeFear.id, tendency.id] },
+      { grade: 3, n: 4, title: 'Изменения: -게 되다, -아/어지다', titleKr: '변화', lessons: [geDoeda.id, eojida.id, stateReady.id, completion.id] },
       { grade: 3, n: 5, title: 'Номинализация: -기, -(으)ㅁ, -는 것', titleKr: '명사형', lessons: [neunGeot.id, giEum.id] },
-      { grade: 3, n: 6, title: 'Время 2: -자마자, -다가', titleKr: '시간 2', lessons: [assoonas.id, daga.id] },
+      { grade: 3, n: 6, title: 'Время 2: -자마자, -다가', titleKr: '시간 2', lessons: [assoonas.id, daga.id, asSoonHabit.id, insteadWhile.id] },
       { grade: 3, n: 7, title: 'Пассив и каузатив', titleKr: '피동과 사동', lessons: [passive.id, causative.id] },
       { grade: 3, n: 8, title: 'Воспоминание -더-', titleKr: '회상', lessons: [deoragoyo.id, deon.id] },
       { grade: 3, n: 9, title: 'Корни ханча', titleKr: '한자', lessons: [hanja1.id, hanja2.id] },
@@ -125,13 +131,13 @@ export const GRADES: Grade[] = [
     name: '4급',
     ru: 'Средняя школа · 2 класс · TOPIK II',
     units: [
-      { grade: 4, n: 1, title: 'Уступка', titleKr: '양보', lessons: [evenIf.id, evenThough.id] },
-      { grade: 4, n: 2, title: 'Противопоставление', titleKr: '대조', lessons: [whereas.id, yesBut.id] },
-      { grade: 4, n: 3, title: 'Тонкие причины', titleKr: '원인', lessons: [suddenBusy.id, thanksBlame.id] },
-      { grade: 4, n: 4, title: 'Гипотеза и сожаление', titleKr: '가정과 후회', lessons: [ifOnly.id, supposeIf.id] },
-      { grade: 4, n: 5, title: 'Похожие конструкции', titleKr: '비슷한 표현', lessons: [geodeunJana.id, tendeGeonde.id, deoniAtdeoni.id] },
-      { grade: 4, n: 6, title: 'Цель 2', titleKr: '목적', lessons: [dorokGoja.id, gyeom.id] },
-      { grade: 4, n: 7, title: 'Степень и мера', titleKr: '정도', lessons: [degree.id, gimanHamyeon.id] },
+      { grade: 4, n: 1, title: 'Уступка', titleKr: '양보', lessons: [evenIf.id, evenThough.id, evenAny.id] },
+      { grade: 4, n: 2, title: 'Противопоставление', titleKr: '대조', lessons: [whereas.id, yesBut.id, notOnly.id] },
+      { grade: 4, n: 3, title: 'Тонкие причины', titleKr: '원인', lessons: [suddenBusy.id, thanksBlame.id, reasons3.id] },
+      { grade: 4, n: 4, title: 'Гипотеза и сожаление', titleKr: '가정과 후회', lessons: [ifOnly.id, supposeIf.id, shouldHave.id] },
+      { grade: 4, n: 5, title: 'Похожие конструкции', titleKr: '비슷한 표현', lessons: [geodeunJana.id, tendeGeonde.id, deoniAtdeoni.id, talkEndings.id] },
+      { grade: 4, n: 6, title: 'Цель 2', titleKr: '목적', lessons: [dorokGoja.id, gyeom.id, justAbout.id] },
+      { grade: 4, n: 7, title: 'Степень и мера', titleKr: '정도', lessons: [degree.id, gimanHamyeon.id, asMuchAs.id] },
       { grade: 4, n: 8, title: 'Идиомы и пословицы', titleKr: '사자성어와 속담', lessons: [idioms.id, proverbs.id] },
       { grade: 4, n: 9, title: 'Корни ханча 2', titleKr: '한자 2', lessons: [hanjaSociety.id, hanjaCulture.id] },
       { grade: 4, n: 10, title: 'Эссе TOPIK 54', titleKr: '쓰기 54', lessons: [essayPlan.id, essay54.id] },

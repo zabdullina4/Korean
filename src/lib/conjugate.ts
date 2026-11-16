@@ -1037,7 +1037,7 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'neundaero':
       // «말한 대로» («как сказал») и «-(으)ㄹ 대로» верны — не берём.
-      c = [`${stem}기 대로`, `${info(verb)}는 대로`];
+      c = [`${stem}기 대로`, `${info(verb)}는 대로`, `${withNeun(verb)} 데로`];
       break;
     case 'gonhada':
       c = [`${info(verb)}곤 했어요`, `${stem}군 했어요`, `${withN(verb)}곤 했어요`];
@@ -1083,7 +1083,7 @@ export function conjDistractors(verb: string, form: Form): string[] {
       c = takesNeun(verb) ? [`${stem}은 데다가`, `${info(verb)}는 데다가`] : [`${stem}는 데다가`, `${stem}은 데다가`];
       break;
     case 'gillae':
-      c = [`${stem}길레`, `${info(verb)}길래`];
+      c = [`${stem}길레`, `${info(verb)}길래`, `${withN(verb)}길래`];
       break;
     case 'aseogeureonji':
       c = [`${pastStemOf(verb)}어서 그런지`, `${stem}서 그런지`];
@@ -1095,7 +1095,8 @@ export function conjDistractors(verb: string, form: Form): string[] {
       c = [`${withN(verb)} 걸 그랬어요`, `${withL(verb)} 껄 그랬어요`];
       break;
     case 'lliga':
-      c = [`${withN(verb)} 리가 없어요`, `${withNeun(verb)} 리가 없어요`];
+      // «-(으)ㄴ 리가 없다» встречается (범인인 리가 없다) — не берём.
+      c = [`${stem}기 리가 없어요`, `${withL(verb)} 니가 없어요`];
       break;
     case 'ayajiyo':
       // «-아/어야죠» — верное сокращение, не берём.
