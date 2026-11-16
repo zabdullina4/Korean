@@ -75,7 +75,26 @@ export type Step =
       hints: { ifIncludes: string; why: string }[];
       errorType: ErrorType;
     }
-  | { kind: 'compose'; title: string; sub?: string; palette: { cho: string[]; jung: string[]; jong?: string[] }; tasks: { target: string; ru?: string }[] };
+  | { kind: 'compose'; title: string; sub?: string; palette: { cho: string[]; jung: string[]; jong?: string[] }; tasks: { target: string; ru?: string }[] }
+  /** Граф корня ханча: корень в центре, вокруг — слова с ним. */
+  | { kind: 'hanja'; title: string; sub?: string; roots: HanjaRoot[]; note?: string }
+  /** Текст, разложенный по бланку 원고지. */
+  | { kind: 'wongoji'; title: string; sub?: string; text: string; note?: string }
+  /** Свободное письмо с проверкой длины и стиля и образцом ответа. */
+  | { kind: 'write'; title: string; sub?: string; task: string; min: number; max: number; model: string; checklist: string[] };
+
+export interface HanjaWord {
+  kr: string;
+  hanja: string;
+  ru: string;
+}
+
+export interface HanjaRoot {
+  char: string;
+  sound: string;
+  meaning: string;
+  words: HanjaWord[];
+}
 
 export interface Lesson {
   id: string;

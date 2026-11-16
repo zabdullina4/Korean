@@ -104,7 +104,9 @@ export type Form =
   // предположение
   | 'gotgataV' | 'gotgataPast' | 'gotgataFut' | 'gotgataA' | 'nabwayo' | 'pastNabwayo' | 'ngabwayo'
   // изменения, номинализация, время 2
-  | 'gedwae' | 'eojida' | 'neungeot' | 'eum' | 'giwihae' | 'jamaja' | 'daga' | 'pastDaga';
+  | 'gedwae' | 'eojida' | 'neungeot' | 'eum' | 'giwihae' | 'jamaja' | 'daga' | 'pastDaga'
+  // каузатив -게 하다, воспоминание -더-
+  | 'gehada' | 'deoragoyo' | 'pastDeoragoyo' | 'deon' | 'pastDeon';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -316,6 +318,16 @@ export function conj(verb: string, form: Form): string {
       return `${stem}다가`;
     case 'pastDaga':
       return `${pastStemOf(verb)}다가`;
+    case 'gehada':
+      return `${stem}게 했어요`;
+    case 'deoragoyo':
+      return `${stem}더라고요`;
+    case 'pastDeoragoyo':
+      return `${pastStemOf(verb)}더라고요`;
+    case 'deon':
+      return `${stem}던`;
+    case 'pastDeon':
+      return `${pastStemOf(verb)}던`;
   }
 }
 
@@ -586,6 +598,22 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'pastDaga':
       c = [`${conj(verb, 'past')}다가`, `${pastStemOf(verb)}는다가`];
+      break;
+    case 'gehada':
+      c = [`${stem}기 했어요`, `${info(verb)}게 했어요`];
+      break;
+    case 'deoragoyo':
+      // Частая орфографическая ошибка: -드라고요.
+      c = [`${stem}드라고요`, `${info(verb)}더라고요`];
+      break;
+    case 'pastDeoragoyo':
+      c = [`${pastStemOf(verb)}드라고요`, `${conj(verb, 'past')}더라고요`];
+      break;
+    case 'deon':
+      c = [`${info(verb)}던`, `${withNeun(verb)}던`];
+      break;
+    case 'pastDeon':
+      c = [`${conj(verb, 'past')}던`, `${pastStemOf(verb)}는`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

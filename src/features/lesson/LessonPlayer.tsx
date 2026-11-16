@@ -12,7 +12,10 @@ import { ChoiceStep } from './steps/ChoiceStep';
 import { ComposeStep } from './steps/ComposeStep';
 import { DialogueStep } from './steps/DialogueStep';
 import { DoneStep } from './steps/DoneStep';
+import { HanjaStep } from './steps/HanjaStep';
 import { LettersStep } from './steps/LettersStep';
+import { WongojiStep } from './steps/WongojiStep';
+import { WriteStep } from './steps/WriteStep';
 
 export interface StepProps<S extends Step = Step> {
   step: S;
@@ -29,6 +32,9 @@ const STEP_LABEL: Record<Step['kind'], string> = {
   choice: 'Задания',
   build: 'Сборка',
   compose: 'Слоги',
+  hanja: 'Ханча',
+  wongoji: 'Бланк 원고지',
+  write: 'Письмо',
 };
 
 export function LessonPlayer() {
@@ -56,7 +62,7 @@ export function LessonPlayer() {
   const total = lesson.steps.length + 1;
   const done = i === lesson.steps.length;
   const step = lesson.steps[i];
-  const autoReady = step && (step.kind === 'board' || step.kind === 'dialogue');
+  const autoReady = step && (step.kind === 'board' || step.kind === 'dialogue' || step.kind === 'wongoji');
   const canGo = done || autoReady || ready;
   const score = Math.max(50, 100 - errors * 7);
   const preview = isPreviewLesson(lesson, school.grade);
@@ -102,6 +108,15 @@ export function LessonPlayer() {
         break;
       case 'compose':
         body = <ComposeStep key={i} step={step} {...props} />;
+        break;
+      case 'hanja':
+        body = <HanjaStep key={i} step={step} {...props} />;
+        break;
+      case 'wongoji':
+        body = <WongojiStep key={i} step={step} {...props} />;
+        break;
+      case 'write':
+        body = <WriteStep key={i} step={step} {...props} />;
         break;
     }
 

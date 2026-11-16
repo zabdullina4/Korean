@@ -334,6 +334,11 @@ const T: Template[] = [
   { id: 'jamaja', build: (v) => ({ form: v.slice(0, -1) + '자마자', chain: [end('-자마자', '«как только, сразу после»', 'g3-u6-l1')] }) },
   { id: 'daga', build: (v) => ({ form: v.slice(0, -1) + '다가', chain: [end('-다가', '«делал… и (прервался, переключился)»', 'g3-u6-l2')] }) },
   { id: 'pastDaga', build: (v) => ({ form: pastStem(v) + '다가', chain: [pastMark(v), end('-다가', '«сделал… и потом (обратное)»', 'g3-u6-l2')] }) },
+  // ---- 3급: -더-, -던 ----
+  { id: 'deoragoyo', build: (v) => ({ form: v.slice(0, -1) + '더라고요', chain: [end('-더라고요', '«я сам видел / почувствовал, и вот рассказываю»', 'g3-u8-l1')] }) },
+  { id: 'pastDeoragoyo', build: (v) => ({ form: pastStem(v) + '더라고요', chain: [pastMark(v), end('-더라고요', '«оказывается, уже…» — наблюдал сам', 'g3-u8-l1')] }) },
+  { id: 'deon', build: (v) => ({ form: v.slice(0, -1) + '던', chain: [end('-던', 'воспоминание: «который раньше (часто) делал» или незаконченное', 'g3-u8-l2')] }) },
+  { id: 'pastDeon', build: (v) => ({ form: pastStem(v) + '던', chain: [pastMark(v), end('-던', 'воспоминание: «который когда-то сделал»', 'g3-u8-l2')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },

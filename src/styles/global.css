@@ -373,3 +373,47 @@ a{color:inherit}
 .sheet-entry .go{border:0;flex:none;cursor:pointer}
 .sheet-entry .go:disabled{background:var(--ok);cursor:default}
 .bub-act{display:block;margin-top:6px;background:none;border:0;padding:0;font-size:12px;color:var(--chalk-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* hanja graph */
+.hj-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.hj-tab{display:flex;flex-direction:column;align-items:center;min-width:52px;padding:6px 8px;border-radius:10px;border:1px solid color-mix(in srgb,var(--chalk) 25%,transparent);background:transparent;color:var(--chalk);cursor:pointer}
+.hj-tab[aria-selected="true"]{background:color-mix(in srgb,var(--chalk) 16%,transparent);border-color:#ffd37a}
+.hj-tab.seen .hj-c{color:#ffd37a}
+.hj-c{font-family:"Noto Serif SC","Noto Serif KR",serif;font-size:24px;line-height:1.1}
+.hj-graph{position:relative;width:100%;max-width:360px;aspect-ratio:1;margin:4px auto 0}
+.hj-lines{position:absolute;inset:0;width:100%;height:100%}
+.hj-lines line{stroke:color-mix(in srgb,var(--chalk) 30%,transparent);stroke-width:.5}
+.hj-lines line.on{stroke:#ffd37a;stroke-width:.9}
+.hj-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:31%;aspect-ratio:1;border-radius:50%;border:2px solid #ffd37a;background:var(--board);color:var(--chalk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer}
+.hj-center .hj-c{font-size:38px}
+.hj-center .hj-m{font-size:11px;color:var(--chalk-2);max-width:90%;text-align:center;line-height:1.15}
+.hj-word{position:absolute;transform:translate(-50%,-50%);background:var(--board-2);border:1px solid color-mix(in srgb,var(--chalk) 30%,transparent);border-radius:12px;color:var(--chalk);padding:4px 8px;display:flex;flex-direction:column;align-items:center;cursor:pointer;max-width:30%}
+.hj-word .kr{font-size:16px}
+.hj-word small{font-family:"Noto Serif SC",serif;font-size:11px;color:var(--chalk-2)}
+.hj-word.on{border-color:#ffd37a;background:color-mix(in srgb,#ffd37a 22%,var(--board))}
+.hj-part{white-space:nowrap}
+
+/* wongoji */
+.wg-wrap{overflow-x:auto;padding-bottom:4px}
+.wg{display:flex;flex-direction:column;gap:3px;min-width:calc(var(--cols) * 17px);font-family:var(--f-kr)}
+.wg-row{display:grid;grid-template-columns:repeat(var(--cols),1fr);position:relative;border-top:1px solid color-mix(in srgb,var(--ok) 55%,transparent);border-bottom:1px solid color-mix(in srgb,var(--ok) 55%,transparent)}
+.wg-cell{aspect-ratio:1;display:grid;place-items:center;font-size:clamp(10px,3.4vw,15px);border-right:1px solid color-mix(in srgb,var(--ok) 35%,transparent);color:var(--ink);min-width:0}
+.wg-row .wg-cell:first-child{border-left:1px solid color-mix(in srgb,var(--ok) 35%,transparent)}
+.wg-indent{background:color-mix(in srgb,var(--hwang) 18%,transparent)}
+.wg-space{background:color-mix(in srgb,var(--cheong) 8%,transparent)}
+.wg-pair{font-size:clamp(8px,2.6vw,12px);letter-spacing:-.5px}
+.wg-punct{color:var(--jeok)}
+.wg-num{position:absolute;right:-2px;bottom:-14px;font-size:9px;color:var(--ink-3);font-family:var(--f-ui)}
+.wg-legend{font-size:12px;color:var(--ink-2);margin:16px 0 0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.wg-legend .wg-cell{width:16px;height:16px;display:inline-grid;border:1px solid color-mix(in srgb,var(--ok) 35%,transparent);font-size:10px}
+
+/* writing */
+.w-task{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;line-height:1.7;white-space:pre-line}
+.w-label{display:flex;justify-content:space-between;gap:8px;margin:12px 0 4px;font-size:13px;color:var(--ink-2)}
+.w-n{font-variant-numeric:tabular-nums;color:var(--ok)}
+.w-n.bad{color:var(--redpen)}
+.w-area{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-size:16px;line-height:1.6;background:var(--paper);color:var(--ink);resize:vertical}
+.w-area:focus{outline:none;border-color:var(--board-2)}
+.w-issues{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--redpen);display:grid;gap:4px}
+.w-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;align-items:stretch}
+.w-check{margin:0;padding-left:18px;font-size:14px;display:grid;gap:4px}

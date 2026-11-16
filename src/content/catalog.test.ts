@@ -21,10 +21,36 @@ describe('контент', () => {
     for (const u of g2.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
   });
 
-  it('3급: 10 юнитов, первые шесть заполнены', () => {
+  it('3급: все 10 юнитов заполнены', () => {
     const g3 = GRADES[3];
     expect(g3.units).toHaveLength(10);
-    for (const u of g3.units.slice(0, 6)) expect(u.lessons.length, u.title).toBeGreaterThan(0);
+    for (const u of g3.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
+  });
+
+  it('ханча: число иероглифов совпадает с числом слогов, корень входит в каждое слово', () => {
+    for (const l of LESSONS)
+      for (const s of l.steps)
+        if (s.kind === 'hanja')
+          for (const r of s.roots)
+            for (const w of r.words) {
+              expect([...w.hanja].length, `${w.kr} ${w.hanja}`).toBe(w.kr.length);
+              const i = [...w.hanja].indexOf(r.char);
+              expect(i, `${w.kr}: нет корня ${r.char}`).toBeGreaterThanOrEqual(0);
+              expect(w.kr[i], `${w.kr}: ${r.char} читается ${r.sound}`).toBe(r.sound);
+            }
+  });
+
+  it('образцы письменных заданий укладываются в объём и написаны в 한다체', async () => {
+    const { topikLength } = await import('../lib/wongoji');
+    const { styleIssues } = await import('../lib/writing');
+    for (const l of LESSONS)
+      for (const s of l.steps)
+        if (s.kind === 'write') {
+          const n = topikLength(s.model);
+          expect(n, l.id).toBeGreaterThanOrEqual(s.min);
+          expect(n, l.id).toBeLessThanOrEqual(s.max);
+          expect(styleIssues(s.model), l.id).toEqual([]);
+        }
   });
 
   it('все уроки из программы существуют', () => {

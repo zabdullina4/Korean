@@ -66,6 +66,11 @@ describe('морфологический разбор', () => {
     expect(forms('입었다가')).toContain('입다: 입다 + -었- + -다가');
     expect(forms('삶')).toContain('살다: 살다 + -ㅁ');
     expect(forms('도움')).toContain('돕다: 돕다 + -음');
+    expect(forms('맛있더라고요')).toContain('맛있다: 맛있다 + -더라고요');
+    expect(forms('살던')).toContain('살다: 살다 + -던');
+    expect(forms('갔던')).toContain('가다: 가다 + -았- + -던');
+    expect(forms('열렸어요')).toContain('열리다: 열리다 + -었- + -어요');
+    expect(forms('보여요')).toContain('보이다: 보이다 + -어요');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

@@ -15,6 +15,7 @@ import { because, permission, symptoms } from './grade2/unit7';
 import { choiceWill, honorific, honorWords, neunde, promise, reactions } from './grade2/unit8-10';
 import { handa, handaRules, inference, reportedOther, reportedStatement, seems } from './grade3/unit1-3';
 import { assoonas, daga, eojida, geDoeda, giEum, neunGeot } from './grade3/unit4-6';
+import { causative, deon, deoragoyo, hanja1, hanja2, passive, wongoji, writing53 } from './grade3/unit7-10';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -29,7 +30,7 @@ const G1 = [
 
 const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, when, beforeAfter, whileDoing, symptoms, because, reasonAseoNiga, permission, honorific, honorWords, promise, choiceWill, neunde, reactions];
 
-const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga];
+const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga, passive, causative, deoragoyo, deon, hanja1, hanja2, wongoji, writing53];
 
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3];
 
@@ -95,10 +96,10 @@ export const GRADES: Grade[] = [
       { grade: 3, n: 4, title: 'Изменения: -게 되다, -아/어지다', titleKr: '변화', lessons: [geDoeda.id, eojida.id] },
       { grade: 3, n: 5, title: 'Номинализация: -기, -(으)ㅁ, -는 것', titleKr: '명사형', lessons: [neunGeot.id, giEum.id] },
       { grade: 3, n: 6, title: 'Время 2: -자마자, -다가', titleKr: '시간 2', lessons: [assoonas.id, daga.id] },
-      { grade: 3, n: 7, title: 'Пассив и каузатив', titleKr: '피동과 사동', lessons: [] },
-      { grade: 3, n: 8, title: 'Воспоминание -더-', titleKr: '회상', lessons: [] },
-      { grade: 3, n: 9, title: 'Корни ханча', titleKr: '한자', lessons: [] },
-      { grade: 3, n: 10, title: 'Письмо TOPIK 51–53', titleKr: '쓰기', lessons: [] },
+      { grade: 3, n: 7, title: 'Пассив и каузатив', titleKr: '피동과 사동', lessons: [passive.id, causative.id] },
+      { grade: 3, n: 8, title: 'Воспоминание -더-', titleKr: '회상', lessons: [deoragoyo.id, deon.id] },
+      { grade: 3, n: 9, title: 'Корни ханча', titleKr: '한자', lessons: [hanja1.id, hanja2.id] },
+      { grade: 3, n: 10, title: 'Письмо TOPIK 51–53', titleKr: '쓰기', lessons: [wongoji.id, writing53.id] },
     ],
   },
   { n: 4, name: '4급', ru: 'Средняя школа · 2 класс', units: [] },
