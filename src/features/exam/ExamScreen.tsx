@@ -2,7 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Rich } from '../../components/Rich';
 import { EXAM_BY_ID, GRADES } from '../../content/catalog';
-import { questionCount, type ExamQuestion, type ExamSection } from '../../content/exam';
+import { questionCount, type ExamQuestion, type ExamSection, type WriteItem } from '../../content/exam';
+import { WongojiGrid } from '../../components/WongojiGrid';
+import { topikLength } from '../../lib/wongoji';
+import { styleIssues } from '../../lib/writing';
 import { grade, retakeStatus, seedFor, type Answer, type Graded } from '../../lib/exam';
 import { bell, speak } from '../../lib/sound';
 import { useSchool } from '../../state/store';
@@ -68,6 +71,9 @@ export function ExamScreen() {
                 : 'Экзамен сдан.'
               : `Для зачёта нужно ${Math.round(exam.pass * 100)}%${exam.scale ? ` (${Math.round(exam.pass * exam.scale)} из ${exam.scale})` : ''}. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
           </p>
+          {exam.scale === 300 && (
+            <p style={{ textAlign: 'center', margin: '0 0 14px', fontSize: 13, color: 'var(--ink-2)' }}>{topik2Level(attempt.correct)}</p>
+          )}
           {exam.scale === 200 && (
             <p style={{ textAlign: 'center', margin: '0 0 14px', fontSize: 13, color: 'var(--ink-2)' }}>
               {topikLevel(Math.round((attempt.correct / attempt.total) * 200))}
@@ -82,14 +88,42 @@ export function ExamScreen() {
                   <div className="bar" role="img" aria-label={`${sec.right} из ${sec.total}`}>
                     <i style={{ ['--c' as string]: 'var(--board-2)', width: `${(sec.right / sec.total) * 100}%` }} />
                   </div>
-                  <span className="v">
-                    {sec.right}/{sec.total}
-                  </span>
+                  <span className="v">{exam.perSection ? `${Math.round((sec.right / sec.total) * 100)}/100` : `${sec.right}/${sec.total}`}</span>
                 </div>
               );
             })}
           </div>
         </div>
+        {phase.result.writing.map((w, k) => (
+          <div key={`w${k}`}>
+            <div className="sec pad">
+              <h2 className="kr">쓰기 해설</h2>
+              <span>
+                письмо · {w.earned}/{w.max}
+              </span>
+            </div>
+            <div className="sheetbox" style={{ marginTop: 0, backgroundImage: 'none' }}>
+              <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 8px' }}>
+                Автоматически оцениваются объём, стиль 한다체 и данные из условия — по трети баллов. Содержание и связность сравните с образцом сами.
+              </p>
+              {w.notes.length > 0 && (
+                <ul className="w-issues" style={{ marginBottom: 10 }}>
+                  {w.notes.map((n, j) => (
+                    <li key={j}>{n}</li>
+                  ))}
+                </ul>
+              )}
+              {w.text.trim() && (
+                <>
+                  <h4>Ваш ответ</h4>
+                  <WongojiGrid text={w.text} />
+                </>
+              )}
+              <h4 style={{ marginTop: 12 }}>Образец</h4>
+              <WongojiGrid text={w.item.model} />
+            </div>
+          </div>
+        ))}
         {mistakes.length > 0 && (
           <>
             <div className="sec pad">
@@ -200,6 +234,12 @@ export function ExamScreen() {
   );
 }
 
+/** Пороги настоящего TOPIK II: 120 — 3급, 150 — 4급, 190 — 5급, 230 — 6급. */
+function topik2Level(score: number) {
+  const lv = score >= 230 ? 6 : score >= 190 ? 5 : score >= 150 ? 4 : score >= 120 ? 3 : 0;
+  return lv ? `На настоящем TOPIK II ${score} баллов — это уровень ${lv}급.` : `На настоящем TOPIK II ${score} баллов — ниже 3급 (нужно 120).`;
+}
+
 /** Пороги настоящего TOPIK I: 80 баллов — 1급, 140 — 2급. */
 function topikLevel(score: number) {
   if (score >= 140) return `На настоящем TOPIK I ${score} баллов — это уровень 2급 (от 140).`;
@@ -241,7 +281,7 @@ function ExamRun({ sections, endAt, plays, title, onSubmit }: { sections: ExamSe
   const cur = flat[k];
   const a = answers[cur.si][cur.qi];
   const set = (v: Answer) => setAnswers((all) => all.map((row, si) => (si === cur.si ? row.map((x, qi) => (qi === cur.qi ? v : x)) : row)));
-  const audio = cur.q.kind === 'choice' ? cur.q.item.audio : cur.q.item.audio;
+  const audio = cur.q.kind === 'write' ? undefined : cur.q.item.audio;
   const usedPlays = played[k] ?? 0;
   const mm = Math.max(0, Math.floor(left / 60000));
   const ss = Math.max(0, Math.floor((left % 60000) / 1000));
@@ -294,7 +334,7 @@ function ExamRun({ sections, endAt, plays, title, onSubmit }: { sections: ExamSe
             }
           }}
         >
-          {k === flat.length - 1 ? 'Сдать работу' : a === null || (Array.isArray(a) && !a.length) ? 'Пропустить' : 'Следующее задание'}
+          {k === flat.length - 1 ? 'Сдать работу' : a === null || a === '' || (Array.isArray(a) && !a.length) ? 'Пропустить' : 'Следующее задание'}
         </button>
       </div>
     </div>
@@ -323,11 +363,12 @@ function Question({ q, answer, onAnswer }: { q: ExamQuestion; answer: Answer; on
       </>
     );
   }
+  if (q.kind === 'write') return <WriteQuestion item={q.item} value={typeof answer === 'string' ? answer : ''} onChange={onAnswer} />;
   const it = q.item;
   const chosen = Array.isArray(answer) ? answer : [];
   return (
     <>
-      <p className="q text">Запишите услышанное слово из слогов{it.ru ? '' : ''}.</p>
+      <p className="q text">Запишите услышанное слово из слогов.</p>
       <div className="target" aria-label="Ваш ответ">
         {chosen.map((w, j) => (
           <button key={j} className="tile" onClick={() => onAnswer(chosen.filter((_, x) => x !== j))}>
@@ -342,6 +383,32 @@ function Question({ q, answer, onAnswer }: { q: ExamQuestion; answer: Answer; on
           </button>
         ))}
       </div>
+    </>
+  );
+}
+
+/** Письменное задание на экзамене: без образца и подсказок, только счётчик знаков и проверка стиля. */
+function WriteQuestion({ item, value, onChange }: { item: WriteItem; value: string; onChange(a: Answer): void }) {
+  const n = topikLength(value);
+  const issues = styleIssues(value);
+  return (
+    <>
+      <div className="w-task kr">
+        <Rich text={item.task} />
+      </div>
+      <label htmlFor="exam-w" className="w-label">
+        Ответ <span className={n < item.min || n > item.max ? 'w-n bad' : 'w-n'}>{n} / {item.min}–{item.max} знаков</span>
+      </label>
+      <textarea id="exam-w" lang="ko" className="w-area kr" rows={8} value={value} onChange={(e) => onChange(e.target.value)} placeholder="한다체로 쓰십시오." />
+      {issues.length > 0 && (
+        <ul className="w-issues">
+          {issues.map((i, k) => (
+            <li key={k}>
+              <b className="kr">{i.text}</b> — {i.hint}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }

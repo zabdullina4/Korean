@@ -10,7 +10,21 @@ export interface SpellItem {
   alts: string[];
 }
 
-export type ExamQuestion = { kind: 'choice'; item: ChoiceItem } | { kind: 'spell'; item: SpellItem };
+/** Письменное задание (TOPIK II, 53): оценивается автоматически по форме и ключевым данным. */
+export interface WriteItem {
+  task: string;
+  min: number;
+  max: number;
+  model: string;
+  /** Ключевые данные из условия: в каждой группе достаточно одного варианта написания. */
+  keywords: string[][];
+}
+
+/** points — вес задания в разделе (по умолчанию 1). */
+export type ExamQuestion =
+  | { kind: 'choice'; item: ChoiceItem; points?: number }
+  | { kind: 'spell'; item: SpellItem; points?: number }
+  | { kind: 'write'; item: WriteItem; points: number };
 
 export type SectionKey = 'listen' | 'read' | 'write';
 
@@ -33,6 +47,8 @@ export interface ExamDef {
   plays: number;
   /** Шкала результата, как на настоящем экзамене (TOPIK I — 200 баллов). */
   scale?: number;
+  /** TOPIK II: каждый раздел пересчитывается в 100 баллов, итог — сумма. */
+  perSection?: boolean;
   make(seed: number): ExamSection[];
 }
 

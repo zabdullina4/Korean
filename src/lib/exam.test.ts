@@ -5,7 +5,7 @@ import { answerNote, createNote } from './notebook';
 import { grade, isRight, retakeStatus, seedFor, type Answer } from './exam';
 
 const perfect = (seed: number): Answer[][] =>
-  prepExam.make(seed).map((s) => s.questions.map((q) => (q.kind === 'choice' ? q.item.answer : q.item.target)));
+  prepExam.make(seed).map((s) => s.questions.map((q) => (q.kind === 'choice' ? q.item.answer : q.kind === 'spell' ? q.item.target : '')));
 
 describe('экзамен 예비반', () => {
   it('25 заданий в трёх разделах, все решаемы', () => {
@@ -15,7 +15,7 @@ describe('экзамен 예비반', () => {
     for (const s of secs)
       for (const q of s.questions)
         if (q.kind === 'choice') expect(q.item.options[q.item.answer]).toBeDefined();
-        else for (const t of q.item.target) expect(q.item.pool).toContain(t);
+        else if (q.kind === 'spell') for (const t of q.item.target) expect(q.item.pool).toContain(t);
   });
 
   it('вариант детерминирован, а пересдача — другой вариант', () => {

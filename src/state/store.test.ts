@@ -15,7 +15,7 @@ describe('store: экзамен и перевод', () => {
     expect(st.grade).toBe(0);
     expect(Object.keys(st.notes)).toHaveLength(25);
 
-    const perfect = secs.map((s) => s.questions.map((q) => (q.kind === 'choice' ? q.item.answer : q.item.target)));
+    const perfect = secs.map((s) => s.questions.map((q) => (q.kind === 'choice' ? q.item.answer : q.kind === 'spell' ? q.item.target : '')));
     useSchool.getState().finishExam(prepExam.id, 0, grade(prepExam, seed, secs, perfect));
     st = useSchool.getState();
     expect(st.grade).toBe(1);
