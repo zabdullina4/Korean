@@ -88,7 +88,9 @@ export type Form =
   // определительные формы: глагол сейчас, прилагательное, глагол в прошлом, будущее
   | 'attrV' | 'attrA' | 'attrPast' | 'attrFut'
   // время: когда, когда (в прошлом), перед, после, одновременно, пока
-  | 'ttae' | 'pastTtae' | 'jeone' | 'hue' | 'myeonseo' | 'dongan';
+  | 'ttae' | 'pastTtae' | 'jeone' | 'hue' | 'myeonseo' | 'dongan'
+  // причины и разрешения
+  | 'aseo' | 'gittaemune' | 'pastGittaemune' | 'eodo' | 'myeonan';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -214,6 +216,16 @@ export function conj(verb: string, form: Form): string {
       return `${euKeepL(verb)}면서`;
     case 'dongan':
       return `${withNeun(verb)} 동안`;
+    case 'aseo':
+      return `${info(verb)}서`;
+    case 'gittaemune':
+      return `${stem}기 때문에`;
+    case 'pastGittaemune':
+      return `${pastStemOf(verb)}기 때문에`;
+    case 'eodo':
+      return `${info(verb)}도 돼요`;
+    case 'myeonan':
+      return `${euKeepL(verb)}면 안 돼요`;
   }
 }
 
@@ -328,6 +340,26 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'dongan':
       c = [`${stem}기 동안`, `${withL(verb)} 동안`];
+      break;
+    case 'aseo': {
+      // Классическая ошибка — прошедшее перед -아/어서 (갔어서) и неверная гармония.
+      const wrong = `${stem}${isBright(s.jung) ? '어' : '아'}서`;
+      c = [`${pastStemOf(verb)}어서`, wrong, `${stem}서`];
+      break;
+    }
+    case 'gittaemune':
+      c = [`${withNeun(verb)} 때문에`, `${withN(verb)} 때문에`];
+      break;
+    case 'pastGittaemune':
+      c = [`${pastStemOf(verb)}는 때문에`, `${stem}${isBright(s.jung) ? '었' : '았'}기 때문에`];
+      break;
+    case 'eodo':
+      // Не берём «-(으)면 돼요» — это грамматично («достаточно…»).
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'}도 돼요`, `${stem}도 돼요`, `${withN(verb)}도 돼요`];
+      break;
+    case 'myeonan':
+      // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.
+      c = [vowel ? `${stem}으면 안 돼요` : `${stem}면 안 돼요`, `${info(verb)}면 안 돼요`, `${withNeun(verb)}면 안 돼요`];
       break;
   }
   return [...new Set(c.filter((x) => x && x !== right))];

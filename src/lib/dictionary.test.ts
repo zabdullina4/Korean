@@ -35,6 +35,10 @@ describe('морфологический разбор', () => {
     expect(forms('걸으면서')).toContain('걷다: 걷다 + -으면서');
     expect(forms('전에')).toContain('전: 전 + 에');
     expect(forms('동안')[0]).toBe('동안: 동안');
+    expect(forms('잤기')).toContain('자다: 자다 + -았- + -기');
+    expect(forms('돼요')).toContain('되다: 되다 + -어요');
+    expect(forms('아파서')).toContain('아프다: 아프다 + -아서');
+    expect(forms('걸렸어요')).toContain('걸리다: 걸리다 + -었- + -어요');
   });
 
   it('нерегулярные и неоднозначные формы', () => {
