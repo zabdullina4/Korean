@@ -49,9 +49,13 @@ export function CampusScreen() {
   const views = useMemo(() => {
     const v = {} as Record<BuildingId, BuildingView>;
     for (const g of GRADES) {
-      const lessons = gradeLessons(g.n);
-      const next = lessons.find((l) => !s.lessons[l.id]);
-      const windows = lessons.map((l) => (s.lessons[l.id] ? 1 : g.n === s.grade && l === next ? 0.5 : 0));
+      // Окно здания = юнит класса: горит, когда юнит пройден, мигает — текущий.
+      const next = gradeLessons(g.n).find((l) => !s.lessons[l.id]);
+      const windows: number[] = [];
+      for (const u of g.units) {
+        const done = u.lessons.length > 0 && u.lessons.every((id) => s.lessons[id]);
+        windows[u.n - 1] = done ? 1 : g.n === s.grade && next && u.lessons.includes(next.id) ? 0.5 : 0;
+      }
       v[`g${g.n}` as BuildingId] = { label: `${g.name}, ${g.ru}`, windows, fog: g.n > s.grade };
     }
     v.lib = { label: '도서관, Библиотека', windows: [1, 1, 0, 1, 0, 0], fog: false };
@@ -64,7 +68,8 @@ export function CampusScreen() {
     if (x.action.type === 'lesson') {
       if (s.bell) bell();
       nav(`/lesson/${x.action.lessonId}`);
-    } else if (x.action.type === 'review') nav('/cards');
+    } else if (x.action.type === 'exam') nav(`/exam/${x.action.examId}`);
+    else if (x.action.type === 'review') nav('/cards');
     else if (x.action.type === 'notebook') nav('/notebook');
     else if (x.status === 'done') toast('Этот блок на сегодня выполнен');
     else toast(`«${x.title}» появится в следующих версиях`);
@@ -109,7 +114,16 @@ export function CampusScreen() {
         </p>
       </div>
 
-      <div className="scene-wrap">
+      {s.promoted !== null && (
+        <div className="promo" role="status">
+          <div>
+            <b className="kr">진급 축하해요!</b>
+            <p>Вы переведены в {GRADES[s.promoted].name}. Новое здание кампуса открыто.</p>
+          </div>
+          <button onClick={s.clearPromoted}>Спасибо</button>
+        </div>
+      )}
+      <div className="scene-wrap" style={s.promoted !== null ? { marginTop: 10 } : undefined}>
         <CampusScene views={views} current={currentId} selected={sel} fresh={fresh} onSelect={setSel} />
       </div>
       <BuildingInfo id={sel} current={s.grade} />

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { ChoiceItem, Lesson, Word } from '../content/types';
+import type { ExamAttempt, Graded } from '../lib/exam';
 import { answerNote, createNote, missAgain, noteKey, type ErrorNote } from '../lib/notebook';
 import { newFsrs, review, State as FsrsState, type Grade, type StoredFsrs } from '../lib/srs';
 
@@ -30,6 +31,9 @@ export interface SchoolState {
   attendance: string[];
   reviewsByDay: Record<string, number>;
   newByDay: Record<string, number>;
+  exams: Record<string, ExamAttempt[]>;
+  /** Номер класса, в который ученик только что перешёл — для поздравления в кампусе. */
+  promoted: number | null;
 }
 
 interface Actions {
@@ -39,6 +43,8 @@ interface Actions {
   recordError(lessonId: string, item: ChoiceItem, wrong: string): void;
   reviewCard(id: string, grade: Grade): void;
   answerNote(id: string, correct: boolean): void;
+  finishExam(examId: string, grade: number, result: Graded): void;
+  clearPromoted(): void;
   reset(): void;
 }
 
@@ -60,6 +66,8 @@ const initial: SchoolState = {
   attendance: [],
   reviewsByDay: {},
   newByDay: {},
+  exams: {},
+  promoted: null,
 };
 
 const withAttendance = (s: SchoolState): Pick<SchoolState, 'attendance'> => {
@@ -125,11 +133,32 @@ export const useSchool = create<SchoolState & Actions>()(
           return { notes: { ...s.notes, [id]: answerNote(n, correct) }, ...withAttendance(s) };
         }),
 
+      finishExam: (examId, grade, { attempt, mistakes }) =>
+        set((s) => {
+          const notes = { ...s.notes };
+          for (const m of mistakes) {
+            const id = noteKey(examId, m.item);
+            notes[id] = notes[id] ? missAgain(notes[id], m.wrong) : createNote(examId, m.item, m.wrong);
+          }
+          const promote = attempt.passed && s.grade === grade;
+          return {
+            notes,
+            exams: { ...s.exams, [examId]: [...(s.exams[examId] ?? []), attempt] },
+            grade: promote ? grade + 1 : s.grade,
+            promoted: promote ? grade + 1 : s.promoted,
+            ...withAttendance(s),
+          };
+        }),
+
+      clearPromoted: () => set({ promoted: null }),
+
       reset: () => set({ ...initial }),
     }),
     {
       name: 'hakgyo-v1',
-      version: 1,
+      version: 2,
+      // v1 → v2: появились экзамены
+      migrate: (old) => ({ ...initial, ...(old as Partial<SchoolState>) }),
       storage: createJSONStorage(() => {
         try {
           const t = '__t';

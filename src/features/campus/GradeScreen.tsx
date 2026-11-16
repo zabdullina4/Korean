@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { TabBar } from '../../components/TabBar';
-import { GRADES, LESSON_BY_ID } from '../../content/catalog';
+import { EXAMS, GRADES, LESSON_BY_ID } from '../../content/catalog';
 import { useSchool } from '../../state/store';
 
 /** Программа класса: юниты и уроки. Внутри класса уроки открыты все (мягкий барьер). */
@@ -34,6 +34,18 @@ export function GradeScreen() {
               </h2>
               <span>{u.title}</span>
             </div>
+            {u.lessons.length === 0 && (
+              <div className="slot" style={{ opacity: 0.55 }}>
+                <div className="per">
+                  —<small>&nbsp;</small>
+                </div>
+                <div className="what">
+                  <b>Уроки готовятся</b>
+                  <span>Юнит появится в следующих версиях</span>
+                </div>
+                <div className="st">скоро</div>
+              </div>
+            )}
             {u.lessons.map((id, k) => {
               const l = LESSON_BY_ID[id];
               const r = s.lessons[id];
@@ -52,16 +64,31 @@ export function GradeScreen() {
             })}
           </section>
         ))}
-        <div className="slot" style={{ opacity: 0.6 }}>
-          <div className="per">
-            시험<small>&nbsp;</small>
+        {EXAMS[g.n] ? (
+          <button className={`slot${(s.exams[EXAMS[g.n].id] ?? []).some((a) => a.passed) ? ' done' : ''}`} onClick={() => nav(`/exam/${EXAMS[g.n].id}`)}>
+            <div className="per">
+              시험<small>{EXAMS[g.n].minutes} мин</small>
+            </div>
+            <div className="what">
+              <b className="kr">{EXAMS[g.n].titleKr}</b>
+              <span>Переводной экзамен. Можно сдать экстерном в любой момент.</span>
+            </div>
+            <div className="st">
+              {(s.exams[EXAMS[g.n].id] ?? []).some((a) => a.passed) ? <span className="tick">합격</span> : <span className="go">›</span>}
+            </div>
+          </button>
+        ) : (
+          <div className="slot" style={{ opacity: 0.6 }}>
+            <div className="per">
+              시험<small>&nbsp;</small>
+            </div>
+            <div className="what">
+              <b>Переводной экзамен класса</b>
+              <span>Появится, когда программа класса будет готова</span>
+            </div>
+            <div className="st">скоро</div>
           </div>
-          <div className="what">
-            <b>Выпускной экзамен класса</b>
-            <span>Появится в следующей версии</span>
-          </div>
-          <div className="st">скоро</div>
-        </div>
+        )}
       </div>
       <div className="spacer" />
       <TabBar />

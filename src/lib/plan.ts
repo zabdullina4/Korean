@@ -1,5 +1,5 @@
 // Генератор учебного дня (시간표): из состояния ученика собирает расписание.
-import { gradeLessons } from '../content/catalog';
+import { EXAMS, gradeLessons } from '../content/catalog';
 import type { Lesson, SkillKey } from '../content/types';
 import type { SchoolState } from '../state/store';
 import { dayKey, NEW_CARDS_PER_DAY } from '../state/store';
@@ -7,7 +7,7 @@ import { isNoteDue, isOpen } from './notebook';
 import { isDue, isMature, State } from './srs';
 
 export type SlotStatus = 'done' | 'next' | 'todo' | 'soon';
-export type SlotAction = { type: 'review' } | { type: 'lesson'; lessonId: string } | { type: 'notebook' } | { type: 'none' };
+export type SlotAction = { type: 'review' } | { type: 'lesson'; lessonId: string } | { type: 'exam'; examId: string } | { type: 'notebook' } | { type: 'none' };
 
 export interface Slot {
   id: string;
@@ -21,7 +21,7 @@ export interface Slot {
   action: SlotAction;
 }
 
-type Snapshot = Pick<SchoolState, 'grade' | 'lessons' | 'cards' | 'notes' | 'reviewsByDay' | 'newByDay'>;
+type Snapshot = Pick<SchoolState, 'grade' | 'lessons' | 'cards' | 'notes' | 'reviewsByDay' | 'newByDay'> & Partial<Pick<SchoolState, 'exams'>>;
 
 export function reviewQueue(s: Snapshot, now = new Date()) {
   const cards = Object.values(s.cards);
@@ -58,6 +58,12 @@ export function buildDay(s: Snapshot, now = new Date()): Slot[] {
   const pending = lessons.filter((l) => !s.lessons[l.id]);
   const picks: { l: Lesson; done: boolean }[] = [...today.map((l) => ({ l, done: true })), ...pending.map((l) => ({ l, done: false }))].slice(0, 2);
 
+  // Когда все уроки класса пройдены, в расписании появляется переводной экзамен.
+  const examDef = EXAMS[s.grade];
+  const passed = examDef && (s.exams?.[examDef.id] ?? []).some((a) => a.passed);
+  const exam = examDef && !passed && pending.length === 0 ? examDef : null;
+  let examTaken = false;
+
   ['1교시', '2교시'].forEach((per, i) => {
     const p = picks[i];
     if (p)
@@ -72,12 +78,25 @@ export function buildDay(s: Snapshot, now = new Date()): Slot[] {
         status: p.done ? 'done' : 'todo',
         action: { type: 'lesson', lessonId: p.l.id },
       });
-    else
+    else if (exam && !examTaken) {
+      examTaken = true;
       slots.push({
         id: `les${i}`,
         per,
         time: i ? '09:50' : '09:00',
-        title: pending.length === 0 && lessons.length ? 'Выпускной экзамен класса' : 'Новые уроки готовятся',
+        title: exam.titleKr,
+        detail: `Переводной экзамен · ${exam.minutes} мин · зачёт от ${Math.round(exam.pass * 100)}%`,
+        skill: 'read',
+        minutes: exam.minutes,
+        status: 'todo',
+        action: { type: 'exam', examId: exam.id },
+      });
+    } else
+      slots.push({
+        id: `les${i}`,
+        per,
+        time: i ? '09:50' : '09:00',
+        title: pending.length === 0 && lessons.length ? 'Класс пройден' : 'Новые уроки готовятся',
         detail: 'Скоро в приложении',
         skill: 'read',
         minutes: 15,

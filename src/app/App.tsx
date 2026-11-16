@@ -1,8 +1,9 @@
-import { HashRouter, MemoryRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, MemoryRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Toast } from '../components/toast';
 import { CampusScreen } from '../features/campus/CampusScreen';
 import { GradeScreen } from '../features/campus/GradeScreen';
 import { Welcome } from '../features/campus/Welcome';
+import { ExamScreen } from '../features/exam/ExamScreen';
 import { ReviewScreen } from '../features/cards/ReviewScreen';
 import { LessonPlayer } from '../features/lesson/LessonPlayer';
 import { NotebookScreen } from '../features/notebook/NotebookScreen';
@@ -20,7 +21,8 @@ export function App() {
         <Routes>
           <Route path="/" element={<CampusScreen />} />
           <Route path="/grade/:n" element={<GradeScreen />} />
-          <Route path="/lesson/:id" element={<LessonPlayer />} />
+          <Route path="/lesson/:id" element={<LessonRoute />} />
+          <Route path="/exam/:id" element={<ExamRoute />} />
           <Route path="/cards" element={<ReviewScreen />} />
           <Route path="/notebook" element={<NotebookScreen />} />
           <Route
@@ -35,4 +37,15 @@ export function App() {
       <Toast />
     </Router>
   );
+}
+
+// key по id: при переходе с урока на урок состояние проигрывателя начинается заново.
+function LessonRoute() {
+  const { id } = useParams();
+  return <LessonPlayer key={id} />;
+}
+
+function ExamRoute() {
+  const { id } = useParams();
+  return <ExamScreen key={id} />;
 }

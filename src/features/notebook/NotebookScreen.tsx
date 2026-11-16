@@ -79,7 +79,7 @@ export function NotebookScreen() {
   );
 }
 
-function Drill({ ids, onEnd }: { ids: string[]; onEnd(): void }) {
+export function Drill({ ids, onEnd }: { ids: string[]; onEnd(): void }) {
   const s = useSchool();
   const [k, setK] = useState(0);
   const [ans, setAns] = useState<number | null>(null);

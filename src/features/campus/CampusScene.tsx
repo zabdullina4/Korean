@@ -4,7 +4,7 @@ export type BuildingId = 'g0' | 'g1' | 'g2' | 'g3' | 'g4' | 'g5' | 'g6' | 'lib' 
 
 export interface BuildingView {
   label: string;
-  /** Окна: 1 — горит (пройдено), 0.5 — текущее, 0 — тёмное. */
+  /** Окна по юнитам: 1 — юнит пройден, 0.5 — текущий, 0 — тёмное. */
   windows: number[];
   fog: boolean;
 }
@@ -28,10 +28,10 @@ const GEO: Record<Exclude<BuildingId, 'yard'>, Geo> = {
   g4: { x: 120, y: 86, w: 40, h: 40, cols: 3, rows: 3, d: 8 },
   g3: { x: 168, y: 90, w: 40, h: 40, cols: 3, rows: 3, d: 8 },
   club: { x: 292, y: 150, w: 64, h: 40, cols: 4, rows: 2, d: 12 },
-  g1: { x: 26, y: 196, w: 78, h: 52, cols: 4, rows: 2, door: true },
+  g1: { x: 22, y: 196, w: 86, h: 52, cols: 5, rows: 2, door: true },
   g2: { x: 124, y: 166, w: 104, h: 70, cols: 5, rows: 2, door: true },
   lib: { x: 258, y: 224, w: 62, h: 44, cols: 3, rows: 2, door: true },
-  g0: { x: 28, y: 268, w: 60, h: 46, cols: 3, rows: 2, d: 10 },
+  g0: { x: 28, y: 280, w: 60, h: 34, cols: 3, rows: 1, d: 10 },
 };
 const ORDER: Exclude<BuildingId, 'yard'>[] = ['g6', 'g5', 'g4', 'g3', 'club', 'g1', 'g2', 'lib', 'g0'];
 

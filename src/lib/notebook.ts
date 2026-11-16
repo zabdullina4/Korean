@@ -15,6 +15,8 @@ export interface ErrorNote {
   due: string;
   streak: number;
   lastAnswerDay?: string;
+  /** Когда ученик последний раз отвечал на эту запись (для допуска к пересдаче). */
+  lastAnsweredAt?: string;
   closedAt?: string;
   misses: number;
 }
@@ -27,8 +29,9 @@ const addDays = (d: Date, n: number) => {
   return x;
 };
 
+/** Ключ записи: урок + задание. Аудио-задания с одинаковым текстом «___» различаются звучанием и вариантами. */
 export function noteKey(lessonId: string, item: ChoiceItem): string {
-  return `${lessonId}::${item.prompt}`;
+  return `${lessonId}::${item.audio ?? ''}::${item.prompt}::${item.options.join('|')}`;
 }
 
 export function createNote(lessonId: string, item: ChoiceItem, wrong: string, now = new Date()): ErrorNote {
@@ -47,16 +50,16 @@ export function createNote(lessonId: string, item: ChoiceItem, wrong: string, no
 
 /** Повторная ошибка в уже записанном задании: серия сбрасывается. */
 export function missAgain(n: ErrorNote, wrong: string, now = new Date()): ErrorNote {
-  return { ...n, wrong, streak: 0, misses: n.misses + 1, closedAt: undefined, due: addDays(now, GAPS[0]).toISOString(), lastAnswerDay: dayKey(now) };
+  return { ...n, wrong, streak: 0, misses: n.misses + 1, closedAt: undefined, due: addDays(now, GAPS[0]).toISOString(), lastAnswerDay: dayKey(now), lastAnsweredAt: now.toISOString() };
 }
 
 export function answerNote(n: ErrorNote, correct: boolean, now = new Date()): ErrorNote {
   if (!correct) return missAgain(n, n.wrong, now);
   // Второй верный ответ в тот же день не засчитывается — нужны разные дни.
-  if (n.lastAnswerDay === dayKey(now) && n.streak > 0) return n;
+  if (n.lastAnswerDay === dayKey(now) && n.streak > 0) return { ...n, lastAnsweredAt: now.toISOString() };
   const streak = n.streak + 1;
-  if (streak >= CLOSE_AFTER) return { ...n, streak, lastAnswerDay: dayKey(now), closedAt: now.toISOString() };
-  return { ...n, streak, lastAnswerDay: dayKey(now), due: addDays(now, GAPS[streak]).toISOString() };
+  if (streak >= CLOSE_AFTER) return { ...n, streak, lastAnswerDay: dayKey(now), lastAnsweredAt: now.toISOString(), closedAt: now.toISOString() };
+  return { ...n, streak, lastAnswerDay: dayKey(now), lastAnsweredAt: now.toISOString(), due: addDays(now, GAPS[streak]).toISOString() };
 }
 
 export function isOpen(n: ErrorNote): boolean {
