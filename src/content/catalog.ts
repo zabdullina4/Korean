@@ -14,6 +14,7 @@ import { beforeAfter, when, whileDoing } from './grade2/unit6';
 import { because, permission, symptoms } from './grade2/unit7';
 import { choiceWill, honorific, honorWords, neunde, promise, reactions } from './grade2/unit8-10';
 import { handa, handaRules, inference, reportedOther, reportedStatement, seems } from './grade3/unit1-3';
+import { assoonas, daga, eojida, geDoeda, giEum, neunGeot } from './grade3/unit4-6';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -28,7 +29,7 @@ const G1 = [
 
 const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, when, beforeAfter, whileDoing, symptoms, because, reasonAseoNiga, permission, honorific, honorWords, promise, choiceWill, neunde, reactions];
 
-const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference];
+const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga];
 
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3];
 
@@ -91,9 +92,9 @@ export const GRADES: Grade[] = [
       { grade: 3, n: 1, title: 'Письменный стиль', titleKr: '한다체', lessons: [handa.id, handaRules.id] },
       { grade: 3, n: 2, title: 'Косвенная речь', titleKr: '간접 화법', lessons: [reportedStatement.id, reportedOther.id] },
       { grade: 3, n: 3, title: 'Предположение', titleKr: '추측', lessons: [seems.id, inference.id] },
-      { grade: 3, n: 4, title: 'Изменения: -게 되다, -아/어지다', titleKr: '변화', lessons: [] },
-      { grade: 3, n: 5, title: 'Номинализация: -기, -(으)ㅁ, -는 것', titleKr: '명사형', lessons: [] },
-      { grade: 3, n: 6, title: 'Время 2: -자마자, -다가', titleKr: '시간 2', lessons: [] },
+      { grade: 3, n: 4, title: 'Изменения: -게 되다, -아/어지다', titleKr: '변화', lessons: [geDoeda.id, eojida.id] },
+      { grade: 3, n: 5, title: 'Номинализация: -기, -(으)ㅁ, -는 것', titleKr: '명사형', lessons: [neunGeot.id, giEum.id] },
+      { grade: 3, n: 6, title: 'Время 2: -자마자, -다가', titleKr: '시간 2', lessons: [assoonas.id, daga.id] },
       { grade: 3, n: 7, title: 'Пассив и каузатив', titleKr: '피동과 사동', lessons: [] },
       { grade: 3, n: 8, title: 'Воспоминание -더-', titleKr: '회상', lessons: [] },
       { grade: 3, n: 9, title: 'Корни ханча', titleKr: '한자', lessons: [] },

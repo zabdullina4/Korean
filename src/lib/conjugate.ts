@@ -102,7 +102,9 @@ export type Form =
   // косвенная речь
   | 'indV' | 'indA' | 'indPast' | 'daeyoV' | 'daeyoA' | 'indQ' | 'indCmd' | 'indSug'
   // предположение
-  | 'gotgataV' | 'gotgataPast' | 'gotgataFut' | 'gotgataA' | 'nabwayo' | 'pastNabwayo' | 'ngabwayo';
+  | 'gotgataV' | 'gotgataPast' | 'gotgataFut' | 'gotgataA' | 'nabwayo' | 'pastNabwayo' | 'ngabwayo'
+  // изменения, номинализация, время 2
+  | 'gedwae' | 'eojida' | 'neungeot' | 'eum' | 'giwihae' | 'jamaja' | 'daga' | 'pastDaga';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -298,6 +300,22 @@ export function conj(verb: string, form: Form): string {
       return `${pastStemOf(verb)}나 봐요`;
     case 'ngabwayo':
       return `${withN(verb)}가 봐요`;
+    case 'gedwae':
+      return `${stem}게 됐어요`;
+    case 'eojida':
+      return `${info(verb)}졌어요`;
+    case 'neungeot':
+      return `${withNeun(verb)} 것`;
+    case 'eum':
+      return eum(verb);
+    case 'giwihae':
+      return `${stem}기 위해서`;
+    case 'jamaja':
+      return `${stem}자마자`;
+    case 'daga':
+      return `${stem}다가`;
+    case 'pastDaga':
+      return `${pastStemOf(verb)}다가`;
   }
 }
 
@@ -307,6 +325,15 @@ export function neunda(verb: string): string {
   const s = decompose(stem[stem.length - 1])!;
   if (s.jong && s.jong !== 'ㄹ') return `${stem}는다`;
   return replaceLast(stem, compose(s.cho, s.jung, 'ㄴ')!) + '다';
+}
+
+/** Номинализация -(으)ㅁ: 가다 → 감, 먹다 → 먹음, 살다 → 삶, 만들다 → 만듦, 돕다 → 도움, 듣다 → 들음. */
+export function eum(verb: string): string {
+  const stem = stemOf(verb);
+  const s = decompose(stem[stem.length - 1])!;
+  if (s.jong === 'ㄹ') return replaceLast(stem, compose(s.cho, s.jung, 'ㄻ')!);
+  const { base } = stemForEu(verb, 'ㄹ');
+  return replaceLast(base, addJong(base[base.length - 1], 'ㅁ'));
 }
 
 /** Основа без ㄹ (перед ㄴ, ㅅ): 살 → 사. */
@@ -534,6 +561,31 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'ngabwayo':
       c = [`${stem}는가 봐요`, `${stem}은가 봐요`, `${haeyo(verb).slice(0, -1)}나 봐요`];
+      break;
+    case 'gedwae':
+      c = [`${stem}기 됐어요`, `${withN(verb)}게 됐어요`];
+      break;
+    case 'eojida':
+      // «춥게 됐어요» грамматично — его не берём.
+      c = [`${stem}졌어요`, `${haeyo(verb)}졌어요`];
+      break;
+    case 'neungeot':
+      c = [`${withN(verb)} 것`, `${stem}기 것`];
+      break;
+    case 'eum':
+      c = [`${stem}음`, `${stem}기음`];
+      break;
+    case 'giwihae':
+      c = [`${withN(verb)} 위해서`, `${stem}게 위해서`];
+      break;
+    case 'jamaja':
+      c = [`${info(verb)}자마자`, `${withN(verb)} 자마자`, `${stem}고자마자`];
+      break;
+    case 'daga':
+      c = [`${info(verb)}다가`, `${stem}고다가`];
+      break;
+    case 'pastDaga':
+      c = [`${conj(verb, 'past')}다가`, `${pastStemOf(verb)}는다가`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

@@ -3,7 +3,7 @@
 // формы по шаблонам, и введённая форма ищется в обратном индексе. Так разбор всегда согласован с уроками.
 // Существительные: отделяем частицы и связку справа, проверяем согласование (은/는, 이/가, 을/를…).
 import type { DictEntry, Pos } from '../content/dictionary';
-import { addJong, conj, haeyo, irregularType, neunda, stemForEu, stemOf } from './conjugate';
+import { addJong, conj, eum, haeyo, irregularType, neunda, stemForEu, stemOf } from './conjugate';
 import { decompose } from './hangul';
 
 export type MorphKind = 'stem' | 'honor' | 'tense' | 'ending' | 'particle' | 'copula';
@@ -326,6 +326,14 @@ const T: Template[] = [
       return { form: r.form, chain: [end(euJ(r.eu, 'ㄴ', '가'), 'с 보다 — «видимо» (у прилагательных)', 'g3-u3-l2')] };
     },
   },
+  // ---- 3급: изменения, номинализация, время 2 ----
+  { id: 'ge', build: (v) => ({ form: v.slice(0, -1) + '게', chain: [end('-게', 'наречная форма «так, чтобы» (맛있게); с 되다 — «стало так, что»', 'g3-u4-l1')] }) },
+  { id: 'eojyeoyo', build: (v) => ({ form: haeyo(v).slice(0, -1) + '져요', chain: [end(`-${harmony(v)}져요`, '«становится» (-아/어지다)', 'g3-u4-l2')] }) },
+  { id: 'eojyeosseoyo', build: (v) => ({ form: haeyo(v).slice(0, -1) + '졌어요', chain: [end(`-${harmony(v)}지-`, '«стать» (-아/어지다)', 'g3-u4-l2'), { form: '-었-', kind: 'tense', gloss: 'прошедшее время', lessonId: L.past }, end('-어요', 'вежливое окончание', L.haeyo)] }) },
+  { id: 'eum', build: (v) => { const f = eum(v); const j = decompose(lastSyl(v.slice(0, -1)))?.jong; return { form: f, chain: [end(j && j !== 'ㄹ' ? '-음' : '-ㅁ', 'существительное от глагола (-(으)ㅁ): письменный, «телеграфный» стиль', 'g3-u5-l2')] }; } },
+  { id: 'jamaja', build: (v) => ({ form: v.slice(0, -1) + '자마자', chain: [end('-자마자', '«как только, сразу после»', 'g3-u6-l1')] }) },
+  { id: 'daga', build: (v) => ({ form: v.slice(0, -1) + '다가', chain: [end('-다가', '«делал… и (прервался, переключился)»', 'g3-u6-l2')] }) },
+  { id: 'pastDaga', build: (v) => ({ form: pastStem(v) + '다가', chain: [pastMark(v), end('-다가', '«сделал… и потом (обратное)»', 'g3-u6-l2')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },

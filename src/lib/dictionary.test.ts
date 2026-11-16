@@ -60,6 +60,12 @@ describe('морфологический разбор', () => {
     expect(forms('추운가')).toContain('춥다: 춥다 + -은가');
     expect(forms('학생이라고')).toContain('학생: 학생 + 이라고');
     expect(forms('것이다')).toContain('것: 것 + 이다');
+    expect(forms('추워졌어요')).toContain('춥다: 춥다 + -어지- + -었- + -어요');
+    expect(forms('좋아하게')).toContain('좋아하다: 좋아하다 + -게');
+    expect(forms('도착하자마자')).toContain('도착하다: 도착하다 + -자마자');
+    expect(forms('입었다가')).toContain('입다: 입다 + -었- + -다가');
+    expect(forms('삶')).toContain('살다: 살다 + -ㅁ');
+    expect(forms('도움')).toContain('돕다: 돕다 + -음');
   });
 
   it('нерегулярные и неоднозначные формы', () => {
