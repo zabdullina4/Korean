@@ -86,7 +86,7 @@ import { bankSize } from '../content/exams/topik';
 describe('банки TOPIK I: 1급 и 2급', () => {
   const exams = [
     { name: '1급', exam: topik1Exam, spec: topik1Spec, min: 100 },
-    { name: '2급', exam: topik2Exam, spec: topik2Spec, min: 70 },
+    { name: '2급', exam: topik2Exam, spec: topik2Spec, min: 140 },
   ];
   for (const { name, exam, spec, min } of exams) {
     it(`${name}: банк не меньше ${min} заданий, без повторов текста, по 4 разных варианта`, () => {

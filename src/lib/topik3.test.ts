@@ -7,8 +7,9 @@ import { styleIssues } from './writing';
 const all = [...TOPIK3.LISTEN, ...TOPIK3.WRITE_CHOICE, ...TOPIK3.READ];
 
 describe('экзамен 3급 · TOPIK II', () => {
-  it('банки: без повторов, по 4 разных варианта, хватает на выборку', () => {
+  it('банки: не меньше 120 заданий, без повторов, по 4 разных варианта, хватает на выборку', () => {
     const bodies = all.flatMap((s) => s.bank.map((r) => r[0]));
+    expect(bodies.length + TOPIK3.W53.length).toBeGreaterThanOrEqual(120);
     expect(new Set(bodies).size).toBe(bodies.length);
     for (const s of all) {
       expect(s.n).toBeLessThanOrEqual(s.bank.length);
