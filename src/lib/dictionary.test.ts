@@ -80,6 +80,11 @@ describe('морфологический разбор', () => {
     expect(forms('맛있는데도')).toContain('맛있다: 맛있다 + -는데도');
     expect(forms('공부했는데도')).toContain('공부하다: 공부하다 + -였- + -는데도');
     expect(forms('힘들어도')).toContain('힘들다: 힘들다 + -어도');
+    // 4급: противопоставление
+    expect(forms('어렵기는')).toContain('어렵다: 어렵다 + -기는');
+    expect(forms('맛있긴')).toContain('맛있다: 맛있다 + -긴');
+    expect(forms('편리한')).toContain('편리하다: 편리하다 + -ㄴ');
+    expect(forms('조용한데')).toContain('조용하다: 조용하다 + -ㄴ데');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

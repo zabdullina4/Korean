@@ -360,6 +360,9 @@ const T: Template[] = [
     },
   },
   { id: 'pastNeundedo', build: (v) => ({ form: pastStem(v) + '는데도', chain: [pastMark(v), end('-는데도', '«хотя (уже) …», результат неожиданный', 'g4-u1-l2')] }) },
+  // ---- 4급: противопоставление ----
+  { id: 'gineun', build: (v) => ({ form: v.slice(0, -1) + '기는', chain: [end('-기는', '«-то да» — с 하지만: «вкусно-то вкусно, но…»', 'g4-u2-l2')] }) },
+  { id: 'gin', build: (v) => ({ form: v.slice(0, -1) + '긴', chain: [end('-긴', 'сокращение от -기는: «-то да, но…»', 'g4-u2-l2')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },

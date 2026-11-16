@@ -108,7 +108,9 @@ export type Form =
   // каузатив -게 하다, воспоминание -더-
   | 'gehada' | 'deoragoyo' | 'pastDeoragoyo' | 'deon' | 'pastDeon'
   // 4급: уступка
-  | 'ado' | 'deorado' | 'ljirado' | 'neundedoV' | 'neundedoA' | 'pastNeundedo';
+  | 'ado' | 'deorado' | 'ljirado' | 'neundedoV' | 'neundedoA' | 'pastNeundedo'
+  // противопоставление
+  | 'banmyeonV' | 'banmyeonA' | 'pastBanmyeon' | 'debanhaeV' | 'debanhaeA' | 'gineun' | 'pastGineun';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -342,6 +344,20 @@ export function conj(verb: string, form: Form): string {
       return `${takesNeun(verb) ? withNeun(verb) : withN(verb)}데도`;
     case 'pastNeundedo':
       return `${pastStemOf(verb)}는데도`;
+    case 'banmyeonV':
+      return `${withNeun(verb)} 반면에`;
+    case 'banmyeonA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} 반면에`;
+    case 'pastBanmyeon':
+      return `${withN(verb)} 반면에`;
+    case 'debanhaeV':
+      return `${withNeun(verb)}데 반해`;
+    case 'debanhaeA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)}데 반해`;
+    case 'gineun':
+      return `${stem}기는 하지만`;
+    case 'pastGineun':
+      return `${stem}기는 했지만`;
   }
 }
 
@@ -651,6 +667,30 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'pastNeundedo':
       c = [`${pastStemOf(verb)}은데도`, `${pastStemOf(verb)}데도`];
+      break;
+    case 'banmyeonV':
+      // «간 반면에» — верное прошедшее, поэтому ловушки только неграмматичные: 가은, 먹어는, 살는, -기 반면에.
+      c = [vowel ? `${stem}은 반면에` : s.jong === 'ㄹ' ? `${stem}는 반면에` : `${info(verb)}는 반면에`, `${stem}기 반면에`];
+      break;
+    case 'banmyeonA':
+      c = takesNeun(verb) ? [`${stem}은 반면에`, `${info(verb)}는 반면에`] : [`${stem}는 반면에`, `${stem}은 반면에`, `${stem}기 반면에`];
+      break;
+    case 'pastBanmyeon':
+      c = [`${pastStemOf(verb)}는 반면에`, `${pastStemOf(verb)}은 반면에`];
+      break;
+    case 'debanhaeV':
+      c = vowel ? [`${stem}은데 반해`, `${withL(verb)}는데 반해`] : s.jong === 'ㄹ' ? [`${stem}는데 반해`, `${stem}은데 반해`] : [`${stem}은데 반해`, `${info(verb)}는데 반해`];
+      break;
+    case 'debanhaeA':
+      c = takesNeun(verb) ? [`${stem}은데 반해`, `${info(verb)}는데 반해`] : [`${stem}는데 반해`, `${stem}은데 반해`, `${info(verb)}는데 반해`];
+      break;
+    case 'gineun':
+      // Не берём «-기도 하지만», «-긴 하지만», «-기는 하지마는» — грамматичны.
+      c = [`${stem}기은 하지만`, `${info(verb)}기는 하지만`, `${stem}기는 해지만`];
+      break;
+    case 'pastGineun':
+      // «-기는 하였지만» и «가기는 갔지만» верны; ловушки — 했찌만, 기은, лишнее -아/어.
+      c = [`${stem}기는 했찌만`, `${stem}기은 했지만`, `${info(verb)}기는 했지만`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

@@ -27,3 +27,33 @@ describe('формы 4급: уступка', () => {
     }
   });
 });
+
+// 4급, юнит 2 — противопоставление.
+const table2: [string, Form, string][] = [
+  ['가다', 'banmyeonV', '가는 반면에'], ['먹다', 'banmyeonV', '먹는 반면에'], ['살다', 'banmyeonV', '사는 반면에'], ['좋아하다', 'banmyeonV', '좋아하는 반면에'],
+  ['비싸다', 'banmyeonA', '비싼 반면에'], ['좁다', 'banmyeonA', '좁은 반면에'], ['춥다', 'banmyeonA', '추운 반면에'], ['맛있다', 'banmyeonA', '맛있는 반면에'], ['멀다', 'banmyeonA', '먼 반면에'],
+  ['오르다', 'pastBanmyeon', '오른 반면에'], ['늘다', 'pastBanmyeon', '는 반면에'], ['줄다', 'pastBanmyeon', '준 반면에'], ['먹다', 'pastBanmyeon', '먹은 반면에'],
+  ['살다', 'debanhaeV', '사는데 반해'], ['먹다', 'debanhaeV', '먹는데 반해'], ['자다', 'debanhaeV', '자는데 반해'],
+  ['조용하다', 'debanhaeA', '조용한데 반해'], ['넓다', 'debanhaeA', '넓은데 반해'], ['재미있다', 'debanhaeA', '재미있는데 반해'],
+  ['맛있다', 'gineun', '맛있기는 하지만'], ['비싸다', 'gineun', '비싸기는 하지만'], ['가다', 'gineun', '가기는 하지만'], ['듣다', 'gineun', '듣기는 하지만'],
+  ['읽다', 'pastGineun', '읽기는 했지만'], ['가다', 'pastGineun', '가기는 했지만'],
+];
+
+describe('формы 4급: противопоставление', () => {
+  it.each(table2)('%s · %s → %s', (v, f, want) => {
+    expect(conj(v, f)).toBe(want);
+    const d = conjDistractors(v, f);
+    expect(d.length).toBeGreaterThanOrEqual(2);
+    expect(d).not.toContain(want);
+  });
+
+  it('ловушки не совпадают с другими верными формами', () => {
+    for (const [v, f] of table2) {
+      const verbish = f !== 'banmyeonA' && f !== 'debanhaeA';
+      const ok = new Set(
+        (verbish ? ['banmyeonV', 'pastBanmyeon', 'debanhaeV', 'gineun', 'pastGineun'] : ['banmyeonA', 'debanhaeA', 'gineun', 'pastGineun']).map((x) => conj(v, x as Form)),
+      );
+      for (const d of conjDistractors(v, f)) expect(ok.has(d), `${v} ${f}: ${d}`).toBe(false);
+    }
+  });
+});
