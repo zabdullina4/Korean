@@ -23,6 +23,9 @@ import { causative, deon, deoragoyo, hanja1, hanja2, passive, wongoji, writing53
 import { evenIf, evenThough, suddenBusy, thanksBlame, whereas, yesBut } from './grade4/unit1-3';
 import { deoniAtdeoni, dorokGoja, geodeunJana, gyeom, ifOnly, supposeIf, tendeGeonde } from './grade4/unit4-6';
 import { degree, essay54, essayPlan, gimanHamyeon, hanjaCulture, hanjaSociety, idioms, proverbs } from './grade4/unit7-10';
+import { accordingTo, aslongas, bookReason, byMeans, likely, naturally, ratherThan, whetherOr } from './grade5/unit1-4';
+import { amountsTo, asIf, asYouKnow, dependsOn, evenParticles, letAlone } from './grade5/unit5-7';
+import { essayArgument, hanja3, idioms2, idioms3, idiomsBody, idiomsHead, pressStyles } from './grade5/unit8-10';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -55,8 +58,13 @@ const G4 = [
   ...[evenAny, notOnly, reasons3, shouldHave, talkEndings, justAbout, asMuchAs],
 ];
 
+const G5 = [
+  ...[naturally, likely, accordingTo, aslongas, bookReason, byMeans, ratherThan, whetherOr, letAlone, evenParticles],
+  ...[amountsTo, dependsOn, asYouKnow, asIf, idiomsHead, idiomsBody, idioms2, idioms3, hanja3, pressStyles, essayArgument],
+];
+
 // Каждому уроку добавляется шаг «Новые слова» перед первым заданием на эти слова (см. vocab.ts).
-export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4].map(withVocab);
+export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4, ...G5].map(withVocab);
 
 /** Переводной экзамен каждого класса. */
 export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam, 3: topik3Exam, 4: topik4Exam };
@@ -143,7 +151,23 @@ export const GRADES: Grade[] = [
       { grade: 4, n: 10, title: 'Эссе TOPIK 54', titleKr: '쓰기 54', lessons: [essayPlan.id, essay54.id] },
     ],
   },
-  { n: 5, name: '5급', ru: 'Старшая школа · 1 класс', units: [] },
+  {
+    n: 5,
+    name: '5급',
+    ru: 'Старшая школа · 1 класс · TOPIK II',
+    units: [
+      { grade: 5, n: 1, title: 'Закономерность', titleKr: '당연과 불가피', lessons: [naturally.id, likely.id] },
+      { grade: 5, n: 2, title: 'Зависимость и условие', titleKr: '조건', lessons: [accordingTo.id, aslongas.id] },
+      { grade: 5, n: 3, title: 'Книжные причины', titleKr: '원인과 수단', lessons: [bookReason.id, byMeans.id] },
+      { grade: 5, n: 4, title: 'Выбор', titleKr: '선택', lessons: [ratherThan.id, whetherOr.id] },
+      { grade: 5, n: 5, title: '«Даже» и «тем более»', titleKr: '강조', lessons: [letAlone.id, evenParticles.id] },
+      { grade: 5, n: 6, title: 'Оценка и итог', titleKr: '평가', lessons: [amountsTo.id, dependsOn.id] },
+      { grade: 5, n: 7, title: 'Ссылки и сравнения', titleKr: '인용과 비유', lessons: [asYouKnow.id, asIf.id] },
+      { grade: 5, n: 8, title: 'Идиомы 관용어', titleKr: '관용어', lessons: [idiomsHead.id, idiomsBody.id] },
+      { grade: 5, n: 9, title: '사자성어 и ханча 3', titleKr: '사자성어·한자 3', lessons: [idioms2.id, idioms3.id, hanja3.id] },
+      { grade: 5, n: 10, title: 'Стиль и эссе', titleKr: '문체와 쓰기', lessons: [pressStyles.id, essayArgument.id] },
+    ],
+  },
   { n: 6, name: '6급', ru: 'Старшая школа · 2 класс', units: [] },
 ];
 

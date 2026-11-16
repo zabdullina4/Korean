@@ -129,7 +129,11 @@ export type Form =
   | 'lmanhada' | 'cheok' | 'raeyo' | 'jaeyo' | 'nyaeyo'
   // 4급
   | 'deunji' | 'abwatja' | 'lppunman' | 'dedagaV' | 'dedagaA' | 'gillae' | 'aseogeureonji' | 'ltenikka' | 'lgeolgeuraetda'
-  | 'lliga' | 'ayajiyo' | 'lgeolyo' | 'gineunyo' | 'deondeyo' | 'dabomyeon' | 'nchaero' | 'ryeodeon';
+  | 'lliga' | 'ayajiyo' | 'lgeolyo' | 'gineunyo' | 'deondeyo' | 'dabomyeon' | 'nchaero' | 'ryeodeon'
+  // 5급: книжные конструкции (письменный стиль, формы на -다)
+  | 'gimaryeon' | 'lsubakke' | 'gisipsang' | 'lbeophada' | 'eumettara' | 'neunhan' | 'nisang' | 'eumeuro' | 'gie' | 'eumeurosseo'
+  | 'neuni' | 'lbaeya' | 'geon' | 'dagibodaV' | 'dagibodaA' | 'gineunkeonyeong' | 'lmangjeong' | 'nsem' | 'ginareum' | 'lttareum'
+  | 'dasipi' | 'nbawa' | 'deusi' | 'deutV' | 'deutA';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -527,6 +531,56 @@ export function conj(verb: string, form: Form): string {
       return `${withN(verb)} 채로`;
     case 'ryeodeon':
       return `${euKeepL(verb)}려던 참이에요`;
+    case 'gimaryeon':
+      return `${stem}기 마련이다`;
+    case 'lsubakke':
+      return `${withL(verb)} 수밖에 없다`;
+    case 'gisipsang':
+      return `${stem}기 십상이다`;
+    case 'lbeophada':
+      return `${withL(verb)} 법하다`;
+    case 'eumettara':
+      return `${eum(verb)}에 따라`;
+    case 'neunhan':
+      return `${withNeun(verb)} 한`;
+    case 'nisang':
+      return `${withN(verb)} 이상`;
+    case 'eumeuro':
+      return `${euKeepL(verb)}므로`;
+    case 'gie':
+      return `${stem}기에`;
+    case 'eumeurosseo':
+      return `${eum(verb)}으로써`;
+    case 'neuni':
+      return `${dropL(verb)}느니`;
+    case 'lbaeya':
+      return `${withL(verb)} 바에야`;
+    case 'geon':
+      return `${stem}건`;
+    case 'dagibodaV':
+      return `${neunda(verb)}기보다는`;
+    case 'dagibodaA':
+      return `${verb}기보다는`;
+    case 'gineunkeonyeong':
+      return `${stem}기는커녕`;
+    case 'lmangjeong':
+      return `${withL(verb)}망정`;
+    case 'nsem':
+      return `${withN(verb)} 셈이다`;
+    case 'ginareum':
+      return `${stem}기 나름이다`;
+    case 'lttareum':
+      return `${withL(verb)} 따름이다`;
+    case 'dasipi':
+      return `${stem}다시피`;
+    case 'nbawa':
+      return `${withN(verb)} 바와 같이`;
+    case 'deusi':
+      return `${stem}듯이`;
+    case 'deutV':
+      return `${withNeun(verb)} 듯하다`;
+    case 'deutA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} 듯하다`;
   }
 }
 
@@ -1122,6 +1176,95 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'ryeodeon':
       c = [vowel || s.jong === 'ㄹ' ? `${stem}으려던 참이에요` : `${stem}려던 참이에요`, `${withN(verb)}려던 참이에요`];
+      break;
+    case 'gimaryeon':
+      // «-게 마련이다» — верный синоним, не берём.
+      c = [`${withNeun(verb)} 마련이다`, `${withL(verb)} 마련이다`, `${stem}기 마련하다`];
+      break;
+    case 'lsubakke':
+      c = [`${withN(verb)} 수밖에 없다`, `${stem}기 수밖에 없다`, `${withL(verb)} 수밖에 있다`];
+      break;
+    case 'gisipsang':
+      c = [`${withL(verb)} 십상이다`, `${info(verb)}기 십상이다`];
+      break;
+    case 'lbeophada':
+      // «-는 법이다» («так уж заведено») — другая верная конструкция, не берём.
+      c = [`${withN(verb)} 법하다`, `${stem}기 법하다`];
+      break;
+    case 'eumettara':
+      // «-기에 따라» («смотря как») грамматично — не берём.
+      c = [`${withN(verb)}에 따라`, `${info(verb)}에 따라`];
+      break;
+    case 'neunhan':
+      c = [`${withN(verb)} 한`, `${withL(verb)} 한`, `${stem}기 한`];
+      break;
+    case 'nisang':
+      // «-는 이상» (о настоящем: 학생인 이상) грамматично — не берём.
+      c = [`${withL(verb)} 이상`, `${stem}기 이상`];
+      break;
+    case 'eumeuro':
+      // «-(으)ㅁ으로» («тем, что») — другая верная форма, не берём.
+      c = [vowel || s.jong === 'ㄹ' ? `${stem}으므로` : `${stem}므로`, `${info(verb)}므로`];
+      break;
+    case 'gie':
+      c = [`${info(verb)}기에`, `${withN(verb)}기에`];
+      break;
+    case 'eumeurosseo':
+      // 로써 (средство) ≠ 로서 (в качестве): «노력함으로서» — частая ошибка.
+      c = [`${eum(verb)}으로서`, `${stem}기로써`];
+      break;
+    case 'neuni':
+      c = [`${info(verb)}느니`, `${withN(verb)}느니`, `${withNeun(verb)}니`];
+      break;
+    case 'lbaeya':
+      // «-(으)ㄴ 바에야» (이왕 시작한 바에야) и «-ㄹ 바엔» грамматичны — не берём.
+      c = [`${stem}기 바에야`, `${withL(verb)} 바에서`];
+      break;
+    case 'geon':
+      // «-던», «-(으)ㄴ 건» — другие верные формы, не берём.
+      c = [`${info(verb)}건`, `${stem}껀`];
+      break;
+    case 'dagibodaV':
+      // «가기보다는» («чем идти») грамматично — не берём.
+      c = [`${verb}기보다는`, vowel || s.jong === 'ㄹ' ? `${stem}는다기보다는` : `${stem}은다기보다는`];
+      break;
+    case 'dagibodaA':
+      c = [`${withN(verb)}다기보다는`, `${stem}는다기보다는`];
+      break;
+    case 'gineunkeonyeong':
+      // 커녕 — частица, пишется слитно.
+      c = [`${stem}기는 커녕`, `${info(verb)}기는커녕`, `${stem}기커녕`];
+      break;
+    case 'lmangjeong':
+      c = [`${withL(verb)} 망정`, `${withN(verb)}망정`];
+      break;
+    case 'nsem':
+      // «-(으)ㄹ 셈이다» («собираюсь») и «-는 셈이다» грамматичны — не берём.
+      c = [`${stem}기 셈이다`, `${info(verb)} 셈이다`];
+      break;
+    case 'ginareum':
+      c = [`${stem}게 나름이다`, `${info(verb)}기 나름이다`];
+      break;
+    case 'lttareum':
+      c = [`${withN(verb)} 따름이다`, `${stem}기 따름이다`];
+      break;
+    case 'dasipi':
+      c = [`${info(verb)}다시피`, `${stem}다싶이`];
+      break;
+    case 'nbawa':
+      // «-는 바와 같이» (о настоящем) грамматично — не берём.
+      c = [`${withL(verb)} 바와 같이`, `${stem}기 바와 같이`];
+      break;
+    case 'deusi':
+      // «-(으)ㄴ/는 듯이» тоже верно — не берём.
+      c = [`${info(verb)}듯이`, `${stem}듯히`];
+      break;
+    case 'deutV':
+      // «-(으)ㄴ 듯하다», «-(으)ㄹ 듯하다» — другие времена, верны; не берём.
+      c = [`${stem}기 듯하다`, `${info(verb)}는 듯하다`];
+      break;
+    case 'deutA':
+      c = takesNeun(verb) ? [`${stem}은 듯하다`, `${info(verb)}는 듯하다`] : [`${stem}는 듯하다`, `${stem}은 듯하다`, `${info(verb)}는 듯하다`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

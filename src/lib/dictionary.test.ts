@@ -126,6 +126,19 @@ describe('морфологический разбор', () => {
     expect(forms('먹어야지요')).toContain('먹다: 먹다 + -어야지요');
     expect(forms('마세요')).toContain('말다: 말다 + -세요');
     expect(forms('버렸어요')).toContain('버리다: 버리다 + -었- + -어요');
+    // 5급
+    expect(forms('중요하므로')).toContain('중요하다: 중요하다 + -므로');
+    expect(forms('많으므로')).toContain('많다: 많다 + -으므로');
+    expect(forms('바쁘기에')).toContain('바쁘다: 바쁘다 + -기에');
+    expect(forms('노력함으로써')).toContain('노력하다: 노력하다 + -(으)ㅁ으로써');
+    expect(forms('변함에')).toContain('변하다: 변하다 + -(으)ㅁ에');
+    expect(forms('사느니')).toContain('살다: 살다 + -느니');
+    expect(forms('먹는다기보다는')).toContain('먹다: 먹다 + -는다기보다는');
+    expect(forms('쉬기는커녕')).toContain('쉬다: 쉬다 + -기는커녕');
+    expect(forms('굶을망정')).toContain('굶다: 굶다 + -을망정');
+    expect(forms('보다시피')).toContain('보다: 보다 + -다시피');
+    expect(forms('아시다시피')).toContain('알다: 알다 + -시- + -다시피');
+    expect(forms('쓰듯이')).toContain('쓰다: 쓰다 + -듯이');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

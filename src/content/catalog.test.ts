@@ -33,6 +33,12 @@ describe('контент', () => {
     for (const u of g4.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
   });
 
+  it('5급: все 10 юнитов заполнены', () => {
+    const g5 = GRADES[5];
+    expect(g5.units).toHaveLength(10);
+    for (const u of g5.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
+  });
+
   it('ханча: число иероглифов совпадает с числом слогов, корень входит в каждое слово', () => {
     for (const l of LESSONS)
       for (const s of l.steps)
