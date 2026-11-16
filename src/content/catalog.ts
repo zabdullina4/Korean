@@ -16,6 +16,7 @@ import { choiceWill, honorific, honorWords, neunde, promise, reactions } from '.
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
+import { topik2Exam } from './exams/topik2';
 import type { Grade, Lesson } from './types';
 
 const G0 = [vowelsBasic, vowelsY, consonantsBasic, consonantsTriples, syllableBlocks, batchim];
@@ -29,7 +30,7 @@ const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, at
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2];
 
 /** Переводной экзамен каждого класса. */
-export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam };
+export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam };
 export const EXAM_BY_ID: Record<string, ExamDef> = Object.fromEntries(Object.values(EXAMS).map((e) => [e.id, e]));
 
 export const LESSON_BY_ID: Record<string, Lesson> = Object.fromEntries(LESSONS.map((l) => [l.id, l]));

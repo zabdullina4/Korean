@@ -78,3 +78,51 @@ describe('экзамен 1급 · TOPIK I', () => {
     }
   });
 });
+
+import { topik1Spec } from '../content/exams/topik1';
+import { topik2Exam, topik2Spec } from '../content/exams/topik2';
+import { bankSize } from '../content/exams/topik';
+
+describe('банки TOPIK I: 1급 и 2급', () => {
+  const exams = [
+    { name: '1급', exam: topik1Exam, spec: topik1Spec, min: 100 },
+    { name: '2급', exam: topik2Exam, spec: topik2Spec, min: 70 },
+  ];
+  for (const { name, exam, spec, min } of exams) {
+    it(`${name}: банк не меньше ${min} заданий, без повторов текста, по 4 разных варианта`, () => {
+      expect(bankSize(spec)).toBeGreaterThanOrEqual(min);
+      const bodies = [...spec.listen, ...spec.read].flatMap((s) => s.bank.map((r) => r[0]));
+      expect(new Set(bodies).size).toBe(bodies.length);
+      for (const s of [...spec.listen, ...spec.read]) {
+        expect(s.n).toBeLessThanOrEqual(s.bank.length);
+        for (const [body, opts] of s.bank) {
+          expect(opts, body).toHaveLength(4);
+          expect(new Set(opts).size, body).toBe(4);
+        }
+      }
+    });
+
+    it(`${name}: 15 + 20 заданий, ответ не теряется при перемешивании`, () => {
+      const banks = [...spec.listen, ...spec.read].flatMap((s) => s.bank);
+      for (let a = 0; a < 4; a++) {
+        const secs = exam.make(seedFor(exam.id, a));
+        expect(secs.map((s) => s.questions.length)).toEqual([15, 20]);
+        for (const q of secs.flatMap((s) => s.questions)) {
+          if (q.kind !== 'choice') continue;
+          const raw = banks.find(([body]) => body === (q.item.audio ?? q.item.prompt))!;
+          expect(q.item.options[q.item.answer]).toBe(raw[1][0]);
+        }
+      }
+    });
+
+    it(`${name}: пересдачи — заметно другой вариант`, () => {
+      const key = (n: number) => new Set(exam.make(seedFor(exam.id, n)).flatMap((s) => s.questions.map((q) => (q.kind === 'choice' ? (q.item.audio ?? q.item.prompt) : ''))));
+      const a = key(0);
+      for (const n of [1, 2]) {
+        const b = key(n);
+        const same = [...a].filter((x) => b.has(x)).length;
+        expect(same / a.size, `попытка ${n + 1}`).toBeLessThan(0.6);
+      }
+    });
+  }
+});
