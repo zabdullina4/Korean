@@ -85,6 +85,11 @@ describe('морфологический разбор', () => {
     expect(forms('맛있긴')).toContain('맛있다: 맛있다 + -긴');
     expect(forms('편리한')).toContain('편리하다: 편리하다 + -ㄴ');
     expect(forms('조용한데')).toContain('조용하다: 조용하다 + -ㄴ데');
+    // 4급: тонкие причины
+    expect(forms('만드느라고')).toContain('만들다: 만들다 + -느라고');
+    expect(forms('먹느라')).toContain('먹다: 먹다 + -느라');
+    expect(forms('바람에')).toContain('바람: 바람 + 에');
+    expect(forms('탓에')).toContain('탓: 탓 + 에');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

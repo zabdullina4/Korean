@@ -78,11 +78,11 @@ function withJamo(verb: string, jamo: 'ㄹ' | 'ㄴ' | 'ㅂ', rest: string): { fo
   return { form: base.slice(0, -1) + addJong(lastSyl(base), jamo) + rest, eu: euEnding(stem) };
 }
 
-/** Основа + окончание на согласную (고, 지, 지만, 네요, 는, 기). Основа на ㄹ теряет ㄹ перед ㄴ. */
+/** Основа + окончание на согласную (고, 지, 지만, 네요, 는, 기, 느라고). Основа на ㄹ теряет ㄹ перед ㄴ. */
 function withC(verb: string, ending: string): string {
   const stem = stemOf(verb);
   const s = decompose(lastSyl(stem))!;
-  if (s.jong === 'ㄹ' && /^[는네]/.test(ending)) return stem.slice(0, -1) + addJong(lastSyl(stem), '') + ending;
+  if (s.jong === 'ㄹ' && /^[는네느]/.test(ending)) return stem.slice(0, -1) + addJong(lastSyl(stem), '') + ending;
   return stem + ending;
 }
 
@@ -363,6 +363,9 @@ const T: Template[] = [
   // ---- 4급: противопоставление ----
   { id: 'gineun', build: (v) => ({ form: v.slice(0, -1) + '기는', chain: [end('-기는', '«-то да» — с 하지만: «вкусно-то вкусно, но…»', 'g4-u2-l2')] }) },
   { id: 'gin', build: (v) => ({ form: v.slice(0, -1) + '긴', chain: [end('-긴', 'сокращение от -기는: «-то да, но…»', 'g4-u2-l2')] }) },
+  // ---- 4급: тонкие причины (바람에, 덕분에, 탓에 — существительные + 에, определение разбирается отдельно) ----
+  { id: 'neurago', only: ['v'], build: (v) => ({ form: withC(v, '느라고'), chain: [end('-느라고', '«был занят тем, что… (и поэтому не смог)»', 'g4-u3-l1')] }) },
+  { id: 'neura', only: ['v'], build: (v) => ({ form: withC(v, '느라'), chain: [end('-느라', 'сокращение от -느라고: «из-за того, что был занят…»', 'g4-u3-l1')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },

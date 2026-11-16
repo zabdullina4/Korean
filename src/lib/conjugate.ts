@@ -110,7 +110,9 @@ export type Form =
   // 4급: уступка
   | 'ado' | 'deorado' | 'ljirado' | 'neundedoV' | 'neundedoA' | 'pastNeundedo'
   // противопоставление
-  | 'banmyeonV' | 'banmyeonA' | 'pastBanmyeon' | 'debanhaeV' | 'debanhaeA' | 'gineun' | 'pastGineun';
+  | 'banmyeonV' | 'banmyeonA' | 'pastBanmyeon' | 'debanhaeV' | 'debanhaeA' | 'gineun' | 'pastGineun'
+  // тонкие причины
+  | 'barame' | 'neurago' | 'deokbun' | 'deokbunA' | 'tatPast' | 'tatA';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -358,6 +360,16 @@ export function conj(verb: string, form: Form): string {
       return `${stem}기는 하지만`;
     case 'pastGineun':
       return `${stem}기는 했지만`;
+    case 'barame':
+      return `${withNeun(verb)} 바람에`;
+    case 'neurago':
+      return `${dropL(verb)}느라고`;
+    case 'deokbun':
+    case 'tatPast':
+      return `${withN(verb)} ${form === 'deokbun' ? '덕분에' : '탓에'}`;
+    case 'deokbunA':
+    case 'tatA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} ${form === 'deokbunA' ? '덕분에' : '탓에'}`;
   }
 }
 
@@ -692,6 +704,27 @@ export function conjDistractors(verb: string, form: Form): string[] {
       // «-기는 하였지만» и «가기는 갔지만» верны; ловушки — 했찌만, 기은, лишнее -아/어.
       c = [`${stem}기는 했찌만`, `${stem}기은 했지만`, `${info(verb)}기는 했지만`];
       break;
+    case 'barame':
+      // -는 바람에 бывает только с -는: прошедшее (간 바람에, 갔는 바람에) — ошибка.
+      c = [`${withN(verb)} 바람에`, `${pastStemOf(verb)}는 바람에`, `${stem}기 바람에`];
+      break;
+    case 'neurago':
+      // «먹으라고» не берём — это косвенный приказ. Ошибки: прошедшее перед -느라고, лишнее -아/어, сохранённая ㄹ.
+      c = [`${pastStemOf(verb)}느라고`, s.jong === 'ㄹ' ? `${stem}느라고` : vowel ? `${withN(verb)}느라고` : `${info(verb)}느라고`];
+      break;
+    case 'deokbun':
+    case 'tatPast': {
+      // «-는 덕분에/탓에» (настоящее) грамматично, поэтому не берём.
+      const n = form === 'deokbun' ? '덕분에' : '탓에';
+      c = [`${withL(verb)} ${n}`, `${pastStemOf(verb)}은 ${n}`, `${stem}기 ${n}`];
+      break;
+    }
+    case 'deokbunA':
+    case 'tatA': {
+      const n = form === 'deokbunA' ? '덕분에' : '탓에';
+      c = takesNeun(verb) ? [`${stem}은 ${n}`, `${stem}기 ${n}`] : [`${stem}는 ${n}`, `${stem}은 ${n}`, `${stem}기 ${n}`];
+      break;
+    }
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.
       c = [vowel ? `${stem}으면 안 돼요` : `${stem}면 안 돼요`, `${info(verb)}면 안 돼요`, `${withNeun(verb)}면 안 돼요`];

@@ -57,3 +57,34 @@ describe('формы 4급: противопоставление', () => {
     }
   });
 });
+
+// 4급, юнит 3 — тонкие причины.
+const table3: [string, Form, string][] = [
+  ['오다', 'barame', '오는 바람에'], ['막히다', 'barame', '막히는 바람에'], ['울다', 'barame', '우는 바람에'], ['고장 나다', 'barame', '고장 나는 바람에'],
+  ['자다', 'neurago', '자느라고'], ['먹다', 'neurago', '먹느라고'], ['만들다', 'neurago', '만드느라고'], ['준비하다', 'neurago', '준비하느라고'], ['듣다', 'neurago', '듣느라고'],
+  ['도와주다', 'deokbun', '도와준 덕분에'], ['가르치다', 'deokbun', '가르친 덕분에'], ['듣다', 'deokbun', '들은 덕분에'], ['연습하다', 'deokbun', '연습한 덕분에'],
+  ['좋다', 'deokbunA', '좋은 덕분에'], ['친절하다', 'deokbunA', '친절한 덕분에'], ['가깝다', 'deokbunA', '가까운 덕분에'],
+  ['먹다', 'tatPast', '먹은 탓에'], ['놀다', 'tatPast', '논 탓에'], ['마시다', 'tatPast', '마신 탓에'],
+  ['춥다', 'tatA', '추운 탓에'], ['바쁘다', 'tatA', '바쁜 탓에'], ['재미없다', 'tatA', '재미없는 탓에'],
+];
+
+describe('формы 4급: тонкие причины', () => {
+  it.each(table3)('%s · %s → %s', (v, f, want) => {
+    expect(conj(v, f)).toBe(want);
+    const d = conjDistractors(v, f);
+    expect(d.length).toBeGreaterThanOrEqual(2);
+    expect(d).not.toContain(want);
+  });
+
+  it('ловушки не совпадают с верными формами причины (в т.ч. -는 덕분에/탓에)', () => {
+    for (const [v, f] of table3) {
+      const adj = f === 'deokbunA' || f === 'tatA';
+      const ok = new Set(
+        adj
+          ? [conj(v, 'deokbunA'), conj(v, 'tatA')]
+          : [conj(v, 'barame'), conj(v, 'neurago'), conj(v, 'deokbun'), conj(v, 'tatPast'), `${conj(v, 'attrV')} 덕분에`, `${conj(v, 'attrV')} 탓에`],
+      );
+      for (const d of conjDistractors(v, f)) expect(ok.has(d), `${v} ${f}: ${d}`).toBe(false);
+    }
+  });
+});
