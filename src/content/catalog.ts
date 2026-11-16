@@ -7,6 +7,8 @@ import { eeseo, eulreul, presentTense } from './grade1/unit3';
 import { prices, sinoNumbers } from './grade1/unit4';
 import { nativeNumbers, negationAn, negationMot, pastTense, telling, weekend } from './grade1/unit5-7';
 import { announcement, formal, future, lkkayo, seyo, want } from './grade1/unit8-10';
+import { andGo, particlesAlso, particlesTo, pleaseDo } from './grade1/extra';
+import { compare, irregulars, knowHow, looks, sequence, sinceNow, suggestGunyo, wishes } from './grade2/extra';
 import { reasonAseoNiga } from './grade2/reason';
 import { butIf, canDo, experience, mustDo, plans, progressive, reo, tryIt } from './grade2/unit1-4';
 import { attrAdj, attrTense, attrVerb } from './grade2/unit5';
@@ -32,9 +34,13 @@ const G0 = [vowelsBasic, vowelsY, consonantsBasic, consonantsTriples, syllableBl
 const G1 = [
   ...[iyeyo, eunneun, aniyeyo, igeot, isseoyo, ui, presentTense, eulreul, eeseo, sinoNumbers, prices],
   ...[nativeNumbers, telling, pastTense, weekend, negationAn, negationMot, future, want, seyo, lkkayo, formal, announcement],
+  ...[particlesAlso, particlesTo, andGo, pleaseDo],
 ];
 
-const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, when, beforeAfter, whileDoing, symptoms, because, reasonAseoNiga, permission, honorific, honorWords, promise, choiceWill, neunde, reactions];
+const G2 = [
+  ...[tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, when, beforeAfter, whileDoing, symptoms, because, reasonAseoNiga, permission, honorific, honorWords, promise, choiceWill, neunde, reactions],
+  ...[knowHow, sequence, compare, wishes, looks, irregulars, sinceNow, suggestGunyo],
+];
 
 const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga, passive, causative, deoragoyo, deon, hanja1, hanja2, wongoji, writing53];
 
@@ -69,14 +75,14 @@ export const GRADES: Grade[] = [
     ru: 'Начальная школа · 1 класс',
     units: [
       { grade: 1, n: 1, title: 'Знакомство', titleKr: '소개', lessons: [iyeyo.id, eunneun.id, aniyeyo.id] },
-      { grade: 1, n: 2, title: 'Вещи и семья', titleKr: '물건과 가족', lessons: [igeot.id, isseoyo.id, ui.id] },
-      { grade: 1, n: 3, title: 'Мой день', titleKr: '하루', lessons: [presentTense.id, eulreul.id, eeseo.id] },
+      { grade: 1, n: 2, title: 'Вещи и семья', titleKr: '물건과 가족', lessons: [igeot.id, isseoyo.id, ui.id, particlesAlso.id] },
+      { grade: 1, n: 3, title: 'Мой день', titleKr: '하루', lessons: [presentTense.id, eulreul.id, eeseo.id, particlesTo.id] },
       { grade: 1, n: 4, title: 'Числа и цены', titleKr: '숫자와 가격', lessons: [sinoNumbers.id, prices.id] },
       { grade: 1, n: 5, title: 'Время и исконные числа', titleKr: '시간', lessons: [nativeNumbers.id, telling.id] },
-      { grade: 1, n: 6, title: 'Прошедшее время', titleKr: '과거', lessons: [pastTense.id, weekend.id] },
+      { grade: 1, n: 6, title: 'Прошедшее время', titleKr: '과거', lessons: [pastTense.id, weekend.id, andGo.id] },
       { grade: 1, n: 7, title: 'Отрицание 안 / 못', titleKr: '부정', lessons: [negationAn.id, negationMot.id] },
       { grade: 1, n: 8, title: 'Планы и желания', titleKr: '계획', lessons: [future.id, want.id] },
-      { grade: 1, n: 9, title: 'Просьбы и предложения', titleKr: '부탁', lessons: [seyo.id, lkkayo.id] },
+      { grade: 1, n: 9, title: 'Просьбы и предложения', titleKr: '부탁', lessons: [seyo.id, lkkayo.id, pleaseDo.id] },
       { grade: 1, n: 10, title: 'Официальный стиль 합니다', titleKr: '격식체', lessons: [formal.id, announcement.id] },
     ],
   },
@@ -86,15 +92,15 @@ export const GRADES: Grade[] = [
     ru: 'Начальная школа · 2 класс',
     units: [
       { grade: 2, n: 1, title: 'Опыт', titleKr: '경험', lessons: [tryIt.id, experience.id] },
-      { grade: 2, n: 2, title: 'Возможность и обязанность', titleKr: '능력과 의무', lessons: [canDo.id, mustDo.id] },
-      { grade: 2, n: 3, title: 'Связки', titleKr: '연결', lessons: [progressive.id, butIf.id] },
-      { grade: 2, n: 4, title: 'Цели и намерения', titleKr: '목적과 계획', lessons: [reo.id, plans.id] },
-      { grade: 2, n: 5, title: 'Описание: определительные формы', titleKr: '묘사', lessons: [attrVerb.id, attrAdj.id, attrTense.id] },
-      { grade: 2, n: 6, title: 'Время: когда, до, после', titleKr: '시간', lessons: [when.id, beforeAfter.id, whileDoing.id] },
+      { grade: 2, n: 2, title: 'Возможность и обязанность', titleKr: '능력과 의무', lessons: [canDo.id, mustDo.id, knowHow.id] },
+      { grade: 2, n: 3, title: 'Связки', titleKr: '연결', lessons: [progressive.id, butIf.id, sequence.id, compare.id] },
+      { grade: 2, n: 4, title: 'Цели и намерения', titleKr: '목적과 계획', lessons: [reo.id, plans.id, wishes.id] },
+      { grade: 2, n: 5, title: 'Описание: определительные формы', titleKr: '묘사', lessons: [attrVerb.id, attrAdj.id, attrTense.id, looks.id, irregulars.id] },
+      { grade: 2, n: 6, title: 'Время: когда, до, после', titleKr: '시간', lessons: [when.id, beforeAfter.id, whileDoing.id, sinceNow.id] },
       { grade: 2, n: 7, title: 'Здоровье и причины', titleKr: '건강', lessons: [symptoms.id, because.id, reasonAseoNiga.id, permission.id] },
       { grade: 2, n: 8, title: 'Почтительность', titleKr: '높임말', lessons: [honorific.id, honorWords.id] },
       { grade: 2, n: 9, title: 'Обещания и выбор', titleKr: '약속', lessons: [promise.id, choiceWill.id] },
-      { grade: 2, n: 10, title: 'Живая речь', titleKr: '대화', lessons: [neunde.id, reactions.id] },
+      { grade: 2, n: 10, title: 'Живая речь', titleKr: '대화', lessons: [neunde.id, reactions.id, suggestGunyo.id] },
     ],
   },
   {

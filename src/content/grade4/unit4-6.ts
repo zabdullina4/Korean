@@ -201,7 +201,7 @@ export const geodeunJana: Lesson = {
     { id: 'w-sasil', kr: '사실', ru: 'на самом деле; факт' },
     { id: 'w-kkamppakhada', kr: '깜빡하다', ru: 'забыть (на миг), вылететь из головы', pron: '[깜빠카다]' },
     { id: 'w-akka', kr: '아까', ru: 'недавно, только что' },
-    { id: 'w-ilgi-yebo', kr: '일기 예보', ru: 'прогноз погоды' },
+    { id: 'w-ilgiyebo', kr: '일기 예보', ru: 'прогноз погоды' },
   ],
   steps: [
     {

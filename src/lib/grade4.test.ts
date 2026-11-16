@@ -138,3 +138,27 @@ describe('формы 4급: юниты 5–7', () => {
     expect(d).not.toContain(want);
   });
 });
+
+// Дополнение по Korean Grammar in Use: формы 1–4급.
+const tableKgiu: [string, Form, string][] = [
+  ['먹다', 'go', '먹고'], ['가다', 'go', '가고'], ['먹다', 'juseyo', '먹어 주세요'], ['사다', 'juseyo', '사 주세요'], ['돕다', 'juseyo', '도와 주세요'],
+  ['가다', 'jimaseyo', '가지 마세요'], ['먹다', 'gonaseo', '먹고 나서'], ['보다', 'geona', '보거나'], ['타다', 'ljulalda', '탈 줄 알아요'], ['만들다', 'ljulalda', '만들 줄 알아요'],
+  ['오다', 'jianhado', '오지 않아도 돼요'], ['오다', 'eosseumyeon', '왔으면 좋겠어요'], ['가다', 'ryeomyeon', '가려면'], ['먹다', 'ryeomyeon', '먹으려면'], ['살다', 'ryeomyeon', '살려면'],
+  ['배우다', 'lkkahada', '배울까 해요'], ['살다', 'nji', '산 지'], ['먹다', 'jungida', '먹는 중이에요'], ['쉬다', 'geoeottaeyo', '쉬는 게 어때요'], ['먹다', 'gunyoV', '먹는군요'], ['춥다', 'gunyoA', '춥군요'],
+  ['피곤하다', 'boyeoyo', '피곤해 보여요'], ['깨끗하다', 'geAdv', '깨끗하게'], ['무섭다', 'ahada', '무서워해요'], ['슬프다', 'ahada', '슬퍼해요'],
+  ['열리다', 'aitda', '열려 있어요'], ['사다', 'anota', '사 놓았어요'], ['먹다', 'abeorida', '먹어 버렸어요'], ['울다', 'gomalda', '울고 말았어요'], ['늦다', 'ljido', '늦을지도 몰라요'], ['늦다', 'lkkabwa', '늦을까 봐'],
+  ['도착하다', 'neundaero', '도착하는 대로'], ['가다', 'gonhada', '가곤 했어요'], ['먹다', 'pyeonV', '먹는 편이에요'], ['조용하다', 'pyeonA', '조용한 편이에요'], ['보다', 'lmanhada', '볼 만해요'], ['자다', 'cheok', '자는 척했어요'],
+  ['기다리다', 'raeyo', '기다리래요'], ['먹다', 'raeyo', '먹으래요'], ['가다', 'jaeyo', '가재요'], ['살다', 'nyaeyo', '사냬요'],
+  ['가다', 'deunji', '가든지'], ['말하다', 'abwatja', '말해 봤자'], ['싸다', 'lppunman', '쌀 뿐만 아니라'], ['비싸다', 'dedagaA', '비싼 데다가'], ['오다', 'dedagaV', '오는 데다가'], ['예쁘다', 'gillae', '예쁘길래'],
+  ['피곤하다', 'aseogeureonji', '피곤해서 그런지'], ['돕다', 'ltenikka', '도울 테니까'], ['오다', 'lgeolgeuraetda', '올 걸 그랬어요'], ['알다', 'lliga', '알 리가 없어요'], ['먹다', 'ayajiyo', '먹어야지요'],
+  ['비싸다', 'lgeolyo', '비쌀걸요'], ['잘하다', 'gineunyo', '잘하기는요'], ['맛있다', 'deondeyo', '맛있던데요'], ['살다', 'dabomyeon', '살다 보면'], ['입다', 'nchaero', '입은 채로'], ['전화하다', 'ryeodeon', '전화하려던 참이에요'],
+];
+
+describe('формы: дополнение по Korean Grammar in Use', () => {
+  it.each(tableKgiu)('%s · %s → %s', (v, f, want) => {
+    expect(conj(v, f)).toBe(want);
+    const d = conjDistractors(v, f);
+    expect(d.length).toBeGreaterThanOrEqual(2);
+    expect(d).not.toContain(want);
+  });
+});

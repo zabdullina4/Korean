@@ -118,7 +118,18 @@ export type Form =
   // синонимичные пары: -거든요/-잖아요, -(으)ㄹ 텐데/건데, -더니/-았/었더니
   | 'geodeunyo' | 'pastGeodeunyo' | 'janayo' | 'pastJanayo' | 'ltende' | 'lgeonde' | 'deoni' | 'pastDeoni'
   // цель 2 и степень
-  | 'dorok' | 'goja' | 'lgyeom' | 'ljeongdoro' | 'lsurok' | 'giman' | 'gimanhaeyo';
+  | 'dorok' | 'goja' | 'lgyeom' | 'ljeongdoro' | 'lsurok' | 'giman' | 'gimanhaeyo'
+  // дополнение по Korean Grammar in Use — 1급
+  | 'go' | 'juseyo' | 'jimaseyo'
+  // 2급
+  | 'gonaseo' | 'geona' | 'ljulalda' | 'jianhado' | 'eosseumyeon' | 'ryeomyeon' | 'lkkahada' | 'nji' | 'jungida'
+  | 'geoeottaeyo' | 'gunyoV' | 'gunyoA' | 'boyeoyo' | 'geAdv' | 'ahada'
+  // 3급
+  | 'aitda' | 'anota' | 'abeorida' | 'gomalda' | 'ljido' | 'lkkabwa' | 'neundaero' | 'gonhada' | 'pyeonV' | 'pyeonA'
+  | 'lmanhada' | 'cheok' | 'raeyo' | 'jaeyo' | 'nyaeyo'
+  // 4급
+  | 'deunji' | 'abwatja' | 'lppunman' | 'dedagaV' | 'dedagaA' | 'gillae' | 'aseogeureonji' | 'ltenikka' | 'lgeolgeuraetda'
+  | 'lliga' | 'ayajiyo' | 'lgeolyo' | 'gineunyo' | 'deondeyo' | 'dabomyeon' | 'nchaero' | 'ryeodeon';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -416,6 +427,106 @@ export function conj(verb: string, form: Form): string {
       return `${stem}기만 하면`;
     case 'gimanhaeyo':
       return `${stem}기만 해요`;
+    case 'go':
+      return `${stem}고`;
+    case 'juseyo':
+      return `${info(verb)} 주세요`;
+    case 'jimaseyo':
+      return `${stem}지 마세요`;
+    case 'gonaseo':
+      return `${stem}고 나서`;
+    case 'geona':
+      return `${stem}거나`;
+    case 'ljulalda':
+      return `${withL(verb)} 줄 알아요`;
+    case 'jianhado':
+      return `${stem}지 않아도 돼요`;
+    case 'eosseumyeon':
+      return `${pastStemOf(verb)}으면 좋겠어요`;
+    case 'ryeomyeon':
+      return `${euKeepL(verb)}려면`;
+    case 'lkkahada':
+      return `${withL(verb)}까 해요`;
+    case 'nji':
+      return `${withN(verb)} 지`;
+    case 'jungida':
+      return `${withNeun(verb)} 중이에요`;
+    case 'geoeottaeyo':
+      return `${withNeun(verb)} 게 어때요`;
+    case 'gunyoV':
+      return `${withNeun(verb)}군요`;
+    case 'gunyoA':
+      return `${stem}군요`;
+    case 'boyeoyo':
+      return `${info(verb)} 보여요`;
+    case 'geAdv':
+      return `${stem}게`;
+    case 'ahada':
+      return `${info(verb)}해요`;
+    case 'aitda':
+      return `${info(verb)} 있어요`;
+    case 'anota':
+      return `${info(verb)} 놓았어요`;
+    case 'abeorida':
+      return `${info(verb)} 버렸어요`;
+    case 'gomalda':
+      return `${stem}고 말았어요`;
+    case 'ljido':
+      return `${withL(verb)}지도 몰라요`;
+    case 'lkkabwa':
+      return `${withL(verb)}까 봐`;
+    case 'neundaero':
+      return `${withNeun(verb)} 대로`;
+    case 'gonhada':
+      return `${stem}곤 했어요`;
+    case 'pyeonV':
+      return `${withNeun(verb)} 편이에요`;
+    case 'pyeonA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} 편이에요`;
+    case 'lmanhada':
+      return `${withL(verb)} 만해요`;
+    case 'cheok':
+      return `${withNeun(verb)} 척했어요`;
+    case 'raeyo':
+      return `${euKeepL(verb)}래요`;
+    case 'jaeyo':
+      return `${stem}재요`;
+    case 'nyaeyo':
+      return `${dropL(verb)}냬요`;
+    case 'deunji':
+      return `${stem}든지`;
+    case 'abwatja':
+      return `${info(verb)} 봤자`;
+    case 'lppunman':
+      return `${withL(verb)} 뿐만 아니라`;
+    case 'dedagaV':
+      return `${withNeun(verb)} 데다가`;
+    case 'dedagaA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} 데다가`;
+    case 'gillae':
+      return `${stem}길래`;
+    case 'aseogeureonji':
+      return `${info(verb)}서 그런지`;
+    case 'ltenikka':
+      return `${withL(verb)} 테니까`;
+    case 'lgeolgeuraetda':
+      return `${withL(verb)} 걸 그랬어요`;
+    case 'lliga':
+      return `${withL(verb)} 리가 없어요`;
+    case 'ayajiyo':
+      return `${info(verb)}야지요`;
+    case 'lgeolyo':
+      return `${withL(verb)}걸요`;
+    case 'gineunyo':
+      return `${stem}기는요`;
+    case 'deondeyo':
+      return `${stem}던데요`;
+    case 'dabomyeon':
+      return `${stem}다 보면`;
+    case 'nchaero':
+      return `${withN(verb)} 채로`;
+    case 'ryeodeon':
+      return `${euKeepL(verb)}려던 참이에요`;
   }
 }
 
@@ -840,6 +951,176 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'gimanhaeyo':
       c = [`${stem}기만 하요`, `${info(verb)}기만 해요`, `${stem}기만 해어요`];
+      break;
+    case 'go':
+      // «-아/어서» и «-고서» грамматичны, ловушки — лишнее -아/어 и -구.
+      c = [`${info(verb)}고`, `${stem}구`, `${withN(verb)}고`];
+      break;
+    case 'juseyo':
+      // «사서 주세요» («купите и дайте») грамматично — не берём.
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'} 주세요`, `${stem}기 주세요`, `${stem} 주세요`];
+      break;
+    case 'jimaseyo':
+      // «-지 마요», «-지 말아요» — разговорные, но верные; не берём.
+      c = [`${info(verb)}지 마세요`, `${stem}기 마세요`, `${stem}지 말세요`];
+      break;
+    case 'gonaseo':
+      c = [`${info(verb)}고 나서`, `${withN(verb)} 나서`, `${stem}기 나서`];
+      break;
+    case 'geona':
+      c = [`${info(verb)}거나`, `${withN(verb)}거나`];
+      break;
+    case 'ljulalda':
+      // «간 줄 알아요», «가는 줄 알아요» («думает, что пошёл / идёт») грамматичны — не берём.
+      c = [`${stem}기 줄 알아요`, vowel || s.jong === 'ㄹ' ? `${stem}을 줄 알아요` : `${stem} 줄 알아요`];
+      break;
+    case 'jianhado':
+      c = [`${stem}지 안아도 돼요`, `${info(verb)}지 않아도 돼요`, `${stem}지 않아서 돼요`];
+      break;
+    case 'eosseumyeon':
+      // «가면 좋겠어요» грамматично (о будущем) — не берём.
+      c = [`${conj(verb, 'past')}면 좋겠어요`, `${pastStemOf(verb)}면 좋겠어요`];
+      break;
+    case 'ryeomyeon':
+      c = [vowel ? `${stem}으려면` : s.jong === 'ㄹ' ? `${stem}으려면` : `${stem}려면`, `${info(verb)}려면`, `${withN(verb)}려면`];
+      break;
+    case 'lkkahada':
+      c = [`${withN(verb)}까 해요`, `${withL(verb)}까 하요`];
+      break;
+    case 'nji':
+      // «가는지», «갈지» — другие верные конструкции, не берём.
+      c = [`${stem}기 지`, `${pastStemOf(verb)}은 지`];
+      break;
+    case 'jungida':
+      c = [`${withN(verb)} 중이에요`, `${stem}기 중이에요`, `${stem}고 중이에요`];
+      break;
+    case 'geoeottaeyo':
+      // «간 게 어때요?» («как прошло то, что сходил?») возможно — не берём.
+      c = [`${stem}기 게 어때요`, `${info(verb)}는 게 어때요`];
+      break;
+    case 'gunyoV':
+      // У глаголов нужен -는-: «먹군요», «간군요» — ошибки.
+      c = [`${stem}군요`, `${withN(verb)}군요`, `${info(verb)}군요`];
+      break;
+    case 'gunyoA':
+      c = [`${stem}는군요`, `${info(verb)}군요`, `${withN(verb)}군요`];
+      break;
+    case 'boyeoyo':
+      // «-게 보여요» грамматично — не берём.
+      c = [`${stem} 보여요`, `${withN(verb)} 보여요`];
+      break;
+    case 'geAdv':
+      c = [`${info(verb)}게`, `${withN(verb)}게`];
+      break;
+    case 'ahada':
+      c = [`${stem}해요`, `${stem}${isBright(s.jung) ? '어' : '아'}해요`];
+      break;
+    case 'aitda':
+      // «-고 있어요» (процесс) грамматично — не берём.
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'} 있어요`, `${info(verb)}서 있어요`];
+      break;
+    case 'anota':
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'} 놓았어요`, `${stem}고 놓았어요`];
+      break;
+    case 'abeorida':
+      // «먹고 버렸어요» («съел и выбросил») грамматично — не берём.
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'} 버렸어요`, `${withN(verb)} 버렸어요`];
+      break;
+    case 'gomalda':
+      c = [`${info(verb)}고 말았어요`, `${stem}기 말았어요`];
+      break;
+    case 'ljido':
+      c = [`${withL(verb)} 지도 몰라요`, vowel || s.jong === 'ㄹ' ? `${stem}을지도 몰라요` : `${stem}지도 몰라요`];
+      break;
+    case 'lkkabwa':
+      c = [`${withN(verb)}까 봐`, `${stem}기까 봐`];
+      break;
+    case 'neundaero':
+      // «말한 대로» («как сказал») и «-(으)ㄹ 대로» верны — не берём.
+      c = [`${stem}기 대로`, `${info(verb)}는 대로`];
+      break;
+    case 'gonhada':
+      c = [`${info(verb)}곤 했어요`, `${stem}군 했어요`, `${withN(verb)}곤 했어요`];
+      break;
+    case 'pyeonV':
+      // «먹은 편이에요» («съел сравнительно много») грамматично — не берём.
+      c = [`${stem}기 편이에요`, `${info(verb)}는 편이에요`];
+      break;
+    case 'pyeonA':
+      c = takesNeun(verb) ? [`${stem}은 편이에요`, `${info(verb)}는 편이에요`] : [`${stem}는 편이에요`, `${stem}은 편이에요`, `${stem}기 편이에요`];
+      break;
+    case 'lmanhada':
+      c = [`${withN(verb)} 만해요`, `${stem}기 만해요`];
+      break;
+    case 'cheok':
+      // «본 척했어요» (прошлое) грамматично — не берём.
+      c = [`${stem}기 척했어요`, `${info(verb)}는 척했어요`, `${withL(verb)} 척했어요`];
+      break;
+    case 'raeyo':
+      // «-ㄹ래요» — другое окончание (желание), не берём.
+      c = [vowel || s.jong === 'ㄹ' ? `${stem}으래요` : `${stem}래요`, `${info(verb)}래요`];
+      break;
+    case 'jaeyo':
+      c = [`${stem}제요`, `${info(verb)}재요`, `${withN(verb)}재요`];
+      break;
+    case 'nyaeyo':
+      c = [`${stem}내요`, `${info(verb)}냬요`];
+      break;
+    case 'deunji':
+      // «-던지» — частая ошибка написания (это прошедшее «-던»).
+      c = [`${stem}던지`, `${info(verb)}든지`, `${withN(verb)}든지`];
+      break;
+    case 'abwatja':
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'} 봤자`, `${stem}기 봤자`];
+      break;
+    case 'lppunman':
+      c = [`${withN(verb)} 뿐만 아니라`, `${withNeun(verb)} 뿐만 아니라`];
+      break;
+    case 'dedagaV':
+      c = [`${stem}기 데다가`, `${info(verb)}는 데다가`];
+      break;
+    case 'dedagaA':
+      c = takesNeun(verb) ? [`${stem}은 데다가`, `${info(verb)}는 데다가`] : [`${stem}는 데다가`, `${stem}은 데다가`];
+      break;
+    case 'gillae':
+      c = [`${stem}길레`, `${info(verb)}길래`];
+      break;
+    case 'aseogeureonji':
+      c = [`${pastStemOf(verb)}어서 그런지`, `${stem}서 그런지`];
+      break;
+    case 'ltenikka':
+      c = [`${withN(verb)} 테니까`, `${withL(verb)} 태니까`];
+      break;
+    case 'lgeolgeuraetda':
+      c = [`${withN(verb)} 걸 그랬어요`, `${withL(verb)} 껄 그랬어요`];
+      break;
+    case 'lliga':
+      c = [`${withN(verb)} 리가 없어요`, `${withNeun(verb)} 리가 없어요`];
+      break;
+    case 'ayajiyo':
+      // «-아/어야죠» — верное сокращение, не берём.
+      c = [`${stem}야지요`, `${stem}${isBright(s.jung) ? '어' : '아'}야지요`, `${info(verb)}야죠요`];
+      break;
+    case 'lgeolyo':
+      // «간걸요», «가는걸요» — другие верные формы, не берём.
+      c = [`${withL(verb)}껄요`, vowel || s.jong === 'ㄹ' ? `${stem}을걸요` : `${stem}걸요`];
+      break;
+    case 'gineunyo':
+      // «-긴요» — верное сокращение, не берём.
+      c = [`${info(verb)}기는요`, `${stem}기은요`];
+      break;
+    case 'deondeyo':
+      c = [`${stem}든데요`, `${info(verb)}던데요`];
+      break;
+    case 'dabomyeon':
+      // «-다가 보면» — полная форма, верна; не берём.
+      c = [`${info(verb)}다 보면`, `${withN(verb)}다 보면`];
+      break;
+    case 'nchaero':
+      c = [`${withNeun(verb)} 채로`, `${withL(verb)} 채로`];
+      break;
+    case 'ryeodeon':
+      c = [vowel || s.jong === 'ㄹ' ? `${stem}으려던 참이에요` : `${stem}려던 참이에요`, `${withN(verb)}려던 참이에요`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

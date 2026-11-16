@@ -111,6 +111,21 @@ describe('морфологический разбор', () => {
     expect(forms('오기만')).toContain('오다: 오다 + -기만');
     expect(forms('텐데')).toContain('텐데: 텐데');
     expect(forms('겸')).toContain('겸: 겸');
+    // дополнение по Korean Grammar in Use
+    expect(forms('보거나')).toContain('보다: 보다 + -거나');
+    expect(forms('먹으려면')).toContain('먹다: 먹다 + -으려면');
+    expect(forms('배울까')).toContain('배우다: 배우다 + -ㄹ까');
+    expect(forms('먹는군요')).toContain('먹다: 먹다 + -는군요');
+    expect(forms('춥군요')).toContain('춥다: 춥다 + -군요');
+    expect(forms('늦을지도')).toContain('늦다: 늦다 + -을지도');
+    expect(forms('가곤')).toContain('가다: 가다 + -곤');
+    expect(forms('사냬요')).toContain('살다: 살다 + -냬요');
+    expect(forms('가든지')).toContain('가다: 가다 + -든지');
+    expect(forms('비쌀걸요')).toContain('비싸다: 비싸다 + -ㄹ걸요');
+    expect(forms('맛있던데요')).toContain('맛있다: 맛있다 + -던데요');
+    expect(forms('먹어야지요')).toContain('먹다: 먹다 + -어야지요');
+    expect(forms('마세요')).toContain('말다: 말다 + -세요');
+    expect(forms('버렸어요')).toContain('버리다: 버리다 + -었- + -어요');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

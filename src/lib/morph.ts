@@ -82,7 +82,7 @@ function withJamo(verb: string, jamo: 'ㄹ' | 'ㄴ' | 'ㅂ', rest: string): { fo
 function withC(verb: string, ending: string): string {
   const stem = stemOf(verb);
   const s = decompose(lastSyl(stem))!;
-  if (s.jong === 'ㄹ' && /^[는네느]/.test(ending)) return stem.slice(0, -1) + addJong(lastSyl(stem), '') + ending;
+  if (s.jong === 'ㄹ' && /^[는네느냬]/.test(ending)) return stem.slice(0, -1) + addJong(lastSyl(stem), '') + ending;
   return stem + ending;
 }
 
@@ -389,6 +389,22 @@ const T: Template[] = [
     },
   },
   { id: 'giman', build: (v) => ({ form: v.slice(0, -1) + '기만', chain: [end('-기만', 'с 하면 — «стоит только…»; с 하다 — «только и делает, что…»', 'g4-u7-l2')] }) },
+  // ---- дополнение по Korean Grammar in Use ----
+  { id: 'geona', build: (v) => ({ form: v.slice(0, -1) + '거나', chain: [end('-거나', '«или»', 'g2-u3-l3')] }) },
+  { id: 'ryeomyeon', build: (v) => { const r = withEu(v, '려면'); return { form: r.form, chain: [end(eu(r.eu, '려면'), '«если хочешь…, то»', 'g2-u4-l3')] }; } },
+  { id: 'lkka', build: (v) => { const r = withJamo(v, 'ㄹ', '까'); return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '까'), 'с 하다 — «подумываю…»; с 봐 — «боясь, что…»', 'g2-u4-l3')] }; } },
+  { id: 'gunyoV', only: ['v'], build: (v) => ({ form: withC(v, '는군요'), chain: [end('-는군요', '«вот как, оказывается» (только что узнал)', 'g2-u10-l3')] }) },
+  { id: 'gunyoA', build: (v, pos) => (pos === 'v' ? null : { form: v.slice(0, -1) + '군요', chain: [end('-군요', '«вот как, оказывается»', 'g2-u10-l3')] }) },
+  { id: 'ljido', build: (v) => { const r = withJamo(v, 'ㄹ', '지도'); return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '지도'), 'с 모르다 — «может быть…»', 'g3-u3-l3')] }; } },
+  { id: 'gon', build: (v) => ({ form: v.slice(0, -1) + '곤', chain: [end('-곤', 'с 하다 — «бывало, часто делал»', 'g3-u6-l3')] }) },
+  { id: 'nyaeyo', only: ['v'], build: (v) => ({ form: withC(v, '냬요'), chain: [end('-냬요', '«спрашивает…» (сокращение от -냐고 해요)', 'g3-u2-l3')] }) },
+  { id: 'deunji', build: (v) => ({ form: v.slice(0, -1) + '든지', chain: [end('-든지', '«хоть…, хоть…; или» (не путать с -던지)', 'g4-u1-l3')] }) },
+  { id: 'gillae', build: (v) => ({ form: v.slice(0, -1) + '길래', chain: [end('-길래', '«раз уж (я увидел, что)…»', 'g4-u3-l3')] }) },
+  { id: 'lgeolyo', build: (v) => { const r = withJamo(v, 'ㄹ', '걸요'); return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '걸요'), '«наверное, …» — мягко возражаю или догадываюсь', 'g4-u5-l4')] }; } },
+  { id: 'gineunyo', build: (v) => ({ form: v.slice(0, -1) + '기는요', chain: [end('-기는요', '«да какое там…» — скромно отрицаю похвалу', 'g4-u5-l4')] }) },
+  { id: 'deondeyo', build: (v) => ({ form: v.slice(0, -1) + '던데요', chain: [end('-던데요', '«а я видел, что… (и?)» — сам наблюдал', 'g4-u5-l4')] }) },
+  { id: 'ayajiyo', build: (v) => ({ form: haeyo(v).slice(0, -1) + '야지요', chain: [end(`-${harmony(v)}야지요`, '«надо же…, конечно нужно»', 'g4-u5-l4')] }) },
+  { id: 'ryeodeon', build: (v) => { const r = withEu(v, '려던'); return { form: r.form, chain: [end(eu(r.eu, '려던'), 'с 참이다 — «как раз собирался»', 'g4-u6-l3')] }; } },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },
