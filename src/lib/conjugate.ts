@@ -114,7 +114,11 @@ export type Form =
   // тонкие причины
   | 'barame' | 'neurago' | 'deokbun' | 'deokbunA' | 'tatPast' | 'tatA'
   // гипотеза и сожаление
-  | 'deoramyeon' | 'lppeon' | 'ndamyeonV' | 'damyeonA' | 'pastDamyeon';
+  | 'deoramyeon' | 'lppeon' | 'ndamyeonV' | 'damyeonA' | 'pastDamyeon'
+  // синонимичные пары: -거든요/-잖아요, -(으)ㄹ 텐데/건데, -더니/-았/었더니
+  | 'geodeunyo' | 'pastGeodeunyo' | 'janayo' | 'pastJanayo' | 'ltende' | 'lgeonde' | 'deoni' | 'pastDeoni'
+  // цель 2 и степень
+  | 'dorok' | 'goja' | 'lgyeom' | 'ljeongdoro' | 'lsurok' | 'giman' | 'gimanhaeyo';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -382,6 +386,36 @@ export function conj(verb: string, form: Form): string {
       return `${verb}면`;
     case 'pastDamyeon':
       return `${pastStemOf(verb)}다면`;
+    case 'geodeunyo':
+      return `${stem}거든요`;
+    case 'pastGeodeunyo':
+      return `${pastStemOf(verb)}거든요`;
+    case 'janayo':
+      return `${stem}잖아요`;
+    case 'pastJanayo':
+      return `${pastStemOf(verb)}잖아요`;
+    case 'ltende':
+      return `${withL(verb)} 텐데`;
+    case 'lgeonde':
+      return `${withL(verb)} 건데`;
+    case 'deoni':
+      return `${stem}더니`;
+    case 'pastDeoni':
+      return `${pastStemOf(verb)}더니`;
+    case 'dorok':
+      return `${stem}도록`;
+    case 'goja':
+      return `${stem}고자`;
+    case 'lgyeom':
+      return `${withL(verb)} 겸`;
+    case 'ljeongdoro':
+      return `${withL(verb)} 정도로`;
+    case 'lsurok':
+      return `${withL(verb)}수록`;
+    case 'giman':
+      return `${stem}기만 하면`;
+    case 'gimanhaeyo':
+      return `${stem}기만 해요`;
   }
 }
 
@@ -755,6 +789,57 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'pastDamyeon':
       c = [`${pastStemOf(verb)}는다면`, `${conj(verb, 'past')}면`];
+      break;
+    case 'geodeunyo':
+      // «간 거든요» не берём: разговорное «간 것이거든요» возможно.
+      c = [`${stem}거던요`, `${stem}거등요`, `${info(verb)}거든요`];
+      break;
+    case 'pastGeodeunyo':
+      c = [`${pastStemOf(verb)}거던요`, `${conj(verb, 'past')}거든요`];
+      break;
+    case 'janayo':
+      // 쟎아요 — старое написание, по норме ошибка.
+      c = [`${stem}쟎아요`, `${stem}잔아요`, `${info(verb)}잖아요`];
+      break;
+    case 'pastJanayo':
+      c = [`${pastStemOf(verb)}쟎아요`, `${pastStemOf(verb)}잔아요`];
+      break;
+    case 'ltende':
+      c = [`${withN(verb)} 텐데`, `${withL(verb)} 탠데`, `${withNeun(verb)} 텐데`];
+      break;
+    case 'lgeonde':
+      // «간 건데», «가는 건데» грамматичны (것인데), поэтому ловушки — орфография и несуществующие основы.
+      c = [`${withL(verb)} 껀데`, vowel || s.jong === 'ㄹ' ? `${stem}을 건데` : `${stem} 건데`];
+      break;
+    case 'deoni':
+      c = [`${stem}드니`, `${info(verb)}더니`, `${withN(verb)}더니`];
+      break;
+    case 'pastDeoni':
+      c = [`${pastStemOf(verb)}드니`, `${conj(verb, 'past')}더니`];
+      break;
+    case 'dorok':
+      c = [`${info(verb)}도록`, `${stem}도륵`, `${withL(verb)}도록`];
+      break;
+    case 'goja':
+      c = [`${info(verb)}고자`, `${stem}구자`, `${withL(verb)}고자`];
+      break;
+    case 'lgyeom':
+      c = [`${withN(verb)} 겸`, `${withNeun(verb)} 겸`, `${stem}기 겸`];
+      break;
+    case 'ljeongdoro':
+      // «-는 정도로» встречается («말할 수 없는 정도로») — не берём.
+      c = [`${stem}기 정도로`, vowel || s.jong === 'ㄹ' ? `${stem}을 정도로` : `${stem} 정도로`];
+      break;
+    case 'lsurok':
+      // «갈 수록» — частая ошибка в пробеле: 수록 пишется слитно.
+      c = [`${withL(verb)} 수록`, `${withNeun(verb)}수록`, `${withN(verb)}수록`];
+      break;
+    case 'giman':
+      // «-기만 하면은», «-기만 하며» грамматичны — не берём.
+      c = [`${info(verb)}기만 하면`, `${stem}기만 해면`, `${stem}기면 하면`];
+      break;
+    case 'gimanhaeyo':
+      c = [`${stem}기만 하요`, `${info(verb)}기만 해요`, `${stem}기만 해어요`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

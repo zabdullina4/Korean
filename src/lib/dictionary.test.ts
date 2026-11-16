@@ -99,6 +99,18 @@ describe('морфологический разбор', () => {
     expect(forms('비싸다면')).toContain('비싸다: 비싸다 + -다면');
     expect(forms('있었다면')).toContain('있다: 있다 + -었- + -다면');
     expect(forms('미끄러워서')).toContain('미끄럽다: 미끄럽다 + -어서');
+    // 4급: юниты 5–7
+    expect(forms('바쁘거든요')).toContain('바쁘다: 바쁘다 + -거든요');
+    expect(forms('말했잖아요')).toContain('말하다: 말하다 + -였- + -잖아요');
+    expect(forms('춥더니')).toContain('춥다: 춥다 + -더니');
+    expect(forms('열었더니')).toContain('열다: 열다 + -었- + -더니');
+    expect(forms('늦지')).toContain('늦다: 늦다 + -지');
+    expect(forms('알리고자')).toContain('알리다: 알리다 + -고자');
+    expect(forms('들을수록')).toContain('듣다: 듣다 + -을수록');
+    expect(forms('갈수록')).toContain('가다: 가다 + -ㄹ수록');
+    expect(forms('오기만')).toContain('오다: 오다 + -기만');
+    expect(forms('텐데')).toContain('텐데: 텐데');
+    expect(forms('겸')).toContain('겸: 겸');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

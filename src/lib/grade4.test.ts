@@ -114,3 +114,27 @@ describe('формы 4급: гипотеза и сожаление', () => {
     }
   });
 });
+
+// 4급, юниты 5–7 — синонимичные пары, цель 2, степень.
+const table57: [string, Form, string][] = [
+  ['가다', 'geodeunyo', '가거든요'], ['바쁘다', 'geodeunyo', '바쁘거든요'], ['살다', 'geodeunyo', '살거든요'], ['먹다', 'pastGeodeunyo', '먹었거든요'], ['오다', 'pastGeodeunyo', '왔거든요'],
+  ['알다', 'janayo', '알잖아요'], ['비싸다', 'janayo', '비싸잖아요'], ['가다', 'janayo', '가잖아요'], ['말하다', 'pastJanayo', '말했잖아요'],
+  ['춥다', 'ltende', '추울 텐데'], ['바쁘다', 'ltende', '바쁠 텐데'], ['힘들다', 'ltende', '힘들 텐데'], ['오다', 'ltende', '올 텐데'],
+  ['가다', 'lgeonde', '갈 건데'], ['먹다', 'lgeonde', '먹을 건데'], ['만들다', 'lgeonde', '만들 건데'],
+  ['춥다', 'deoni', '춥더니'], ['오다', 'deoni', '오더니'], ['열다', 'pastDeoni', '열었더니'], ['먹다', 'pastDeoni', '먹었더니'], ['물어보다', 'pastDeoni', '물어봤더니'],
+  ['늦다', 'dorok', '늦도록'], ['알다', 'dorok', '알도록'], ['듣다', 'dorok', '듣도록'],
+  ['알리다', 'goja', '알리고자'], ['돕다', 'goja', '돕고자'],
+  ['운동하다', 'lgyeom', '운동할 겸'], ['먹다', 'lgyeom', '먹을 겸'], ['쉬다', 'lgyeom', '쉴 겸'],
+  ['죽다', 'ljeongdoro', '죽을 정도로'], ['놀라다', 'ljeongdoro', '놀랄 정도로'], ['울다', 'ljeongdoro', '울 정도로'],
+  ['가다', 'lsurok', '갈수록'], ['먹다', 'lsurok', '먹을수록'], ['듣다', 'lsurok', '들을수록'], ['살다', 'lsurok', '살수록'], ['많다', 'lsurok', '많을수록'],
+  ['오다', 'giman', '오기만 하면'], ['먹다', 'giman', '먹기만 하면'], ['울다', 'gimanhaeyo', '울기만 해요'], ['자다', 'gimanhaeyo', '자기만 해요'],
+];
+
+describe('формы 4급: юниты 5–7', () => {
+  it.each(table57)('%s · %s → %s', (v, f, want) => {
+    expect(conj(v, f)).toBe(want);
+    const d = conjDistractors(v, f);
+    expect(d.length).toBeGreaterThanOrEqual(2);
+    expect(d).not.toContain(want);
+  });
+});

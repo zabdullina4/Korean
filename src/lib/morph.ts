@@ -371,6 +371,24 @@ const T: Template[] = [
   { id: 'ndamyeon', only: ['v'], build: (v) => { const f = neunda(v); return { form: f + '면', chain: [end(f.endsWith('는다') ? '-는다면' : '-ㄴ다면', '«если вдруг…» — гипотеза', 'g4-u4-l2')] }; } },
   { id: 'damyeon', only: ['a'], build: (v) => ({ form: v + '면', chain: [end('-다면', '«если вдруг…» — гипотеза', 'g4-u4-l2')] }) },
   { id: 'pastDamyeon', build: (v) => ({ form: pastStem(v) + '다면', chain: [pastMark(v), end('-다면', '«если бы (уже)…»', 'g4-u4-l2')] }) },
+  // ---- 4급: -거든요, -잖아요, -더니, -도록, -고자, -(으)ㄹ수록, -기만 ----
+  { id: 'geodeunyo', build: (v) => ({ form: v.slice(0, -1) + '거든요', chain: [end('-거든요', '«дело в том, что…» — объясняю то, чего собеседник не знал', 'g4-u5-l1')] }) },
+  { id: 'geodeun', build: (v) => ({ form: v.slice(0, -1) + '거든', chain: [end('-거든', '«дело в том, что» (반말); в начале фразы — «если»', 'g4-u5-l1')] }) },
+  { id: 'pastGeodeunyo', build: (v) => ({ form: pastStem(v) + '거든요', chain: [pastMark(v), end('-거든요', '«дело в том, что…»', 'g4-u5-l1')] }) },
+  { id: 'janayo', build: (v) => ({ form: v.slice(0, -1) + '잖아요', chain: [end('-잖아요', '«ведь…, вы же знаете»', 'g4-u5-l1')] }) },
+  { id: 'pastJanayo', build: (v) => ({ form: pastStem(v) + '잖아요', chain: [pastMark(v), end('-잖아요', '«ведь (уже)…»', 'g4-u5-l1')] }) },
+  { id: 'deoni', build: (v) => ({ form: v.slice(0, -1) + '더니', chain: [end('-더니', '«раньше было (видел)…, а потом / теперь…»', 'g4-u5-l3')] }) },
+  { id: 'pastDeoni', build: (v) => ({ form: pastStem(v) + '더니', chain: [pastMark(v), end('-더니', '«я сделал…, и оказалось…»', 'g4-u5-l3')] }) },
+  { id: 'dorok', build: (v) => ({ form: v.slice(0, -1) + '도록', chain: [end('-도록', '«чтобы»; «до (такой степени), что»', 'g4-u6-l1')] }) },
+  { id: 'goja', build: (v) => ({ form: v.slice(0, -1) + '고자', chain: [end('-고자', 'книжное «с целью, чтобы»', 'g4-u6-l1')] }) },
+  {
+    id: 'lsurok',
+    build: (v) => {
+      const r = withJamo(v, 'ㄹ', '수록');
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '수록'), '«чем больше…, тем…»', 'g4-u7-l1')] };
+    },
+  },
+  { id: 'giman', build: (v) => ({ form: v.slice(0, -1) + '기만', chain: [end('-기만', 'с 하면 — «стоит только…»; с 하다 — «только и делает, что…»', 'g4-u7-l2')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },
