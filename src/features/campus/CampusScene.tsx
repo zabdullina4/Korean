@@ -22,18 +22,52 @@ interface Geo {
   flag?: boolean;
 }
 
-const GEO: Record<Exclude<BuildingId, 'yard'>, Geo> = {
-  g6: { x: 214, y: 74, w: 34, h: 40, cols: 2, rows: 3, d: 8 },
-  g5: { x: 258, y: 82, w: 34, h: 36, cols: 2, rows: 3, d: 8 },
-  g4: { x: 120, y: 86, w: 40, h: 40, cols: 3, rows: 3, d: 8 },
-  g3: { x: 168, y: 90, w: 40, h: 40, cols: 3, rows: 3, d: 8 },
+/** Места на карте. Текущий класс всегда стоит в центре переднего плана («main»). */
+export type Slot = 'main' | 'prev' | 'old' | 'back0' | 'back1' | 'back2' | 'back3' | 'club' | 'lib';
+
+const GEO: Record<Slot, Geo> = {
+  back0: { x: 120, y: 70, w: 40, h: 40, cols: 3, rows: 3, d: 8 },
+  back1: { x: 168, y: 74, w: 40, h: 40, cols: 3, rows: 3, d: 8 },
+  back2: { x: 214, y: 60, w: 34, h: 40, cols: 2, rows: 3, d: 8 },
+  back3: { x: 258, y: 68, w: 34, h: 36, cols: 2, rows: 3, d: 8 },
   club: { x: 292, y: 150, w: 64, h: 40, cols: 4, rows: 2, d: 12 },
-  g1: { x: 22, y: 196, w: 86, h: 52, cols: 5, rows: 2, door: true },
-  g2: { x: 124, y: 166, w: 104, h: 70, cols: 5, rows: 2, door: true },
-  lib: { x: 258, y: 224, w: 62, h: 44, cols: 3, rows: 2, door: true },
-  g0: { x: 28, y: 280, w: 60, h: 34, cols: 3, rows: 1, d: 10 },
+  prev: { x: 22, y: 196, w: 86, h: 52, cols: 5, rows: 2, door: true },
+  main: { x: 116, y: 160, w: 120, h: 80, cols: 5, rows: 2, door: true },
+  lib: { x: 262, y: 228, w: 62, h: 44, cols: 3, rows: 2, door: true },
+  old: { x: 28, y: 280, w: 60, h: 34, cols: 3, rows: 1, d: 10 },
 };
-const ORDER: Exclude<BuildingId, 'yard'>[] = ['g6', 'g5', 'g4', 'g3', 'club', 'g1', 'g2', 'lib', 'g0'];
+
+const GRADE_IDS: BuildingId[] = ['g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6'];
+
+/**
+ * Раскладка классов по местам: текущий — крупно в центре; слева впереди — последний пройденный
+ * (или ближайший следующий, если пройденных нет); остальные — в заднем ряду.
+ */
+export function assignSlots(current: number): Partial<Record<Slot, BuildingId>> {
+  const past = GRADE_IDS.slice(0, current).reverse();
+  const future = GRADE_IDS.slice(current + 1);
+  const rest = [...past, ...future];
+  return {
+    main: GRADE_IDS[current],
+    prev: rest[0],
+    old: rest[1],
+    back0: rest[2],
+    back1: rest[3],
+    back2: rest[4],
+    back3: rest[5],
+    club: 'club',
+    lib: 'lib',
+  };
+}
+
+/** Окна: в главном здании — по юнитам; в маленьких — пропорционально пройденному. */
+function windowStates(v: BuildingView, cells: number, direct: boolean): number[] {
+  if (direct || v.windows.length === cells) return Array.from({ length: cells }, (_, k) => v.windows[k] ?? 0);
+  const units = v.windows.length;
+  const done = v.windows.filter((x) => x === 1).length;
+  const lit = units ? Math.round((done / units) * cells) : 0;
+  return Array.from({ length: cells }, (_, k) => (k < lit ? 1 : 0));
+}
 
 function Tree({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
   return (
@@ -82,16 +116,21 @@ export function CampusScene({ views, current, selected, fresh, onSelect }: Props
     },
   });
 
-  const building = (id: Exclude<BuildingId, 'yard'>): ReactNode => {
-    const g = GEO[id];
+  const slots = assignSlots(Number(current.slice(1)));
+
+  const building = (slot: Slot): ReactNode => {
+    const id = slots[slot];
+    if (!id || id === 'yard') return null;
+    const g = GEO[slot];
     const v = views[id];
+    const states = windowStates(v, g.cols * g.rows, slot === 'main' && id.startsWith('g'));
     const d = g.d ?? Math.round(g.w * 0.18);
     const pw = (g.w - 12) / g.cols;
     const ph = (g.h - (g.door ? 22 : 10)) / g.rows;
     const wins: ReactNode[] = [];
     for (let r = 0, k = 0; r < g.rows; r++)
       for (let c = 0; c < g.cols; c++, k++) {
-        const u = v.windows[k] ?? 0;
+        const u = states[k] ?? 0;
         wins.push(
           <rect
             key={k}
@@ -113,7 +152,7 @@ export function CampusScene({ views, current, selected, fresh, onSelect }: Props
         <rect className="front" x={g.x} y={g.y} width={g.w} height={g.h} fill="var(--wall)" />
         {wins}
         {g.door && <rect x={g.x + g.w / 2 - 8} y={g.y + g.h - 16} width={16} height={16} fill="var(--roof)" />}
-        {(g.clock || isCur) && !v.fog && (
+        {isCur && !v.fog && (
           <>
             <circle cx={g.x + g.w / 2} cy={g.y - 12} r={9} fill="var(--wall)" stroke="var(--roof)" strokeWidth={2} />
             <path d={`M${g.x + g.w / 2} ${g.y - 12}v-5M${g.x + g.w / 2} ${g.y - 12}h4`} stroke="var(--roof)" strokeWidth={1.6} />
@@ -151,7 +190,7 @@ export function CampusScene({ views, current, selected, fresh, onSelect }: Props
       <circle cx="335" cy="44" r="16" fill="var(--win-lit)" opacity=".85" />
       <path d="M0 132 L60 92 L110 118 L170 72 L240 116 L300 84 L360 112 L400 96 V170 H0Z" fill="var(--hill-2)" />
       <path d="M0 150 L80 118 L150 140 L230 110 L320 142 L400 124 V190 H0Z" fill="var(--hill)" />
-      {ORDER.slice(0, 4).map(building)}
+      {(['back0', 'back1', 'back2', 'back3'] as Slot[]).map(building)}
       <rect x="0" y="150" width="400" height="210" fill="var(--ground)" />
       <path d="M190 360 C 200 300, 150 260, 190 222" stroke="var(--path)" strokeWidth="22" fill="none" />
       <g className={`bld${selected === 'yard' ? ' sel' : ''}`} {...interact('yard')}>
@@ -159,7 +198,7 @@ export function CampusScene({ views, current, selected, fresh, onSelect }: Props
         <ellipse cx="318" cy="306" rx="48" ry="18" fill="var(--hill)" />
         <Label cx={318} y={341} text="운동장" />
       </g>
-      {ORDER.slice(4).map(building)}
+      {(['club', 'prev', 'main', 'lib', 'old'] as Slot[]).map(building)}
       <Tree x={108} y={262} s={1.1} />
       <Tree x={248} y={186} s={0.9} />
       <Tree x={14} y={180} s={0.8} />
