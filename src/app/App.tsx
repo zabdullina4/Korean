@@ -3,11 +3,12 @@ import { Toast } from '../components/toast';
 import { CampusScreen } from '../features/campus/CampusScreen';
 import { GradeScreen } from '../features/campus/GradeScreen';
 import { Welcome } from '../features/campus/Welcome';
+import { DictionaryScreen } from '../features/dictionary/DictionaryScreen';
+import { WordScreen } from '../features/dictionary/WordScreen';
 import { ExamScreen } from '../features/exam/ExamScreen';
 import { ReviewScreen } from '../features/cards/ReviewScreen';
 import { LessonPlayer } from '../features/lesson/LessonPlayer';
 import { NotebookScreen } from '../features/notebook/NotebookScreen';
-import { Soon } from '../features/placeholder/Soon';
 import { useSchool } from '../state/store';
 
 // В опубликованном артефакте адрес страницы не принимает #/путь, поэтому там маршруты живут в памяти.
@@ -25,10 +26,8 @@ export function App() {
           <Route path="/exam/:id" element={<ExamRoute />} />
           <Route path="/cards" element={<ReviewScreen />} />
           <Route path="/notebook" element={<NotebookScreen />} />
-          <Route
-            path="/dictionary"
-            element={<Soon kr="사전" title="Словарь с морфологическим разбором" text="Поиск любой словоформы с разбором на основу и окончания: 먹었으니까 → 먹다 + -었- + -으니까. Следующий этап разработки." />}
-          />
+          <Route path="/dictionary" element={<DictionaryScreen />} />
+          <Route path="/word/:lemma" element={<WordScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       ) : (

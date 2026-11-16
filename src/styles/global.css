@@ -312,3 +312,46 @@ a{color:inherit}
 .note-item .kr{white-space:pre-line}
 .exam-ins{margin:0 0 6px;font-size:13px;font-weight:500;color:var(--ink-2)}
 .q.passage{font-family:var(--f-kr);font-size:17px;line-height:1.7;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+
+/* dictionary */
+.dict-search{position:relative;padding-block:6px 4px}
+.dict-search input{width:100%;font-size:20px;padding:12px 44px 12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--sheet);color:var(--ink)}
+.dict-search input:focus{outline:none;border-color:var(--board-2)}
+.dict-search .clear{position:absolute;right:max(26px,calc(env(safe-area-inset-right,0px) + 10px));top:50%;transform:translateY(-50%);border:0;background:none;font-size:24px;color:var(--ink-3)}
+.dict-home{display:flex;flex-direction:column;gap:8px;padding-block:10px}
+.dict-home h4{margin:8px 0 0;font-size:13px;color:var(--ink-2);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips .chip{font-size:14px;cursor:pointer}
+.wod{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--board);color:var(--chalk);border:0;border-radius:var(--r);padding:14px 16px}
+.wod .lbl{font-size:11px;color:var(--chalk-2);letter-spacing:.04em}
+.wod .big{font-size:34px;line-height:1.2}
+.dict-note{font-size:12px;color:var(--ink-3);margin:8px 0 0}
+.analyses{display:flex;flex-direction:column;gap:12px;padding-block:10px 0}
+.analysis{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.analysis h3{margin:0;font-size:24px;font-weight:400}
+.variant{display:flex;flex-direction:column;gap:6px}
+.variant+.variant{border-top:1px dashed var(--line);padding-top:10px}
+.vlabel{font-size:12px;color:var(--ink-3)}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.morph{display:flex;flex-direction:column;gap:1px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 9%,var(--sheet));min-width:0;max-width:100%;flex:1 1 120px}
+.morph .m-form{font-size:19px;color:var(--ink)}
+.morph .m-kind{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--c)}
+.morph .m-gloss{font-size:12.5px;color:var(--ink-2);line-height:1.3}
+.morph .m-lesson{align-self:flex-start;margin-top:3px;background:none;border:0;padding:0;font-size:11.5px;color:var(--cheong);text-decoration:underline}
+.m-stem{--c:var(--heuk)}.m-honor{--c:var(--hwang)}.m-tense{--c:var(--cheong)}.m-ending{--c:var(--jeok)}.m-particle{--c:var(--ok)}.m-copula{--c:var(--baek)}
+.warn{margin:0;color:var(--redpen);font-size:13.5px}
+.mnote{margin:0;font-size:13px;color:var(--ink-2)}
+.muted{margin:0;font-size:13px;color:var(--ink-3)}
+.entry-row{width:100%;text-align:left;cursor:pointer}
+.word-head{display:flex;flex-direction:column;gap:6px;padding-block:6px 4px}
+.word-head .lemma{align-self:flex-start;background:none;border:0;padding:0;font-size:46px;line-height:1.15;color:var(--ink)}
+.word-head .lemma span{font-size:16px;color:var(--ink-3);vertical-align:middle}
+.word-head .meta{display:flex;gap:12px;color:var(--ink-2);font-size:15px}
+.word-head .hanja{font-family:"Noto Serif SC","Noto Serif KR",serif;color:var(--jeok)}
+.word-head .ru{margin:0;font-size:18px}
+.cta.done{background:var(--ok);opacity:.8}
+.paradigm{gap:0;padding:4px 14px}
+.p-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border:0;background:none;text-align:left;font-size:13px;color:var(--ink-2)}
+.p-row+.p-row{border-top:1px dashed var(--line)}
+.p-row .kr{font-size:17px;color:var(--ink);text-align:right}
+.ex-kr{background:none;border:0;padding:0;text-align:left;font-size:17px;color:var(--ink)}

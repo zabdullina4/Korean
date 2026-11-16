@@ -44,6 +44,8 @@ interface Actions {
   reviewCard(id: string, grade: Grade): void;
   answerNote(id: string, correct: boolean): void;
   finishExam(examId: string, grade: number, result: Graded): void;
+  /** Добавить слова в карточки (из словаря). */
+  addWords(words: Word[]): void;
   clearPromoted(): void;
   reset(): void;
 }
@@ -151,6 +153,20 @@ export const useSchool = create<SchoolState & Actions>()(
         }),
 
       clearPromoted: () => set({ promoted: null }),
+
+      addWords: (list) =>
+        set((s) => {
+          const words = { ...s.words };
+          const cards = { ...s.cards };
+          for (const w of list) {
+            words[w.id] = w;
+            for (const dir of ['kr-ru', 'ru-kr'] as CardDir[]) {
+              const id = `${w.id}:${dir}`;
+              if (!cards[id]) cards[id] = { id, wordId: w.id, dir, fsrs: newFsrs() };
+            }
+          }
+          return { words, cards };
+        }),
 
       reset: () => set({ ...initial }),
     }),

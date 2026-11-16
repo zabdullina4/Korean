@@ -83,13 +83,13 @@ export function haeyoDistractors(verb: string): string[] {
 
 export type Form = 'past' | 'formal' | 'formalQ' | 'seyo' | 'future' | 'lkkayo' | 'want' | 'an' | 'ji';
 
-const addJong = (syl: string, jong: string) => {
+export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
   return compose(d.cho, d.jung, jong)!;
 };
 
 /** Основа для окончаний на 으: 먹 → 먹으, 가 → 가, 살 → 사(ㄹ выпадает перед ㅅ/ㅂ/ㄴ), 돕 → 도우, 듣 → 들으. */
-function stemForEu(verb: string, before: 'ㅅ' | 'ㄹ'): { base: string; vowelEnd: boolean } {
+export function stemForEu(verb: string, before: 'ㅅ' | 'ㄹ'): { base: string; vowelEnd: boolean } {
   const stem = stemOf(verb);
   const last = stem[stem.length - 1];
   const s = decompose(last)!;
@@ -184,4 +184,23 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
   }
   return [...new Set(c.filter((x) => x && x !== right))];
+}
+
+export type IrregularType = 'ㅂ' | 'ㄷ' | 'ㅅ' | 'ㅎ' | '르' | 'ㄹ' | 'ㅡ' | '하다' | null;
+
+/** Тип спряжения для подсказки в словаре. ㄹ и ㅡ — регулярные, но с выпадением. */
+export function irregularType(verb: string): IrregularType {
+  const stem = stemOf(verb);
+  const last = stem[stem.length - 1];
+  const s = decompose(last);
+  if (!s) return null;
+  if (stem.endsWith('하')) return '하다';
+  if (s.jong === 'ㅂ' && IRREGULAR_B.has(stem)) return 'ㅂ';
+  if (s.jong === 'ㄷ' && IRREGULAR_D.has(stem)) return 'ㄷ';
+  if (s.jong === 'ㅅ' && IRREGULAR_S.has(stem)) return 'ㅅ';
+  if (s.jong === 'ㅎ' && IRREGULAR_H.has(stem)) return 'ㅎ';
+  if (last === '르' && stem.length > 1 && !REGULAR_REU.has(stem)) return '르';
+  if (s.jong === 'ㄹ') return 'ㄹ';
+  if (!s.jong && s.jung === 'ㅡ') return 'ㅡ';
+  return null;
 }
