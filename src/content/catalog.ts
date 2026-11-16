@@ -17,6 +17,7 @@ import { handa, handaRules, inference, reportedOther, reportedStatement, seems }
 import { assoonas, daga, eojida, geDoeda, giEum, neunGeot } from './grade3/unit4-6';
 import { causative, deon, deoragoyo, hanja1, hanja2, passive, wongoji, writing53 } from './grade3/unit7-10';
 import { evenIf, evenThough, suddenBusy, thanksBlame, whereas, yesBut } from './grade4/unit1-3';
+import { ifOnly, supposeIf } from './grade4/unit4-6';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -35,7 +36,7 @@ const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, at
 
 const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga, passive, causative, deoragoyo, deon, hanja1, hanja2, wongoji, writing53];
 
-const G4 = [evenIf, evenThough, whereas, yesBut, suddenBusy, thanksBlame];
+const G4 = [evenIf, evenThough, whereas, yesBut, suddenBusy, thanksBlame, ifOnly, supposeIf];
 
 // Каждому уроку добавляется шаг «Новые слова» перед первым заданием на эти слова (см. vocab.ts).
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4].map(withVocab);
@@ -116,6 +117,7 @@ export const GRADES: Grade[] = [
       { grade: 4, n: 1, title: 'Уступка', titleKr: '양보', lessons: [evenIf.id, evenThough.id] },
       { grade: 4, n: 2, title: 'Противопоставление', titleKr: '대조', lessons: [whereas.id, yesBut.id] },
       { grade: 4, n: 3, title: 'Тонкие причины', titleKr: '원인', lessons: [suddenBusy.id, thanksBlame.id] },
+      { grade: 4, n: 4, title: 'Гипотеза и сожаление', titleKr: '가정과 후회', lessons: [ifOnly.id, supposeIf.id] },
     ],
   },
   { n: 5, name: '5급', ru: 'Старшая школа · 1 класс', units: [] },

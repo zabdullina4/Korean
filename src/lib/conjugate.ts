@@ -3,7 +3,7 @@
 import { compose, decompose } from './hangul';
 
 /** Нерегулярные основы (без 다). Остальные с тем же патчимом спрягаются регулярно. */
-const IRREGULAR_B = new Set(['돕', '덥', '춥', '어둡', '시끄럽', '부드럽', '더럽', '쉽', '어렵', '맵', '가깝', '귀엽', '무섭', '뜨겁', '차갑', '반갑', '즐겁', '아름답', '고맙', '가볍', '무겁', '눕', '굽']);
+const IRREGULAR_B = new Set(['돕', '덥', '춥', '어둡', '시끄럽', '부드럽', '더럽', '쉽', '어렵', '맵', '가깝', '귀엽', '무섭', '뜨겁', '차갑', '반갑', '즐겁', '아름답', '고맙', '가볍', '무겁', '눕', '굽', '미끄럽']);
 const IRREGULAR_D = new Set(['듣', '걷', '묻', '깨닫', '싣']);
 const IRREGULAR_S = new Set(['낫', '짓', '붓', '잇', '젓']);
 const IRREGULAR_H = new Set(['그렇', '이렇', '저렇', '어떻', '빨갛', '노랗', '파랗', '하얗', '까맣']);
@@ -112,7 +112,9 @@ export type Form =
   // противопоставление
   | 'banmyeonV' | 'banmyeonA' | 'pastBanmyeon' | 'debanhaeV' | 'debanhaeA' | 'gineun' | 'pastGineun'
   // тонкие причины
-  | 'barame' | 'neurago' | 'deokbun' | 'deokbunA' | 'tatPast' | 'tatA';
+  | 'barame' | 'neurago' | 'deokbun' | 'deokbunA' | 'tatPast' | 'tatA'
+  // гипотеза и сожаление
+  | 'deoramyeon' | 'lppeon' | 'ndamyeonV' | 'damyeonA' | 'pastDamyeon';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -370,6 +372,16 @@ export function conj(verb: string, form: Form): string {
     case 'deokbunA':
     case 'tatA':
       return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} ${form === 'deokbunA' ? '덕분에' : '탓에'}`;
+    case 'deoramyeon':
+      return `${pastStemOf(verb)}더라면`;
+    case 'lppeon':
+      return `${withL(verb)} 뻔했어요`;
+    case 'ndamyeonV':
+      return `${neunda(verb)}면`;
+    case 'damyeonA':
+      return `${verb}면`;
+    case 'pastDamyeon':
+      return `${pastStemOf(verb)}다면`;
   }
 }
 
@@ -725,6 +737,25 @@ export function conjDistractors(verb: string, form: Form): string[] {
       c = takesNeun(verb) ? [`${stem}은 ${n}`, `${stem}기 ${n}`] : [`${stem}는 ${n}`, `${stem}은 ${n}`, `${stem}기 ${n}`];
       break;
     }
+    case 'deoramyeon':
+      // «갔으면», «갔다면» и архаичное «갔더면» грамматичны — не берём. Ошибки: без -았/었-, орфография -드라면.
+      c = [`${stem}더라면`, `${pastStemOf(verb)}드라면`];
+      break;
+    case 'lppeon':
+      // Только -(으)ㄹ 뻔하다; 번 вместо 뻔 — орфографическая ошибка.
+      c = [`${withN(verb)} 뻔했어요`, `${withL(verb)} 번했어요`, `${stem}기 뻔했어요`];
+      break;
+    case 'ndamyeonV':
+      // Ошибки: словарная форма (가다면), неверный вариант -는다/-ㄴ다 (먹은다면, 가는다면).
+      c = [`${verb}면`, s.jong && s.jong !== 'ㄹ' ? `${stem}은다면` : `${stem}는다면`];
+      break;
+    case 'damyeonA':
+      // «있는다면» не берём: 있다 как глагол «оставаться» так и спрягается (여기 있는다면).
+      c = takesNeun(verb) ? [`${stem}은다면`, `${haeyo(verb)}면`] : [`${withN(verb)}다면`, `${stem}는다면`];
+      break;
+    case 'pastDamyeon':
+      c = [`${pastStemOf(verb)}는다면`, `${conj(verb, 'past')}면`];
+      break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.
       c = [vowel ? `${stem}으면 안 돼요` : `${stem}면 안 돼요`, `${info(verb)}면 안 돼요`, `${withNeun(verb)}면 안 돼요`];

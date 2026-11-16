@@ -366,6 +366,11 @@ const T: Template[] = [
   // ---- 4급: тонкие причины (바람에, 덕분에, 탓에 — существительные + 에, определение разбирается отдельно) ----
   { id: 'neurago', only: ['v'], build: (v) => ({ form: withC(v, '느라고'), chain: [end('-느라고', '«был занят тем, что… (и поэтому не смог)»', 'g4-u3-l1')] }) },
   { id: 'neura', only: ['v'], build: (v) => ({ form: withC(v, '느라'), chain: [end('-느라', 'сокращение от -느라고: «из-за того, что был занят…»', 'g4-u3-l1')] }) },
+  // ---- 4급: гипотеза и сожаление ----
+  { id: 'deoramyeon', build: (v) => ({ form: pastStem(v) + '더라면', chain: [pastMark(v), end('-더라면', '«если бы тогда…» — сожаление о прошлом', 'g4-u4-l1')] }) },
+  { id: 'ndamyeon', only: ['v'], build: (v) => { const f = neunda(v); return { form: f + '면', chain: [end(f.endsWith('는다') ? '-는다면' : '-ㄴ다면', '«если вдруг…» — гипотеза', 'g4-u4-l2')] }; } },
+  { id: 'damyeon', only: ['a'], build: (v) => ({ form: v + '면', chain: [end('-다면', '«если вдруг…» — гипотеза', 'g4-u4-l2')] }) },
+  { id: 'pastDamyeon', build: (v) => ({ form: pastStem(v) + '다면', chain: [pastMark(v), end('-다면', '«если бы (уже)…»', 'g4-u4-l2')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },

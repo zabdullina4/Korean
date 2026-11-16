@@ -88,3 +88,29 @@ describe('формы 4급: тонкие причины', () => {
     }
   });
 });
+
+// 4급, юнит 4 — гипотеза и сожаление.
+const table4: [string, Form, string][] = [
+  ['가다', 'deoramyeon', '갔더라면'], ['먹다', 'deoramyeon', '먹었더라면'], ['조심하다', 'deoramyeon', '조심했더라면'], ['듣다', 'deoramyeon', '들었더라면'], ['알다', 'deoramyeon', '알았더라면'],
+  ['넘어지다', 'lppeon', '넘어질 뻔했어요'], ['늦다', 'lppeon', '늦을 뻔했어요'], ['울다', 'lppeon', '울 뻔했어요'], ['잊어버리다', 'lppeon', '잊어버릴 뻔했어요'], ['죽다', 'lppeon', '죽을 뻔했어요'],
+  ['가다', 'ndamyeonV', '간다면'], ['먹다', 'ndamyeonV', '먹는다면'], ['살다', 'ndamyeonV', '산다면'], ['당첨되다', 'ndamyeonV', '당첨된다면'], ['듣다', 'ndamyeonV', '듣는다면'],
+  ['비싸다', 'damyeonA', '비싸다면'], ['춥다', 'damyeonA', '춥다면'], ['있다', 'damyeonA', '있다면'], ['없다', 'damyeonA', '없다면'],
+  ['알다', 'pastDamyeon', '알았다면'], ['오다', 'pastDamyeon', '왔다면'], ['하다', 'pastDamyeon', '했다면'],
+];
+
+describe('формы 4급: гипотеза и сожаление', () => {
+  it.each(table4)('%s · %s → %s', (v, f, want) => {
+    expect(conj(v, f)).toBe(want);
+    const d = conjDistractors(v, f);
+    expect(d.length).toBeGreaterThanOrEqual(2);
+    expect(d).not.toContain(want);
+  });
+
+  it('ловушки не совпадают с верными условными формами', () => {
+    for (const [v, f] of table4) {
+      const p = conj(v, 'past').slice(0, -2);
+      const ok = new Set([conj(v, 'deoramyeon'), conj(v, 'lppeon'), conj(v, f === 'damyeonA' ? 'damyeonA' : 'ndamyeonV'), conj(v, 'pastDamyeon'), `${p}으면`, conj(v, 'myeon')]);
+      for (const d of conjDistractors(v, f)) expect(ok.has(d), `${v} ${f}: ${d}`).toBe(false);
+    }
+  });
+});

@@ -90,6 +90,15 @@ describe('морфологический разбор', () => {
     expect(forms('먹느라')).toContain('먹다: 먹다 + -느라');
     expect(forms('바람에')).toContain('바람: 바람 + 에');
     expect(forms('탓에')).toContain('탓: 탓 + 에');
+    // 4급: гипотеза и сожаление
+    expect(forms('알았더라면')).toContain('알다: 알다 + -았- + -더라면');
+    expect(forms('뻔했어요')).toContain('뻔하다: 뻔하다 + -였- + -어요');
+    expect(forms('넘어질')).toContain('넘어지다: 넘어지다 + -ㄹ');
+    expect(forms('당첨된다면')).toContain('당첨되다: 당첨되다 + -ㄴ다면');
+    expect(forms('먹는다면')).toContain('먹다: 먹다 + -는다면');
+    expect(forms('비싸다면')).toContain('비싸다: 비싸다 + -다면');
+    expect(forms('있었다면')).toContain('있다: 있다 + -었- + -다면');
+    expect(forms('미끄러워서')).toContain('미끄럽다: 미끄럽다 + -어서');
   });
 
   it('нерегулярные и неоднозначные формы', () => {
