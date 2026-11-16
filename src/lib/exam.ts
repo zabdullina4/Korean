@@ -37,11 +37,12 @@ export interface Graded {
 }
 
 /**
- * Автооценка письма по трём равным частям: объём, стиль 한다체, ключевые данные из условия.
+ * Автооценка письма по равным частям: объём, стиль 한다체, ключевые данные из условия,
+ * а у эссе (`item.structure`) ещё и строение — абзацы и письменные связки.
  * Содержание и связность автоматически не оцениваются — для этого ученик сверяется с образцом.
  */
 export function gradeWriting(item: WriteItem, text: string, max: number): WritingScore {
-  const part = max / 3;
+  const part = max / (item.structure ? 4 : 3);
   const notes: string[] = [];
   const n = topikLength(text.trim());
   let lengthPts = 0;
@@ -54,12 +55,25 @@ export function gradeWriting(item: WriteItem, text: string, max: number): Writin
   const stylePts = !n ? 0 : issues.length === 0 ? part : issues.length === 1 ? part / 2 : 0;
   for (const i of issues) notes.push(`${i.text}: ${i.hint}`);
   const found = item.keywords.filter((alts) => alts.some((k) => text.includes(k))).length;
-  const keyPts = item.keywords.length ? (found / item.keywords.length) * part : part;
-  if (found < item.keywords.length) {
+  const keyPts = !n ? 0 : item.keywords.length ? (found / item.keywords.length) * part : part;
+  if (n && found < item.keywords.length) {
     const missing = item.keywords.filter((alts) => !alts.some((k) => text.includes(k))).map((a) => a[0]);
     notes.push(`Не хватает данных из условия: ${missing.join(', ')}.`);
   }
-  return { item, text, earned: Math.round(lengthPts + stylePts + keyPts), max, notes };
+  let structPts = 0;
+  if (item.structure && n) {
+    const { paragraphs, connectives, minConnectives } = item.structure;
+    const paras = text.split(/\n+/).filter((p) => p.trim()).length;
+    structPts += paras >= paragraphs ? part / 2 : paras >= 2 ? part / 4 : 0;
+    if (paras < paragraphs) notes.push(`Абзацев: ${paras}, нужно ${paragraphs} — вступление, основная часть, заключение (новый абзац — с новой строки).`);
+    const used = connectives.filter((c) => text.includes(c));
+    structPts += Math.min(1, used.length / minConnectives) * (part / 2);
+    if (used.length < minConnectives) notes.push(`Письменных связок: ${used.length}, нужно хотя бы ${minConnectives} (например: ${connectives.slice(0, 6).join(', ')}).`);
+  }
+  // Короткий ответ не должен набирать баллы «галочками»: стиль, данные и строение
+  // засчитываются пропорционально выполненному объёму (72 знака из 600 — около 12%).
+  const cover = Math.min(1, n / item.min);
+  return { item, text, earned: Math.round(lengthPts + cover * (stylePts + keyPts + structPts)), max, notes };
 }
 
 export function seedFor(examId: string, attemptNo: number): number {
@@ -107,7 +121,8 @@ export function grade(exam: ExamDef, seed: number, sections: ExamSection[], answ
     total = exam.scale;
   }
   const enough = total > 0 && correct / total >= exam.pass;
-  const writingShort = exam.minWriting !== undefined && writing.some((w) => w.earned < w.max * exam.minWriting!);
+  // Флаг ставится только при достаточном итоге — иначе причина провала просто в баллах.
+  const writingShort = enough && exam.minWriting !== undefined && writing.some((w) => w.earned < w.max * exam.minWriting!);
   const attempt: ExamAttempt = {
     at: now.toISOString(),
     seed,

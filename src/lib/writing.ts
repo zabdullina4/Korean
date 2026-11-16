@@ -14,7 +14,8 @@ export function styleIssues(text: string): WritingIssue[] {
   for (const s of sentences) {
     const body = s.replace(/[.?!\s]+$/, '');
     if (/요$/.test(body)) out.push({ kind: 'style', text: s, hint: 'Окончание -요 — разговорный стиль. В письменном задании нужен 한다체: -ㄴ/는다, -다.' });
-    else if (/니다$/.test(body)) out.push({ kind: 'style', text: s, hint: 'Окончание -ㅂ/습니다 — стиль докладов. В заданиях 53–54 пишут в 한다체.' });
+    // «아니다» — обычный 한다체, хотя тоже кончается на «니다».
+    else if (/니다$/.test(body) && !/아니다$/.test(body)) out.push({ kind: 'style', text: s, hint: 'Окончание -ㅂ/습니다 — стиль докладов. В заданиях 53–54 пишут в 한다체.' });
     else if (/니까$/.test(body)) out.push({ kind: 'style', text: s, hint: 'Вопрос -ㅂ/습니까 — разговорный стиль.' });
   }
   if (/(^|\s)(저는|제가|저도|저의)/.test(text)) out.push({ kind: 'pronoun', text: '저는 / 제가', hint: 'В 한다체 «я» — 나는 / 내가 (или лучше вообще без «я» в эссе).' });

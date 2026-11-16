@@ -70,7 +70,7 @@ export function ExamScreen() {
                 ? `Поздравляем! Вы переведены в ${GRADES[exam.grade + 1].name}.`
                 : 'Экзамен сдан.'
               : attempt.writingShort
-                ? `Баллов по сумме хватает, но письменное задание обязательно: нужно не меньше ${Math.round((exam.minWriting ?? 0) * 100)}% его баллов. ${attempt.wrongNoteIds.length ? 'Отработайте ошибки в 보충수업 — после этого откроется пересдача.' : 'Пересдача доступна сразу.'}`
+                ? `Баллов по сумме хватает, но письменные задания обязательны: за каждое нужно не меньше ${Math.round((exam.minWriting ?? 0) * 100)}% его баллов. ${attempt.wrongNoteIds.length ? 'Отработайте ошибки в 보충수업 — после этого откроется пересдача.' : 'Пересдача доступна сразу.'}`
                 : `Для зачёта нужно ${Math.round(exam.pass * 100)}%${exam.scale ? ` (${Math.round(exam.pass * exam.scale)} из ${exam.scale})` : ''}. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
           </p>
           {exam.scale === 300 && (
@@ -106,7 +106,9 @@ export function ExamScreen() {
             </div>
             <div className="sheetbox" style={{ marginTop: 0, backgroundImage: 'none' }}>
               <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 8px' }}>
-                Автоматически оцениваются объём, стиль 한다체 и данные из условия — по трети баллов. Содержание и связность сравните с образцом сами.
+                {w.item.structure
+                  ? 'Автоматически оцениваются объём, стиль 한다체, ответы на вопросы условия и строение (абзацы и связки) — по четверти баллов. Содержание и логику сравните с образцом сами.'
+                  : 'Автоматически оцениваются объём, стиль 한다체 и данные из условия — по трети баллов. Содержание и связность сравните с образцом сами.'}
               </p>
               {w.notes.length > 0 && (
                 <ul className="w-issues" style={{ marginBottom: 10 }}>
@@ -401,7 +403,20 @@ function WriteQuestion({ item, value, onChange }: { item: WriteItem; value: stri
       <label htmlFor="exam-w" className="w-label">
         Ответ <span className={n < item.min || n > item.max ? 'w-n bad' : 'w-n'}>{n} / {item.min}–{item.max} знаков</span>
       </label>
-      <textarea id="exam-w" lang="ko" className="w-area kr" rows={8} value={value} onChange={(e) => onChange(e.target.value)} placeholder="한다체로 쓰십시오." />
+      <textarea
+        id="exam-w"
+        lang="ko"
+        className="w-area kr"
+        rows={item.structure ? 16 : 8}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={item.structure ? '한다체로 쓰십시오. 새 문단은 새 줄에서 시작하십시오.' : '한다체로 쓰십시오.'}
+      />
+      {item.structure && (
+        <p className="hint" style={{ textAlign: 'left' }}>
+          Эссе: {item.structure.paragraphs} абзаца (каждый с новой строки) и письменные связки — {item.structure.connectives.slice(0, 6).join(', ')}…
+        </p>
+      )}
       {issues.length > 0 && (
         <ul className="w-issues">
           {issues.map((i, k) => (

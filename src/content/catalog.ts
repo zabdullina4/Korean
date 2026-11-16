@@ -24,6 +24,7 @@ import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
 import { topik2Exam } from './exams/topik2';
 import { topik3Exam } from './exams/topik3';
+import { topik4Exam } from './exams/topik4';
 import type { Grade, Lesson } from './types';
 import { withVocab } from './vocab';
 
@@ -46,7 +47,7 @@ const G4 = [
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4].map(withVocab);
 
 /** Переводной экзамен каждого класса. */
-export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam, 3: topik3Exam };
+export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam, 3: topik3Exam, 4: topik4Exam };
 export const EXAM_BY_ID: Record<string, ExamDef> = Object.fromEntries(Object.values(EXAMS).map((e) => [e.id, e]));
 
 export const LESSON_BY_ID: Record<string, Lesson> = Object.fromEntries(LESSONS.map((l) => [l.id, l]));

@@ -18,6 +18,8 @@ export interface WriteItem {
   model: string;
   /** Ключевые данные из условия: в каждой группе достаточно одного варианта написания. */
   keywords: string[][];
+  /** Эссе (задание 54): сколько нужно абзацев и какие письменные связки засчитываются. */
+  structure?: { paragraphs: number; connectives: string[]; minConnectives: number };
 }
 
 /** points — вес задания в разделе (по умолчанию 1). */
