@@ -31,6 +31,10 @@ describe('морфологический разбор', () => {
     expect(forms('추운')).toContain('춥다: 춥다 + -은');
     expect(forms('사는')).toContain('살다: 살다 + -는');
     expect(forms('읽을')).toContain('읽다: 읽다 + -을');
+    expect(forms('어렸을')).toContain('어리다: 어리다 + -었- + -을');
+    expect(forms('걸으면서')).toContain('걷다: 걷다 + -으면서');
+    expect(forms('전에')).toContain('전: 전 + 에');
+    expect(forms('동안')[0]).toBe('동안: 동안');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

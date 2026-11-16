@@ -86,7 +86,9 @@ export type Form =
   // 2급
   | 'tryPast' | 'trySeyo' | 'experience' | 'can' | 'cannot' | 'must' | 'progressive' | 'jiman' | 'myeon' | 'reo' | 'ryeogo' | 'giro'
   // определительные формы: глагол сейчас, прилагательное, глагол в прошлом, будущее
-  | 'attrV' | 'attrA' | 'attrPast' | 'attrFut';
+  | 'attrV' | 'attrA' | 'attrPast' | 'attrFut'
+  // время: когда, когда (в прошлом), перед, после, одновременно, пока
+  | 'ttae' | 'pastTtae' | 'jeone' | 'hue' | 'myeonseo' | 'dongan';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -200,7 +202,24 @@ export function conj(verb: string, form: Form): string {
       return withN(verb);
     case 'attrFut':
       return withL(verb);
+    case 'ttae':
+      return `${withL(verb)} 때`;
+    case 'pastTtae':
+      return `${pastStemOf(verb)}을 때`;
+    case 'jeone':
+      return `${stem}기 전에`;
+    case 'hue':
+      return `${withN(verb)} 후에`;
+    case 'myeonseo':
+      return `${euKeepL(verb)}면서`;
+    case 'dongan':
+      return `${withNeun(verb)} 동안`;
   }
+}
+
+/** Основа прошедшего времени: 가다 → 갔, 먹다 → 먹었. */
+function pastStemOf(verb: string): string {
+  return conj(verb, 'past').slice(0, -2);
 }
 
 /** Правдоподобные ошибки для каждой формы (не совпадают с верной). */
@@ -287,6 +306,28 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'attrFut':
       c = [withN(verb), withNeun(verb), vowel ? `${stem}을` : `${stem}를`];
+      break;
+    case 'ttae':
+      // Не используем -(으)ㄴ 때: у прилагательных «추운 때» («холодная пора») допустимо.
+      c = [vowel ? `${stem}을 때` : `${stem} 때`, `${stem}기 때`, s.jong === 'ㄹ' ? `${stem}는 때` : `${withNeun(verb)} 때`];
+      break;
+    case 'pastTtae': {
+      // Неверная гармония (어리았을, 오었을); несокращённое 어리었을 допустимо, поэтому его не берём.
+      const raw = `${stem}${isBright(s.jung) ? '었' : '았'}을 때`;
+      c = [`${pastStemOf(verb)}는 때`, raw, `${haeyo(verb)} 때`];
+      break;
+    }
+    case 'jeone':
+      c = [`${withNeun(verb)} 전에`, `${withN(verb)} 전에`, `${stem}기 후에`];
+      break;
+    case 'hue':
+      c = [`${stem}기 후에`, `${withNeun(verb)} 후에`, `${withL(verb)} 후에`];
+      break;
+    case 'myeonseo':
+      c = [vowel ? `${stem}으면서` : `${stem}면서`, `${info(verb)}면서`];
+      break;
+    case 'dongan':
+      c = [`${stem}기 동안`, `${withL(verb)} 동안`];
       break;
   }
   return [...new Set(c.filter((x) => x && x !== right))];

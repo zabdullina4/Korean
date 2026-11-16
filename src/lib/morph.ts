@@ -157,7 +157,7 @@ const T: Template[] = [
     id: 'attrFuture',
     build: (v) => {
       const r = withJamo(v, 'ㄹ', '');
-      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ'), 'определительная форма будущего: 할 일 «дела»; с 거예요 — «буду», с 때 — «когда»', 'g2-u5-l3')] };
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ'), 'определительная форма будущего: 할 일 «дела»; с 때 — «когда» (юнит 6), с 거예요 — «буду»', 'g2-u5-l3')] };
     },
   },
   {
@@ -197,7 +197,7 @@ const T: Template[] = [
   { id: 'jiman', build: (v) => ({ form: v.slice(0, -1) + '지만', chain: [end('-지만', '«но, однако»', 'g2-u3-l2')] }) },
   { id: 'neyo', build: (v) => ({ form: withC(v, '네요'), chain: [end('-네요', 'удивление или открытие: «оказывается…, надо же»')] }) },
   { id: 'giro', only: ['v'], build: (v) => ({ form: v.slice(0, -1) + '기로', chain: [end('-기로', 'с 하다 — «решить, договориться» (만나기로 했어요)', 'g2-u4-l2')] }) },
-  { id: 'gi', build: (v) => ({ form: v.slice(0, -1) + '기', chain: [end('-기', 'отглагольное существительное: «-ние» (읽기 — чтение)')] }) },
+  { id: 'gi', build: (v) => ({ form: v.slice(0, -1) + '기', chain: [end('-기', 'отглагольное существительное: «-ние» (읽기 — чтение); с 전에 — «перед тем как»', 'g2-u6-l2')] }) },
   { id: 'aseo', build: (v) => ({ form: haeyo(v).slice(0, -1) + '서', chain: [end(`-${harmony(v)}서`, '«потому что» (причина-факт) или «и затем» (последовательность)', L.reason)] }) },
   { id: 'eodo', build: (v) => ({ form: haeyo(v).slice(0, -1) + '도', chain: [end(`-${harmony(v)}도`, '«даже если, хотя»')] }) },
   { id: 'eoya', build: (v) => ({ form: haeyo(v).slice(0, -1) + '야', chain: [end(`-${harmony(v)}야`, 'с 하다 / 되다 — «нужно, должен»', 'g2-u2-l2')] }) },
@@ -231,6 +231,14 @@ const T: Template[] = [
       return { form: r.form, chain: [end(eu(r.eu, '려고'), '«чтобы, собираясь»; с 하다 — «собираюсь»', 'g2-u4-l2')] };
     },
   },
+  {
+    id: 'myeonseo',
+    build: (v) => {
+      const r = withEu(v, '면서');
+      return { form: r.form, chain: [end(eu(r.eu, '면서'), '«делая одно, делаю другое» — одновременно, один и тот же человек', 'g2-u6-l3')] };
+    },
+  },
+  { id: 'pastAttrL', build: (v) => ({ form: pastStem(v) + '을', chain: [pastMark(v), end('-을', 'с 때 — «когда (в прошлом)»: 어렸을 때, 왔을 때', 'g2-u6-l1')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },
   { id: 'pastNikka', build: (v) => ({ form: pastStem(v) + '으니까', chain: [pastMark(v), end('-으니까', '«так как, раз уж»', L.reason)] }) },
