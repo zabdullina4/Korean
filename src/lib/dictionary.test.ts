@@ -71,6 +71,15 @@ describe('морфологический разбор', () => {
     expect(forms('갔던')).toContain('가다: 가다 + -았- + -던');
     expect(forms('열렸어요')).toContain('열리다: 열리다 + -었- + -어요');
     expect(forms('보여요')).toContain('보이다: 보이다 + -어요');
+    // 4급: уступка
+    expect(forms('늦더라도')).toContain('늦다: 늦다 + -더라도');
+    expect(forms('실패할지라도')).toContain('실패하다: 실패하다 + -ㄹ지라도');
+    expect(forms('먹을지라도')).toContain('먹다: 먹다 + -을지라도');
+    expect(forms('먹는데도')).toContain('먹다: 먹다 + -는데도');
+    expect(forms('추운데도')).toContain('춥다: 춥다 + -은데도');
+    expect(forms('맛있는데도')).toContain('맛있다: 맛있다 + -는데도');
+    expect(forms('공부했는데도')).toContain('공부하다: 공부하다 + -였- + -는데도');
+    expect(forms('힘들어도')).toContain('힘들다: 힘들다 + -어도');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

@@ -96,7 +96,8 @@ export function buildDay(s: Snapshot, now = new Date()): Slot[] {
         id: `les${i}`,
         per,
         time: i ? '09:50' : '09:00',
-        title: pending.length === 0 && lessons.length ? 'Класс пройден' : 'Новые уроки готовятся',
+        // Класс без экзамена (4급 пока наполняется) — ещё не «пройден».
+        title: pending.length === 0 && lessons.length && examDef ? 'Класс пройден' : 'Новые уроки готовятся',
         detail: 'Скоро в приложении',
         skill: 'read',
         minutes: 15,

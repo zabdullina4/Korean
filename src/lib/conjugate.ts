@@ -106,7 +106,9 @@ export type Form =
   // изменения, номинализация, время 2
   | 'gedwae' | 'eojida' | 'neungeot' | 'eum' | 'giwihae' | 'jamaja' | 'daga' | 'pastDaga'
   // каузатив -게 하다, воспоминание -더-
-  | 'gehada' | 'deoragoyo' | 'pastDeoragoyo' | 'deon' | 'pastDeon';
+  | 'gehada' | 'deoragoyo' | 'pastDeoragoyo' | 'deon' | 'pastDeon'
+  // 4급: уступка
+  | 'ado' | 'deorado' | 'ljirado' | 'neundedoV' | 'neundedoA' | 'pastNeundedo';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -328,6 +330,18 @@ export function conj(verb: string, form: Form): string {
       return `${stem}던`;
     case 'pastDeon':
       return `${pastStemOf(verb)}던`;
+    case 'ado':
+      return `${info(verb)}도`;
+    case 'deorado':
+      return `${stem}더라도`;
+    case 'ljirado':
+      return `${withL(verb)}지라도`;
+    case 'neundedoV':
+      return `${withNeun(verb)}데도`;
+    case 'neundedoA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)}데도`;
+    case 'pastNeundedo':
+      return `${pastStemOf(verb)}는데도`;
   }
 }
 
@@ -614,6 +628,29 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'pastDeon':
       c = [`${conj(verb, 'past')}던`, `${pastStemOf(verb)}는`];
+      break;
+    case 'ado':
+      // Прошедшее (갔어도) и -(으)ㄴ/는데도 — тоже уступка и грамматичны, поэтому не берём их.
+      c = [`${stem}${isBright(s.jung) ? '어' : '아'}도`, `${stem}도`, `${haeyo(verb)}도`];
+      break;
+    case 'deorado':
+      // 갔더라도 грамматично, ловушки — орфография (드라도) и лишняя гласная -아/어.
+      c = [`${stem}드라도`, `${info(verb)}더라도`];
+      break;
+    case 'ljirado':
+      // Пишется 지, хотя слышится [찌]: 갈찌라도 — частая ошибка.
+      c = [`${withL(verb)}찌라도`, vowel ? `${stem}을지라도` : s.jong === 'ㄹ' ? `${stem}을지라도` : `${stem}지라도`, `${withN(verb)}지라도`];
+      break;
+    case 'neundedoV':
+      // Ловушки — определение прилагательного (먹은데도) и несуществующие 자은데도, 살는데도, 먹어는데도.
+      // «잔데도» не берём: слитно читается как «잔 데도» («и место, где спал»).
+      c = vowel ? [`${stem}은데도`, `${withL(verb)}는데도`] : s.jong === 'ㄹ' ? [`${stem}는데도`, `${stem}은데도`] : [`${stem}은데도`, `${info(verb)}는데도`];
+      break;
+    case 'neundedoA':
+      c = takesNeun(verb) ? [`${stem}은데도`, `${info(verb)}는데도`] : [`${stem}는데도`, vowel ? `${stem}은데도` : `${stem}은데도`, `${info(verb)}는데도`];
+      break;
+    case 'pastNeundedo':
+      c = [`${pastStemOf(verb)}은데도`, `${pastStemOf(verb)}데도`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.
