@@ -26,6 +26,11 @@ describe('морфологический разбор', () => {
     expect(forms('적이')).toContain('적: 적 + 이');
     expect(forms('먹어야')).toContain('먹다: 먹다 + -어야');
     expect(forms('있으면')).toContain('있다: 있다 + -으면');
+    expect(forms('맛있는')).toContain('맛있다: 맛있다 + -는');
+    expect(forms('맛있은')).not.toContain('맛있다: 맛있다 + -은');
+    expect(forms('추운')).toContain('춥다: 춥다 + -은');
+    expect(forms('사는')).toContain('살다: 살다 + -는');
+    expect(forms('읽을')).toContain('읽다: 읽다 + -을');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

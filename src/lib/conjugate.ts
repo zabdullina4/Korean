@@ -84,7 +84,9 @@ export function haeyoDistractors(verb: string): string[] {
 export type Form =
   | 'past' | 'formal' | 'formalQ' | 'seyo' | 'future' | 'lkkayo' | 'want' | 'an' | 'ji'
   // 2급
-  | 'tryPast' | 'trySeyo' | 'experience' | 'can' | 'cannot' | 'must' | 'progressive' | 'jiman' | 'myeon' | 'reo' | 'ryeogo' | 'giro';
+  | 'tryPast' | 'trySeyo' | 'experience' | 'can' | 'cannot' | 'must' | 'progressive' | 'jiman' | 'myeon' | 'reo' | 'ryeogo' | 'giro'
+  // определительные формы: глагол сейчас, прилагательное, глагол в прошлом, будущее
+  | 'attrV' | 'attrA' | 'attrPast' | 'attrFut';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -122,6 +124,16 @@ function withN(verb: string): string {
 
 /** Основа для -(으)면, -(으)러, -(으)려고: основа на ㄹ сохраняет ㄹ и не берёт 으. */
 const euKeepL = (verb: string) => stemForEu(verb, 'ㄹ').base;
+
+/** -는: основа на ㄹ теряет ㄹ (살다 → 사는). */
+function withNeun(verb: string): string {
+  const stem = stemOf(verb);
+  const s = decompose(stem[stem.length - 1])!;
+  return (s.jong === 'ㄹ' ? replaceLast(stem, compose(s.cho, s.jung)!) : stem) + '는';
+}
+
+/** 있다, 없다 и слова на них (맛있다, 재미없다) в определении ведут себя как глаголы: 맛있는. */
+export const takesNeun = (verb: string) => /[있없]다$/.test(verb);
 const info = (verb: string) => haeyo(verb).slice(0, -1);
 
 export function conj(verb: string, form: Form): string {
@@ -180,6 +192,14 @@ export function conj(verb: string, form: Form): string {
       return `${euKeepL(verb)}려고 해요`;
     case 'giro':
       return `${stem}기로 했어요`;
+    case 'attrV':
+      return withNeun(verb);
+    case 'attrA':
+      return takesNeun(verb) ? withNeun(verb) : withN(verb);
+    case 'attrPast':
+      return withN(verb);
+    case 'attrFut':
+      return withL(verb);
   }
 }
 
@@ -254,6 +274,19 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'giro':
       c = [`${stem}기를 했어요`, `${stem}고로 했어요`];
+      break;
+    case 'attrV':
+      c = [withN(verb), withL(verb), s.jong === 'ㄹ' ? `${stem}는` : `${stem}${vowel ? '은' : '는'}`];
+      break;
+    case 'attrA':
+      // Ловушки: -는 у прилагательного, «сырое» -은 без учёта нерегулярности и сказуемое вместо определения (좋아요 날).
+      c = takesNeun(verb) ? [`${stem}은`, haeyo(verb)] : [`${stem}는`, `${stem}은`, haeyo(verb)];
+      break;
+    case 'attrPast':
+      c = [withNeun(verb), withL(verb), vowel ? `${stem}은` : `${stem}는`];
+      break;
+    case 'attrFut':
+      c = [withN(verb), withNeun(verb), vowel ? `${stem}을` : `${stem}를`];
       break;
   }
   return [...new Set(c.filter((x) => x && x !== right))];

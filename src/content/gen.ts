@@ -57,7 +57,23 @@ const FORM_RULE: Record<Form, (right: string, verb: string) => string> = {
   reo: (r) => `После гласной и ㄹ -러, после согласной -으러: [[kr|${r}]].`,
   ryeogo: (r) => `После гласной и ㄹ -려고, после согласной -으려고: [[kr|${r}]].`,
   giro: (r) => `Основа + -기로 하다: [[kr|${r}]] — «решили».`,
+  attrV: (r) => `Глагол в настоящем: основа + -는 (ㄹ выпадает): [[kr|${r}]].`,
+  attrA: (r, v) =>
+    /[있없]다$/.test(v)
+      ? `Слова на 있다/없다 ведут себя как глаголы: -는 → [[kr|${r}]].`
+      : `Прилагательное: после гласной -ㄴ, после согласной -은: [[kr|${r}]].`,
+  attrPast: (r) => `Глагол в прошлом: после гласной -ㄴ, после согласной -은: [[kr|${r}]].`,
+  attrFut: (r) => `Будущее и предположение: после гласной -ㄹ, после согласной -을: [[kr|${r}]].`,
 };
+
+/** Определение + существительное: «가다 → ___ 사람» → «가는 사람». */
+export function attrItem(verb: string, form: 'attrV' | 'attrA' | 'attrPast' | 'attrFut', noun: string, ru: string): ChoiceItem {
+  const right = `${conj(verb, form)} ${noun}`;
+  const wrong = conjDistractors(verb, form)
+    .slice(0, 2)
+    .map((d) => `${d} ${noun}`);
+  return { prompt: `${verb} + ${noun}`, ru, ...ordered(right, wrong, `${form}:${verb}:${noun}`), why: FORM_RULE[form](conj(verb, form), verb), errorType: 'ending' };
+}
 
 export function formItem(verb: string, form: Form, ru: string): ChoiceItem {
   const right = conj(verb, form);

@@ -55,12 +55,18 @@ function harmony(verb: string): '아' | '어' | '여' {
   return j === 'ㅏ' || j === 'ㅘ' || j === 'ㅑ' ? '아' : '어';
 }
 
+/** Вариант окончания с 으 выбирается по основе: согласная (кроме ㄹ) → -으니까, -은; у нерегулярных тоже (춥 + -은 → 추운). */
+function euEnding(stem: string): boolean {
+  const j = decompose(lastSyl(stem))?.jong;
+  return !!j && j !== 'ㄹ';
+}
+
 /** Основа + окончание на 으 (니까, 면, 세요, 러, 려고). Перед ㄴ/ㅅ основа на ㄹ теряет ㄹ. */
 function withEu(verb: string, ending: string): { form: string; eu: boolean } {
   const mode = /^[니세시십]/.test(ending) ? 'ㅅ' : 'ㄹ';
   const stem = stemOf(verb);
   const { base } = stemForEu(verb, mode);
-  return { form: base + ending, eu: base.endsWith('으') && !stem.endsWith('으') };
+  return { form: base + ending, eu: euEnding(stem) };
 }
 
 /** Основа + окончание-согласная, которая садится в патчим: -(으)ㄹ, -(으)ㄴ, -(으)ㅂ시다. */
@@ -69,7 +75,7 @@ function withJamo(verb: string, jamo: 'ㄹ' | 'ㄴ' | 'ㅂ', rest: string): { fo
   const s = decompose(lastSyl(stem))!;
   if (s.jong === 'ㄹ' && jamo === 'ㄹ') return { form: stem + rest, eu: false };
   const { base } = stemForEu(verb, jamo === 'ㄹ' ? 'ㄹ' : 'ㅅ');
-  return { form: base.slice(0, -1) + addJong(lastSyl(base), jamo) + rest, eu: base.endsWith('으') && !stem.endsWith('으') };
+  return { form: base.slice(0, -1) + addJong(lastSyl(base), jamo) + rest, eu: euEnding(stem) };
 }
 
 /** Основа + окончание на согласную (고, 지, 지만, 네요, 는, 기). Основа на ㄹ теряет ㄹ перед ㄴ. */
@@ -151,7 +157,7 @@ const T: Template[] = [
     id: 'attrFuture',
     build: (v) => {
       const r = withJamo(v, 'ㄹ', '');
-      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ'), 'определительная форма будущего; с 거예요 — «буду», с 때 — «когда»', L.future)] };
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ'), 'определительная форма будущего: 할 일 «дела»; с 거예요 — «буду», с 때 — «когда»', 'g2-u5-l3')] };
     },
   },
   {
@@ -175,11 +181,15 @@ const T: Template[] = [
       const r = withJamo(v, 'ㄴ', '');
       return {
         form: r.form,
-        chain: [end(euJ(r.eu, 'ㄴ'), pos === 'v' ? 'определительная форма прошедшего: «который сделал»' : 'определительная форма прилагательного: «какой» (좋은 사람 — хороший человек)')],
+        chain: [
+          pos === 'v'
+            ? end(euJ(r.eu, 'ㄴ'), 'определительная форма прошедшего: «который сделал»', 'g2-u5-l3')
+            : end(euJ(r.eu, 'ㄴ'), 'определительная форма прилагательного: «какой» (좋은 사람 — хороший человек)', 'g2-u5-l2'),
+        ],
       };
     },
   },
-  { id: 'attrPresent', only: ['v', 'aux'], build: (v) => ({ form: withC(v, '는'), chain: [end('-는', 'определительная форма настоящего: «который делает»')] }) },
+  { id: 'attrPresent', only: ['v', 'aux'], build: (v) => ({ form: withC(v, '는'), chain: [end('-는', 'определительная форма настоящего: «который делает»', 'g2-u5-l1')] }) },
   { id: 'go', build: (v) => ({ form: v.slice(0, -1) + '고', chain: [end('-고', '«и», «и затем»; перед 싶다 — «хотеть», перед 있다 — «сейчас делаю»', L.want)] }) },
   { id: 'ji', build: (v) => ({ form: v.slice(0, -1) + '지', chain: [end('-지', 'перед 않다 / 못하다 / 마세요 — отрицание; в конце фразы — «ведь…»', L.neg)] }) },
   { id: 'jiyo', build: (v) => ({ form: v.slice(0, -1) + '지요', chain: [end('-지요 (-죠)', '«ведь…, не так ли?» — ожидание согласия')] }) },
@@ -253,7 +263,10 @@ export function buildVerbIndex(entries: DictEntry[]): Map<string, Analysis[]> {
     if (!VERBAL.includes(e.pos) || !e.lemma.endsWith('다') || e.lemma.includes(' ')) continue;
     const it = irregularType(e.lemma);
     for (const t of T) {
-      if (t.only && !t.only.includes(e.pos)) continue;
+      // Прилагательные на 있다/없다 (맛있다) образуют определение через -는, как глаголы.
+      const allowed = t.only && t.id === 'attrPresent' && /[있없]다$/.test(e.lemma) ? true : !t.only || t.only.includes(e.pos);
+      if (!allowed) continue;
+      if (t.id === 'attrPast' && e.pos === 'a' && /[있없]다$/.test(e.lemma)) continue;
       let r: ReturnType<Template['build']>;
       try {
         r = t.build(e.lemma, e.pos);

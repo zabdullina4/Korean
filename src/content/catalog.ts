@@ -9,6 +9,7 @@ import { nativeNumbers, negationAn, negationMot, pastTense, telling, weekend } f
 import { announcement, formal, future, lkkayo, seyo, want } from './grade1/unit8-10';
 import { reasonAseoNiga } from './grade2/reason';
 import { butIf, canDo, experience, mustDo, plans, progressive, reo, tryIt } from './grade2/unit1-4';
+import { attrAdj, attrTense, attrVerb } from './grade2/unit5';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -20,7 +21,7 @@ const G1 = [
   ...[nativeNumbers, telling, pastTense, weekend, negationAn, negationMot, future, want, seyo, lkkayo, formal, announcement],
 ];
 
-const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, reasonAseoNiga];
+const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, reasonAseoNiga];
 
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2];
 
@@ -67,7 +68,7 @@ export const GRADES: Grade[] = [
       { grade: 2, n: 2, title: 'Возможность и обязанность', titleKr: '능력과 의무', lessons: [canDo.id, mustDo.id] },
       { grade: 2, n: 3, title: 'Связки', titleKr: '연결', lessons: [progressive.id, butIf.id] },
       { grade: 2, n: 4, title: 'Цели и намерения', titleKr: '목적과 계획', lessons: [reo.id, plans.id] },
-      { grade: 2, n: 5, title: 'Описание: определительные формы', titleKr: '묘사', lessons: [] },
+      { grade: 2, n: 5, title: 'Описание: определительные формы', titleKr: '묘사', lessons: [attrVerb.id, attrAdj.id, attrTense.id] },
       { grade: 2, n: 6, title: 'Время: когда, до, после', titleKr: '시간', lessons: [] },
       { grade: 2, n: 7, title: 'Здоровье и причины', titleKr: '건강', lessons: [reasonAseoNiga.id] },
       { grade: 2, n: 8, title: 'Почтительность', titleKr: '높임말', lessons: [] },
