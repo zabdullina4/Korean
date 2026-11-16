@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Workflow: TODO.md is the source of truth
+
+- **Before starting any work, always read `TODO.md`** — it holds what is done, current problems and the detailed plan of next steps.
+- **After finishing a task, update `TODO.md`:** tick it as done (`[x]`), and write down the important details the next step needs (decisions taken, what was deliberately left out, new known problems, numbers such as test count or bank sizes). Add new tasks you discovered to the plan. Commit `TODO.md` together with the work.
+
 ## Project
 
 «한국어 학교» — a Korean-language school for Russian speakers (Hangul → TOPIK 6급), built as a React + TypeScript + Vite web app/PWA. All UI text, lesson explanations and commit-facing docs are in **Russian**; learning content is Korean. Design rationale and the full curriculum plan live in `docs/01–07` (methodology, school system, curriculum, modules, algorithms, UX, roadmap) — read them before adding a new grade or feature. `prototype/index.html` is the original static mock-up, not used by the app.
