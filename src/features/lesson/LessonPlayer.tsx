@@ -15,6 +15,7 @@ import { DoneStep } from './steps/DoneStep';
 import { HanjaStep } from './steps/HanjaStep';
 import { LettersStep } from './steps/LettersStep';
 import { WongojiStep } from './steps/WongojiStep';
+import { WordsStep } from './steps/WordsStep';
 import { WriteStep } from './steps/WriteStep';
 
 export interface StepProps<S extends Step = Step> {
@@ -35,6 +36,7 @@ const STEP_LABEL: Record<Step['kind'], string> = {
   hanja: 'Ханча',
   wongoji: 'Бланк 원고지',
   write: 'Письмо',
+  words: 'Новые слова',
 };
 
 export function LessonPlayer() {
@@ -117,6 +119,9 @@ export function LessonPlayer() {
         break;
       case 'write':
         body = <WriteStep key={i} step={step} {...props} />;
+        break;
+      case 'words':
+        body = <WordsStep key={i} step={step} {...props} />;
         break;
     }
 

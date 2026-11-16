@@ -417,3 +417,13 @@ a{color:inherit}
 .w-issues{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--redpen);display:grid;gap:4px}
 .w-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;align-items:stretch}
 .w-check{margin:0;padding-left:18px;font-size:14px;display:grid;gap:4px}
+
+/* new words */
+.vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.vcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:96px;padding:10px 8px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);cursor:pointer;text-align:center}
+.vcard .vk{font-size:24px;color:var(--ink)}
+.vcard .vh{font-size:11px;color:var(--ink-3)}
+.vcard .vp{font-size:13px;color:var(--ink-3)}
+.vcard .vr{font-size:14px;color:var(--ink)}
+.vcard .vn{font-size:11.5px;color:var(--ink-2)}
+.vcard.open{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 7%,var(--sheet))}

@@ -76,6 +76,8 @@ export type Step =
       errorType: ErrorType;
     }
   | { kind: 'compose'; title: string; sub?: string; palette: { cho: string[]; jung: string[]; jong?: string[] }; tasks: { target: string; ru?: string }[] }
+  /** Знакомство с новыми словами урока: карточка → перевод, произношение, озвучка. */
+  | { kind: 'words'; title: string; sub?: string; words: Word[] }
   /** Граф корня ханча: корень в центре, вокруг — слова с ним. */
   | { kind: 'hanja'; title: string; sub?: string; roots: HanjaRoot[]; note?: string }
   /** Текст, разложенный по бланку 원고지. */

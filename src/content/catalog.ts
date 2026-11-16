@@ -22,6 +22,7 @@ import { topik1Exam } from './exams/topik1';
 import { topik2Exam } from './exams/topik2';
 import { topik3Exam } from './exams/topik3';
 import type { Grade, Lesson } from './types';
+import { withVocab } from './vocab';
 
 const G0 = [vowelsBasic, vowelsY, consonantsBasic, consonantsTriples, syllableBlocks, batchim];
 const G1 = [
@@ -33,7 +34,8 @@ const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, at
 
 const G3 = [handa, handaRules, reportedStatement, reportedOther, seems, inference, geDoeda, eojida, neunGeot, giEum, assoonas, daga, passive, causative, deoragoyo, deon, hanja1, hanja2, wongoji, writing53];
 
-export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3];
+// Каждому уроку добавляется шаг «Новые слова» перед первым заданием на эти слова (см. vocab.ts).
+export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3].map(withVocab);
 
 /** Переводной экзамен каждого класса. */
 export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam, 3: topik3Exam };

@@ -53,6 +53,28 @@ describe('контент', () => {
         }
   });
 
+  it('слова урока не проверяются раньше, чем показаны', async () => {
+    const { testedBeforeTaught } = await import('./vocab');
+    for (const l of LESSONS) expect(testedBeforeTaught(l), l.id).toEqual([]);
+  });
+
+  it('в уроках с буквами новые слова идут после букв', () => {
+    for (const l of LESSONS) {
+      const li = l.steps.findIndex((s) => s.kind === 'letters');
+      const wi = l.steps.findIndex((s) => s.kind === 'words');
+      if (li >= 0 && wi >= 0) expect(wi, l.id).toBeGreaterThan(li);
+    }
+  });
+
+  it('в каждом уроке со словами есть шаг «Новые слова» со всеми словами', () => {
+    for (const l of LESSONS) {
+      if (!l.words.length) continue;
+      const st = l.steps.find((s) => s.kind === 'words');
+      expect(st, l.id).toBeDefined();
+      if (st?.kind === 'words') expect(st.words.map((w) => w.id).sort(), l.id).toEqual(l.words.map((w) => w.id).sort());
+    }
+  });
+
   it('все уроки из программы существуют', () => {
     const ids = new Set(LESSONS.map((l) => l.id));
     for (const g of GRADES) for (const u of g.units) for (const id of u.lessons) expect(ids.has(id)).toBe(true);
