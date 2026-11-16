@@ -48,6 +48,18 @@ describe('морфологический разбор', () => {
     expect(forms('맛있는데')).toContain('맛있다: 맛있다 + -는데');
     expect(forms('잘하네요')).toContain('잘하다: 잘하다 + -네요');
     expect(forms('읽으셨어요')).toContain('읽다: 읽다 + -으시- + -었- + -어요');
+    expect(forms('먹는다')).toContain('먹다: 먹다 + -는다');
+    expect(forms('간다')).toContain('가다: 가다 + -ㄴ다');
+    expect(forms('갔다')).toContain('가다: 가다 + -았- + -다');
+    expect(forms('온대요')).toContain('오다: 오다 + -ㄴ대요');
+    expect(forms('좋대요')).toContain('좋다: 좋다 + -대요');
+    expect(forms('먹냐고')).toContain('먹다: 먹다 + -냐고');
+    expect(forms('읽으라고')).toContain('읽다: 읽다 + -으라고');
+    expect(forms('보자고')).toContain('보다: 보다 + -자고');
+    expect(forms('맛있나')).toContain('맛있다: 맛있다 + -나');
+    expect(forms('추운가')).toContain('춥다: 춥다 + -은가');
+    expect(forms('학생이라고')).toContain('학생: 학생 + 이라고');
+    expect(forms('것이다')).toContain('것: 것 + 이다');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

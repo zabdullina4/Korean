@@ -3,7 +3,7 @@
 // формы по шаблонам, и введённая форма ищется в обратном индексе. Так разбор всегда согласован с уроками.
 // Существительные: отделяем частицы и связку справа, проверяем согласование (은/는, 이/가, 을/를…).
 import type { DictEntry, Pos } from '../content/dictionary';
-import { addJong, conj, haeyo, irregularType, stemForEu, stemOf } from './conjugate';
+import { addJong, conj, haeyo, irregularType, neunda, stemForEu, stemOf } from './conjugate';
 import { decompose } from './hangul';
 
 export type MorphKind = 'stem' | 'honor' | 'tense' | 'ending' | 'particle' | 'copula';
@@ -286,6 +286,46 @@ const T: Template[] = [
     },
   },
   { id: 'pastNeunde', build: (v) => ({ form: pastStem(v) + '는데', chain: [pastMark(v), end('-는데', 'фон «…, а / и…»', 'g2-u10-l1')] }) },
+  // ---- 3급: 한다체, косвенная речь, предположение ----
+  { id: 'handa', only: ['v'], build: (v) => { const f = neunda(v); return { form: f, chain: [end(f.endsWith('는다') ? '-는다' : '-ㄴ다', 'письменный стиль 한다체, настоящее время', 'g3-u1-l1')] }; } },
+  { id: 'pastHanda', build: (v) => ({ form: pastStem(v) + '다', chain: [pastMark(v), end('-다', 'письменный стиль 한다체', 'g3-u1-l1')] }) },
+  { id: 'dagoV', only: ['v'], build: (v) => ({ form: neunda(v) + '고', chain: [end(neunda(v).endsWith('는다') ? '-는다고' : '-ㄴ다고', 'передача чужих слов: «сказал, что…»', 'g3-u2-l1')] }) },
+  { id: 'dagoA', only: ['a', 'aux'], build: (v) => ({ form: v + '고', chain: [end('-다고', 'передача чужих слов: «сказал, что…»', 'g3-u2-l1')] }) },
+  { id: 'pastDago', build: (v) => ({ form: pastStem(v) + '다고', chain: [pastMark(v), end('-다고', 'передача чужих слов', 'g3-u2-l1')] }) },
+  { id: 'daeyoV', only: ['v'], build: (v) => ({ form: neunda(v).slice(0, -1) + '대요', chain: [end(neunda(v).endsWith('는다') ? '-는대요' : '-ㄴ대요', '«говорят, что…» (сокращение от -ㄴ/는다고 해요)', 'g3-u2-l1')] }) },
+  { id: 'daeyoA', only: ['a'], build: (v) => ({ form: v.slice(0, -1) + '대요', chain: [end('-대요', '«говорят, что…» (сокращение от -다고 해요)', 'g3-u2-l1')] }) },
+  { id: 'pastDaeyo', build: (v) => ({ form: pastStem(v) + '대요', chain: [pastMark(v), end('-대요', '«говорят, что…»', 'g3-u2-l1')] }) },
+  { id: 'nyago', build: (v) => ({ form: withC(v, '냐고'), chain: [end('-냐고', 'пересказ чужого вопроса', 'g3-u2-l2')] }) },
+  { id: 'pastNyago', build: (v) => ({ form: pastStem(v) + '냐고', chain: [pastMark(v), end('-냐고', 'пересказ чужого вопроса', 'g3-u2-l2')] }) },
+  {
+    id: 'rago',
+    only: ['v'],
+    build: (v) => {
+      const r = withEu(v, '라고');
+      return { form: r.form, chain: [end(eu(r.eu, '라고'), 'пересказ просьбы или приказа', 'g3-u2-l2')] };
+    },
+  },
+  {
+    id: 'raeyo',
+    only: ['v'],
+    build: (v) => {
+      const r = withEu(v, '래요');
+      return { form: r.form, chain: [end(eu(r.eu, '래요'), '«велели / просят…» (сокращение от -(으)라고 해요)', 'g3-u2-l2')] };
+    },
+  },
+  { id: 'jago', only: ['v'], build: (v) => ({ form: v.slice(0, -1) + '자고', chain: [end('-자고', 'пересказ предложения «давай…»', 'g3-u2-l2')] }) },
+  { id: 'jaeyo', only: ['v'], build: (v) => ({ form: v.slice(0, -1) + '재요', chain: [end('-재요', '«предлагает…» (сокращение от -자고 해요)', 'g3-u2-l2')] }) },
+  { id: 'na', build: (v, pos) => (pos === 'a' && !/[있없]다$/.test(v) ? null : { form: withC(v, '나'), chain: [end('-나', 'с 보다 — «видимо, судя по всему»', 'g3-u3-l2')] }) },
+  { id: 'pastNa', build: (v) => ({ form: pastStem(v) + '나', chain: [pastMark(v), end('-나', 'с 보다 — «видимо»', 'g3-u3-l2')] }) },
+  {
+    id: 'ngA',
+    only: ['a'],
+    build: (v) => {
+      if (/[있없]다$/.test(v)) return null;
+      const r = withJamo(v, 'ㄴ', '가');
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄴ', '가'), 'с 보다 — «видимо» (у прилагательных)', 'g3-u3-l2')] };
+    },
+  },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },
@@ -388,6 +428,12 @@ const P: Particle[] = [
   { form: '이었어요', after: 'C', pair: '였어요', kind: 'copula', gloss: '«был, являлся»', lessonId: L.past },
   { form: '였어요', after: 'V', pair: '이었어요', kind: 'copula', gloss: '«был, являлся»', lessonId: L.past },
   { form: '입니다', after: 'any', kind: 'copula', gloss: '«является» — связка 합니다체', lessonId: L.formal },
+  { form: '이다', after: 'C', kind: 'copula', gloss: '«является» — связка в словарной форме и в 한다체', lessonId: 'g3-u1-l1' },
+  { form: '이었다', after: 'C', pair: '였다', kind: 'copula', gloss: '«был» — 한다체', lessonId: 'g3-u1-l1' },
+  { form: '였다', after: 'V', pair: '이었다', kind: 'copula', gloss: '«был» — 한다체', lessonId: 'g3-u1-l1' },
+  { form: '이라고', after: 'C', pair: '라고', kind: 'copula', gloss: 'пересказ: «сказал, что (это) …»', lessonId: 'g3-u2-l1' },
+  { form: '라고', after: 'V', pair: '이라고', kind: 'copula', gloss: 'пересказ: «сказал, что (это) …»', lessonId: 'g3-u2-l1' },
+  { form: '이래요', after: 'C', pair: '래요', kind: 'copula', gloss: '«говорят, что (это) …»', lessonId: 'g3-u2-l1' },
   { form: '입니까', after: 'any', kind: 'copula', gloss: '«является?» — вопрос 합니다체', lessonId: L.formal },
   { form: '이었습니다', after: 'C', pair: '였습니다', kind: 'copula', gloss: '«был» — 합니다체', lessonId: L.formal },
   { form: '였습니다', after: 'V', pair: '이었습니다', kind: 'copula', gloss: '«был» — 합니다체', lessonId: L.formal },

@@ -3,7 +3,7 @@
 import { compose, decompose } from './hangul';
 
 /** Нерегулярные основы (без 다). Остальные с тем же патчимом спрягаются регулярно. */
-const IRREGULAR_B = new Set(['돕', '덥', '춥', '쉽', '어렵', '맵', '가깝', '귀엽', '무섭', '뜨겁', '차갑', '반갑', '즐겁', '아름답', '고맙', '가볍', '무겁', '눕', '굽']);
+const IRREGULAR_B = new Set(['돕', '덥', '춥', '어둡', '시끄럽', '부드럽', '더럽', '쉽', '어렵', '맵', '가깝', '귀엽', '무섭', '뜨겁', '차갑', '반갑', '즐겁', '아름답', '고맙', '가볍', '무겁', '눕', '굽']);
 const IRREGULAR_D = new Set(['듣', '걷', '묻', '깨닫', '싣']);
 const IRREGULAR_S = new Set(['낫', '짓', '붓', '잇', '젓']);
 const IRREGULAR_H = new Set(['그렇', '이렇', '저렇', '어떻', '빨갛', '노랗', '파랗', '하얗', '까맣']);
@@ -96,7 +96,13 @@ export type Form =
   // обещания и выбор
   | 'lgeyo' | 'llaeyo' | 'gesseoyo'
   // живая речь
-  | 'neundeV' | 'neundeA' | 'pastNeunde' | 'neyo' | 'pastNeyo' | 'jyo';
+  | 'neundeV' | 'neundeA' | 'pastNeunde' | 'neyo' | 'pastNeyo' | 'jyo'
+  // 3급: письменный стиль 한다체
+  | 'handaV' | 'handaPast' | 'handaFut'
+  // косвенная речь
+  | 'indV' | 'indA' | 'indPast' | 'daeyoV' | 'daeyoA' | 'indQ' | 'indCmd' | 'indSug'
+  // предположение
+  | 'gotgataV' | 'gotgataPast' | 'gotgataFut' | 'gotgataA' | 'nabwayo' | 'pastNabwayo' | 'ngabwayo';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -256,7 +262,58 @@ export function conj(verb: string, form: Form): string {
       return `${pastStemOf(verb)}네요`;
     case 'jyo':
       return `${stem}죠`;
+    case 'handaV':
+      return neunda(verb);
+    case 'handaPast':
+      return `${pastStemOf(verb)}다`;
+    case 'handaFut':
+      return `${withL(verb)} 것이다`;
+    case 'indV':
+      return `${neunda(verb)}고 했어요`;
+    case 'indA':
+      return `${verb}고 했어요`;
+    case 'indPast':
+      return `${pastStemOf(verb)}다고 했어요`;
+    case 'daeyoV':
+      return `${neunda(verb).slice(0, -1)}대요`;
+    case 'daeyoA':
+      return `${stem}대요`;
+    case 'indQ':
+      return `${dropL(verb)}냐고 했어요`;
+    case 'indCmd':
+      return `${euKeepL(verb)}라고 했어요`;
+    case 'indSug':
+      return `${stem}자고 했어요`;
+    case 'gotgataV':
+      return `${withNeun(verb)} 것 같아요`;
+    case 'gotgataPast':
+      return `${withN(verb)} 것 같아요`;
+    case 'gotgataFut':
+      return `${withL(verb)} 것 같아요`;
+    case 'gotgataA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} 것 같아요`;
+    case 'nabwayo':
+      return `${dropL(verb)}나 봐요`;
+    case 'pastNabwayo':
+      return `${pastStemOf(verb)}나 봐요`;
+    case 'ngabwayo':
+      return `${withN(verb)}가 봐요`;
   }
+}
+
+/** 한다체 глагола: 가다 → 간다, 살다 → 산다, 먹다 → 먹는다, 듣다 → 듣는다. */
+export function neunda(verb: string): string {
+  const stem = stemOf(verb);
+  const s = decompose(stem[stem.length - 1])!;
+  if (s.jong && s.jong !== 'ㄹ') return `${stem}는다`;
+  return replaceLast(stem, compose(s.cho, s.jung, 'ㄴ')!) + '다';
+}
+
+/** Основа без ㄹ (перед ㄴ, ㅅ): 살 → 사. */
+function dropL(verb: string): string {
+  const stem = stemOf(verb);
+  const s = decompose(stem[stem.length - 1])!;
+  return s.jong === 'ㄹ' ? replaceLast(stem, compose(s.cho, s.jung)!) : stem;
 }
 
 /** Основа прошедшего времени: 가다 → 갔, 먹다 → 먹었. */
@@ -422,6 +479,61 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'jyo':
       c = [`${info(verb)}죠`, `${stem}죠요`];
+      break;
+    case 'handaV':
+      // Ловушки: словарная форма вместо 한다체 и неверный вариант окончания.
+      c = [verb, s.jong && s.jong !== 'ㄹ' ? `${stem}은다` : `${stem}는다`];
+      break;
+    case 'handaPast':
+      c = [conj(verb, 'past'), `${pastStemOf(verb)}는다`];
+      break;
+    case 'handaFut':
+      c = [`${withL(verb)} 거예요`, `${withN(verb)} 것이다`];
+      break;
+    case 'indV':
+      c = [`${verb}고 했어요`, s.jong && s.jong !== 'ㄹ' ? `${stem}은다고 했어요` : `${stem}는다고 했어요`];
+      break;
+    case 'indA':
+      c = [`${stem}는다고 했어요`, `${haeyo(verb)}고 했어요`];
+      break;
+    case 'indPast':
+      c = [`${pastStemOf(verb)}는다고 했어요`, `${conj(verb, 'past')}고 했어요`];
+      break;
+    case 'daeyoV':
+      c = [`${stem}대요`, `${neunda(verb).slice(0, -1)}데요`];
+      break;
+    case 'daeyoA':
+      c = [`${stem}는대요`, `${stem}데요`];
+      break;
+    case 'indQ':
+      c = [s.jong === 'ㄹ' ? `${stem}냐고 했어요` : `${haeyo(verb)}냐고 했어요`, `${stem}냬고 했어요`];
+      break;
+    case 'indCmd':
+      c = [vowel ? `${stem}으라고 했어요` : s.jong === 'ㄹ' ? `${stem}으라고 했어요` : `${stem}라고 했어요`, `${haeyo(verb)}라고 했어요`];
+      break;
+    case 'indSug':
+      c = [`${stem}자다고 했어요`, `${haeyo(verb)}자고 했어요`];
+      break;
+    case 'gotgataV':
+      c = [`${withN(verb)} 것 같아요`, `${withL(verb)} 것 같아요`];
+      break;
+    case 'gotgataPast':
+      c = [`${withNeun(verb)} 것 같아요`, `${withL(verb)} 것 같아요`];
+      break;
+    case 'gotgataFut':
+      c = [`${withN(verb)} 것 같아요`, `${withNeun(verb)} 것 같아요`];
+      break;
+    case 'gotgataA':
+      c = takesNeun(verb) ? [`${stem}은 것 같아요`, `${haeyo(verb)} 것 같아요`] : [`${stem}는 것 같아요`, `${haeyo(verb)} 것 같아요`];
+      break;
+    case 'nabwayo':
+      c = [`${haeyo(verb)}나 봐요`, s.jong === 'ㄹ' ? `${stem}나 봐요` : `${stem}으나 봐요`];
+      break;
+    case 'pastNabwayo':
+      c = [`${pastStemOf(verb)}은가 봐요`, `${conj(verb, 'past')}나 봐요`];
+      break;
+    case 'ngabwayo':
+      c = [`${stem}는가 봐요`, `${stem}은가 봐요`, `${haeyo(verb).slice(0, -1)}나 봐요`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.
