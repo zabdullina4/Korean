@@ -1,0 +1,9 @@
+{
+  "name": "한국어 학교 — школа корейского",
+  "short_name": "한국어 학교",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eceee8",
+  "theme_color": "#2d4b3f",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
