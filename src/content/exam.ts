@@ -49,6 +49,8 @@ export interface ExamDef {
   scale?: number;
   /** TOPIK II: каждый раздел пересчитывается в 100 баллов, итог — сумма. */
   perSection?: boolean;
+  /** Минимальная доля баллов за каждое задание на письмо (0..1): без неё экзамен не сдан при любом итоге. */
+  minWriting?: number;
   make(seed: number): ExamSection[];
 }
 

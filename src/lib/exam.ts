@@ -16,6 +16,8 @@ export interface ExamAttempt {
   passed: boolean;
   sections: { key: SectionKey; right: number; total: number }[];
   wrongNoteIds: string[];
+  /** Итог достаточен, но письмо ниже минимума `ExamDef.minWriting` — экзамен не сдан. */
+  writingShort?: boolean;
 }
 
 export interface WritingScore {
@@ -104,14 +106,17 @@ export function grade(exam: ExamDef, seed: number, sections: ExamSection[], answ
     correct = Math.round(per.reduce((acc, s) => acc + (s.total ? (s.right / s.total) * each : 0), 0));
     total = exam.scale;
   }
+  const enough = total > 0 && correct / total >= exam.pass;
+  const writingShort = exam.minWriting !== undefined && writing.some((w) => w.earned < w.max * exam.minWriting!);
   const attempt: ExamAttempt = {
     at: now.toISOString(),
     seed,
     correct,
     total,
-    passed: total > 0 && correct / total >= exam.pass,
+    passed: enough && !writingShort,
     sections: per,
     wrongNoteIds: mistakes.map((m) => noteKey(exam.id, m.item)),
+    ...(writingShort ? { writingShort } : {}),
   };
   return { attempt, mistakes, writing };
 }

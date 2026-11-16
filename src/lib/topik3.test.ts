@@ -48,8 +48,29 @@ describe('экзамен 3급 · TOPIK II', () => {
     const noWrite = perfect.map((row, si) => (si === 1 ? row.map((a, qi) => (qi === 2 ? '' : a)) : row));
     const g2 = grade(topik3Exam, seed, secs, noWrite);
     expect(g2.attempt.correct).toBe(240);
-    expect(g2.attempt.passed).toBe(true); // 240/300 = 80% ≥ 70%: письмо важно, но не всё
+    // 240/300 ≥ 210, но письмо обязательно (minWriting): без задания 53 — 불합격.
+    expect(g2.attempt).toMatchObject({ passed: false, writingShort: true });
     expect(g2.writing[0].notes[0]).toMatch(/не написан/);
+  });
+
+  it('задание 53: 10 из 30 — достаточно, меньше — 불합격 при любом итоге', () => {
+    const seed = seedFor(topik3Exam.id, 0);
+    const secs = topik3Exam.make(seed);
+    const w = secs[1].questions[2];
+    if (w.kind !== 'write') throw new Error('нет задания 53');
+    const answer = (text: string): Answer[][] =>
+      secs.map((s, si) => s.questions.map((q, qi) => (si === 1 && qi === 2 ? text : q.kind === 'choice' ? q.item.answer : null)));
+    // Отписка: одна разговорная фраза без данных из условия.
+    const short = '잘 모르겠어요.';
+    const gs = grade(topik3Exam, seed, secs, answer(short));
+    expect(gs.writing[0].earned).toBeLessThan(10);
+    expect(gs.attempt.passed).toBe(false);
+    // Образец без ключевых чисел: объём и стиль есть — проходит.
+    const vague = w.item.model.replace(/\d[\d,]*%?/g, '몇');
+    const gv = grade(topik3Exam, seed, secs, answer(vague));
+    expect(gv.writing[0].earned).toBeGreaterThanOrEqual(10);
+    expect(gv.attempt).toMatchObject({ passed: true });
+    expect(gv.attempt.writingShort).toBeUndefined();
   });
 
   it('автооценка письма: разговорный стиль и пропущенные данные снижают балл', () => {

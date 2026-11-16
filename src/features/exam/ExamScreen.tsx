@@ -69,7 +69,9 @@ export function ExamScreen() {
               ? s.promoted === exam.grade + 1
                 ? `Поздравляем! Вы переведены в ${GRADES[exam.grade + 1].name}.`
                 : 'Экзамен сдан.'
-              : `Для зачёта нужно ${Math.round(exam.pass * 100)}%${exam.scale ? ` (${Math.round(exam.pass * exam.scale)} из ${exam.scale})` : ''}. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
+              : attempt.writingShort
+                ? `Баллов по сумме хватает, но письменное задание обязательно: нужно не меньше ${Math.round((exam.minWriting ?? 0) * 100)}% его баллов. ${attempt.wrongNoteIds.length ? 'Отработайте ошибки в 보충수업 — после этого откроется пересдача.' : 'Пересдача доступна сразу.'}`
+                : `Для зачёта нужно ${Math.round(exam.pass * 100)}%${exam.scale ? ` (${Math.round(exam.pass * exam.scale)} из ${exam.scale})` : ''}. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
           </p>
           {exam.scale === 300 && (
             <p style={{ textAlign: 'center', margin: '0 0 14px', fontSize: 13, color: 'var(--ink-2)' }}>{topik2Level(attempt.correct)}</p>
@@ -148,7 +150,7 @@ export function ExamScreen() {
           </>
         )}
         <div className="lfoot pad" style={{ display: 'grid', gap: 8 }}>
-          {!attempt.passed && (
+          {!attempt.passed && attempt.wrongNoteIds.length > 0 && (
             <button className="cta" onClick={() => setPhase({ kind: 'drill', ids: attempt.wrongNoteIds })}>
               보충수업 · отработать {attempt.wrongNoteIds.length}
             </button>
