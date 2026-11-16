@@ -80,7 +80,7 @@ export const prices: Lesson = {
     {
       kind: 'dialogue',
       title: 'В 편의점',
-      sub: 'Магазин у дома. Нажмите на реплики.',
+      sub: 'Магазин у дома.',
       lines: [
         { who: '안나', kr: '이거 얼마예요?', ru: 'Сколько это стоит?', me: true },
         { who: '직원', kr: '삼천오백 원이에요.', ru: '3 500 вон.' },

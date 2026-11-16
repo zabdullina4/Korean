@@ -46,7 +46,7 @@ export function DoneStep({ lesson, score, errors, preview }: { lesson: Lesson; s
             {lesson.words.map((w) => (
               <span key={w.id} style={{ marginRight: 12, whiteSpace: 'nowrap' }}>
                 <span className="kr" style={{ fontSize: 17 }}>
-                  {w.kr}
+                  <Rich text={w.kr} />
                 </span>{' '}
                 <span style={{ color: 'var(--ink-2)' }}>{w.ru}</span>
               </span>

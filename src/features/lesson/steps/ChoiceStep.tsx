@@ -46,7 +46,7 @@ export function ChoiceStep({ step, ready, mistake }: StepProps<S>) {
           <p className={`q${isText ? ' text' : ''}`}>
             {prompt.split('\u0000').map((part, k, arr) => (
               <span key={k}>
-                <Rich text={part} />
+                <Rich text={part} tap={ans !== null} />
                 {k < arr.length - 1 && <span className="gap">{ans !== null ? it.options[it.answer] : ' '}</span>}
               </span>
             ))}

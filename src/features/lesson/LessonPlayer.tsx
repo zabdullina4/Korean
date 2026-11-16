@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Rich } from '../../components/Rich';
+import { WordTapProvider } from '../../components/WordSheet';
 import { GRADES, isPreviewLesson, LESSON_BY_ID } from '../../content/catalog';
 import type { ChoiceItem, Step } from '../../content/types';
 import { bell } from '../../lib/sound';
@@ -105,6 +106,7 @@ export function LessonPlayer() {
     }
 
   return (
+    <WordTapProvider>
     <div className="app">
       <header className="lhead pad">
         <button className="iconbtn" aria-label="Вернуться в кампус" onClick={() => nav('/')}>
@@ -118,7 +120,7 @@ export function LessonPlayer() {
             {preview ? ' · превью' : ''}
           </small>
           <b>
-            <Rich text={lesson.short} />
+            <Rich text={lesson.short} tap={false} />
           </b>
         </div>
         <span className="chip">
@@ -138,5 +140,6 @@ export function LessonPlayer() {
         {!canGo && <p className="hint">Выполните задание, чтобы продолжить</p>}
       </div>
     </div>
+    </WordTapProvider>
   );
 }

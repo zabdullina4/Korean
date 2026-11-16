@@ -380,7 +380,8 @@ export function analyzeNoun(token: string, lookup: (lemma: string) => DictEntry 
         entry: e,
         chain: [{ form: noun, kind: 'stem', gloss: e?.ru ?? 'нет в учебном словаре' }, ...seq.map((p) => ({ form: p.form, kind: p.kind ?? 'particle', gloss: p.gloss, lessonId: p.lessonId }))],
         warning: !ok ? (fix ? `После ${decompose(lastSyl(noun))?.jong ? 'согласной' : 'гласной'} нужно «${pair!.form}»: ${fix}` : undefined) : undefined,
-        score: (e ? 9 : 1) + (ok ? 2 : -4) - seq.length,
+        // Для неизвестных основ предпочитаем разбор, который объясняет больше букв частицами (안나 + 예요, а не 안나예 + 요).
+        score: (e ? 9 : 1 + rest.length * 0.5) + (ok ? 2 : -4) - seq.length,
       });
     }
   }

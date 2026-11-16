@@ -40,7 +40,7 @@ export function BoardStep({ step }: StepProps<S>) {
                 <tr key={k}>
                   {r.map((c, j) => (
                     <td key={j} className={c === '✓' ? 'yes' : c === '✗' ? 'no' : 'k'}>
-                      {c}
+                      <Rich text={c} />
                     </td>
                   ))}
                 </tr>

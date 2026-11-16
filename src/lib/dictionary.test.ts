@@ -37,6 +37,8 @@ describe('морфологический разбор', () => {
     expect(forms('학생이에요')).toContain('학생: 학생 + 이에요');
     expect(forms('친구를')).toContain('친구: 친구 + 를');
     expect(forms('제가')).toContain('저: 저 + 가');
+    expect(analyze('안나예요')[0].chain.map((m) => m.form)).toEqual(['안나', '예요']);
+    expect(analyze('소피아예요')[0].chain.map((m) => m.form)).toEqual(['소피아', '예요']);
   });
 
   it('ошибка согласования частицы', () => {
