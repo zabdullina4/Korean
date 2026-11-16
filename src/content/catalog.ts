@@ -12,6 +12,7 @@ import { butIf, canDo, experience, mustDo, plans, progressive, reo, tryIt } from
 import { attrAdj, attrTense, attrVerb } from './grade2/unit5';
 import { beforeAfter, when, whileDoing } from './grade2/unit6';
 import { because, permission, symptoms } from './grade2/unit7';
+import { choiceWill, honorific, honorWords, neunde, promise, reactions } from './grade2/unit8-10';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
 import { topik1Exam } from './exams/topik1';
@@ -23,7 +24,7 @@ const G1 = [
   ...[nativeNumbers, telling, pastTense, weekend, negationAn, negationMot, future, want, seyo, lkkayo, formal, announcement],
 ];
 
-const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, when, beforeAfter, whileDoing, symptoms, because, reasonAseoNiga, permission];
+const G2 = [tryIt, experience, canDo, mustDo, progressive, butIf, reo, plans, attrVerb, attrAdj, attrTense, when, beforeAfter, whileDoing, symptoms, because, reasonAseoNiga, permission, honorific, honorWords, promise, choiceWill, neunde, reactions];
 
 export const LESSONS: Lesson[] = [...G0, ...G1, ...G2];
 
@@ -73,9 +74,9 @@ export const GRADES: Grade[] = [
       { grade: 2, n: 5, title: 'Описание: определительные формы', titleKr: '묘사', lessons: [attrVerb.id, attrAdj.id, attrTense.id] },
       { grade: 2, n: 6, title: 'Время: когда, до, после', titleKr: '시간', lessons: [when.id, beforeAfter.id, whileDoing.id] },
       { grade: 2, n: 7, title: 'Здоровье и причины', titleKr: '건강', lessons: [symptoms.id, because.id, reasonAseoNiga.id, permission.id] },
-      { grade: 2, n: 8, title: 'Почтительность', titleKr: '높임말', lessons: [] },
-      { grade: 2, n: 9, title: 'Обещания и выбор', titleKr: '약속', lessons: [] },
-      { grade: 2, n: 10, title: 'Живая речь', titleKr: '대화', lessons: [] },
+      { grade: 2, n: 8, title: 'Почтительность', titleKr: '높임말', lessons: [honorific.id, honorWords.id] },
+      { grade: 2, n: 9, title: 'Обещания и выбор', titleKr: '약속', lessons: [promise.id, choiceWill.id] },
+      { grade: 2, n: 10, title: 'Живая речь', titleKr: '대화', lessons: [neunde.id, reactions.id] },
     ],
   },
   { n: 3, name: '3급', ru: 'Средняя школа · 1 класс', units: [] },

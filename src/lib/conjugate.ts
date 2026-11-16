@@ -90,7 +90,13 @@ export type Form =
   // время: когда, когда (в прошлом), перед, после, одновременно, пока
   | 'ttae' | 'pastTtae' | 'jeone' | 'hue' | 'myeonseo' | 'dongan'
   // причины и разрешения
-  | 'aseo' | 'gittaemune' | 'pastGittaemune' | 'eodo' | 'myeonan';
+  | 'aseo' | 'gittaemune' | 'pastGittaemune' | 'eodo' | 'myeonan'
+  // почтительность
+  | 'honPresent' | 'honPast' | 'honFormal'
+  // обещания и выбор
+  | 'lgeyo' | 'llaeyo' | 'gesseoyo'
+  // живая речь
+  | 'neundeV' | 'neundeA' | 'pastNeunde' | 'neyo' | 'pastNeyo' | 'jyo';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -226,6 +232,30 @@ export function conj(verb: string, form: Form): string {
       return `${info(verb)}도 돼요`;
     case 'myeonan':
       return `${euKeepL(verb)}면 안 돼요`;
+    case 'honPresent':
+      return `${stemForEu(verb, 'ㅅ').base}세요`;
+    case 'honPast':
+      return `${stemForEu(verb, 'ㅅ').base}셨어요`;
+    case 'honFormal':
+      return `${stemForEu(verb, 'ㅅ').base}십니다`;
+    case 'lgeyo':
+      return `${withL(verb)}게요`;
+    case 'llaeyo':
+      return `${withL(verb)}래요`;
+    case 'gesseoyo':
+      return `${stem}겠어요`;
+    case 'neundeV':
+      return `${withNeun(verb)}데`;
+    case 'neundeA':
+      return `${takesNeun(verb) ? withNeun(verb) : withN(verb)}데`;
+    case 'pastNeunde':
+      return `${pastStemOf(verb)}는데`;
+    case 'neyo':
+      return `${s.jong === 'ㄹ' ? replaceLast(stem, compose(s.cho, s.jung)!) : stem}네요`;
+    case 'pastNeyo':
+      return `${pastStemOf(verb)}네요`;
+    case 'jyo':
+      return `${stem}죠`;
   }
 }
 
@@ -356,6 +386,42 @@ export function conjDistractors(verb: string, form: Form): string[] {
     case 'eodo':
       // Не берём «-(으)면 돼요» — это грамматично («достаточно…»).
       c = [`${stem}${isBright(s.jung) ? '어' : '아'}도 돼요`, `${stem}도 돼요`, `${withN(verb)}도 돼요`];
+      break;
+    case 'honPresent':
+    case 'honPast':
+    case 'honFormal': {
+      const tail = form === 'honPresent' ? '세요' : form === 'honPast' ? '셨어요' : '십니다';
+      const plain = form === 'honPresent' ? haeyo(verb) : form === 'honPast' ? conj(verb, 'past') : conj(verb, 'formal');
+      c = [vowel ? `${stem}으${tail}` : `${stem}${tail}`, plain];
+      break;
+    }
+    case 'lgeyo':
+      // Самая частая орфографическая ошибка: 갈께요 вместо 갈게요.
+      c = [`${withL(verb)}께요`, vowel ? `${stem}을게요` : `${withN(verb)}게요`];
+      break;
+    case 'llaeyo':
+      c = [`${withL(verb)}레요`, vowel ? `${stem}을래요` : `${withN(verb)}래요`];
+      break;
+    case 'gesseoyo':
+      c = [`${stem}겠요`, `${stem}갰어요`];
+      break;
+    case 'neundeV':
+      c = [vowel ? `${withN(verb)}데` : `${stem}은데`, `${withL(verb)}데`];
+      break;
+    case 'neundeA':
+      c = takesNeun(verb) ? [`${stem}은데`, `${withL(verb)}데`] : [`${stem}는데`, `${withL(verb)}데`];
+      break;
+    case 'pastNeunde':
+      c = [`${pastStemOf(verb)}은데`, `${haeyo(verb)}는데`];
+      break;
+    case 'neyo':
+      c = [`${info(verb)}네요`, s.jong === 'ㄹ' ? `${stem}네요` : vowel ? `${stem}으네요` : `${stem}는네요`];
+      break;
+    case 'pastNeyo':
+      c = [`${pastStemOf(verb)}으네요`, `${haeyo(verb)}네요`];
+      break;
+    case 'jyo':
+      c = [`${info(verb)}죠`, `${stem}죠요`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

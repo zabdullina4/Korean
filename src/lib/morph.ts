@@ -91,7 +91,7 @@ const pastMark = (verb: string): Morph => {
   const h = harmony(verb);
   return { form: h === '여' ? '-였-' : h === '아' ? '-았-' : '-었-', kind: 'tense', gloss: 'прошедшее время', lessonId: L.past };
 };
-const honor = (eu: boolean): Morph => ({ form: eu ? '-으시-' : '-시-', kind: 'honor', gloss: 'почтительность к тому, кто действует', lessonId: L.seyo });
+const honor = (eu: boolean): Morph => ({ form: eu ? '-으시-' : '-시-', kind: 'honor', gloss: 'почтительность к тому, кто действует', lessonId: 'g2-u8-l1' });
 const end = (form: string, gloss: string, lessonId?: string): Morph => ({ form, kind: 'ending', gloss, lessonId });
 const eu = (flag: boolean, tail: string) => `-${flag ? '으' : ''}${tail}`;
 /** -(으)ㄹ / -(으)ㄴ / -(으)ㅂ: после согласной 으 и согласная сливаются в слог (을, 은, 읍). */
@@ -193,9 +193,9 @@ const T: Template[] = [
   { id: 'go', build: (v) => ({ form: v.slice(0, -1) + '고', chain: [end('-고', '«и», «и затем»; перед 싶다 — «хотеть», перед 있다 — «сейчас делаю»', L.want)] }) },
   { id: 'ji', build: (v) => ({ form: v.slice(0, -1) + '지', chain: [end('-지', 'перед 않다 / 못하다 / 마세요 — отрицание; в конце фразы — «ведь…»', L.neg)] }) },
   { id: 'jiyo', build: (v) => ({ form: v.slice(0, -1) + '지요', chain: [end('-지요 (-죠)', '«ведь…, не так ли?» — ожидание согласия')] }) },
-  { id: 'jyo', build: (v) => ({ form: v.slice(0, -1) + '죠', chain: [end('-죠', 'сокращение от -지요: «ведь…, правда?»')] }) },
+  { id: 'jyo', build: (v) => ({ form: v.slice(0, -1) + '죠', chain: [end('-죠', 'сокращение от -지요: «ведь…, правда?»', 'g2-u10-l2')] }) },
   { id: 'jiman', build: (v) => ({ form: v.slice(0, -1) + '지만', chain: [end('-지만', '«но, однако»', 'g2-u3-l2')] }) },
-  { id: 'neyo', build: (v) => ({ form: withC(v, '네요'), chain: [end('-네요', 'удивление или открытие: «оказывается…, надо же»')] }) },
+  { id: 'neyo', build: (v) => ({ form: withC(v, '네요'), chain: [end('-네요', 'удивление или открытие: «оказывается…, надо же»', 'g2-u10-l2')] }) },
   { id: 'giro', only: ['v'], build: (v) => ({ form: v.slice(0, -1) + '기로', chain: [end('-기로', 'с 하다 — «решить, договориться» (만나기로 했어요)', 'g2-u4-l2')] }) },
   { id: 'gi', build: (v) => ({ form: v.slice(0, -1) + '기', chain: [end('-기', 'отглагольное существительное: «-ние» (읽기 — чтение); с 전에 — «перед тем как», с 때문에 — «потому что»', 'g2-u6-l2')] }) },
   { id: 'aseo', build: (v) => ({ form: haeyo(v).slice(0, -1) + '서', chain: [end(`-${harmony(v)}서`, '«потому что» (причина-факт) или «и затем» (последовательность)', L.reason)] }) },
@@ -239,12 +239,59 @@ const T: Template[] = [
     },
   },
   { id: 'pastAttrL', build: (v) => ({ form: pastStem(v) + '을', chain: [pastMark(v), end('-을', 'с 때 — «когда (в прошлом)»: 어렸을 때, 왔을 때', 'g2-u6-l1')] }) },
+  {
+    id: 'lgeyo',
+    only: ['v'],
+    build: (v) => {
+      const r = withJamo(v, 'ㄹ', '게요');
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '게요'), 'обещание или решение «я сделаю (для вас)»', 'g2-u9-l1')] };
+    },
+  },
+  {
+    id: 'llaeyo',
+    only: ['v'],
+    build: (v) => {
+      const r = withJamo(v, 'ㄹ', '래요');
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '래요'), '«хочу / буду» — выбор; в вопросе — «будешь?»', 'g2-u9-l2')] };
+    },
+  },
+  {
+    id: 'honLlaeyo',
+    only: ['v'],
+    build: (v) => {
+      const r = withEu(v, '실래요');
+      return { form: r.form, chain: [honor(r.eu), end('-ㄹ래요', 'вежливый вопрос «не хотите ли?»', 'g2-u9-l2')] };
+    },
+  },
+  { id: 'gesseoyo', build: (v) => ({ form: v.slice(0, -1) + '겠어요', chain: [{ form: '-겠-', kind: 'tense', gloss: 'намерение или догадка «наверное»', lessonId: 'g2-u9-l2' }, end('-어요', 'вежливое окончание 해요체', L.haeyo)] }) },
+  { id: 'gesseumnida', build: (v) => ({ form: v.slice(0, -1) + '겠습니다', chain: [{ form: '-겠-', kind: 'tense', gloss: 'намерение, вежливость (알겠습니다, 잘 먹겠습니다)', lessonId: 'g2-u9-l2' }, end('-습니다', 'официально-вежливое окончание', L.formal)] }) },
+  { id: 'neunde', build: (v, pos) => (pos === 'a' && !/[있없]다$/.test(v) ? null : { form: withC(v, '는데'), chain: [end('-는데', 'фон, ситуация «…, а / и…»; мягкий контраст', 'g2-u10-l1')] }) },
+  { id: 'neundeyo', build: (v, pos) => (pos === 'a' && !/[있없]다$/.test(v) ? null : { form: withC(v, '는데요'), chain: [end('-는데요', 'мягкое окончание: ждёт реакции собеседника', 'g2-u10-l1')] }) },
+  {
+    id: 'ndeA',
+    only: ['a'],
+    build: (v) => {
+      if (/[있없]다$/.test(v)) return null;
+      const r = withJamo(v, 'ㄴ', '데');
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄴ', '데'), 'фон, ситуация «…, а / и…» (у прилагательных)', 'g2-u10-l1')] };
+    },
+  },
+  {
+    id: 'ndeAyo',
+    only: ['a'],
+    build: (v) => {
+      if (/[있없]다$/.test(v)) return null;
+      const r = withJamo(v, 'ㄴ', '데요');
+      return { form: r.form, chain: [end(euJ(r.eu, 'ㄴ', '데요'), 'мягкое окончание: ждёт реакции собеседника', 'g2-u10-l1')] };
+    },
+  },
+  { id: 'pastNeunde', build: (v) => ({ form: pastStem(v) + '는데', chain: [pastMark(v), end('-는데', 'фон «…, а / и…»', 'g2-u10-l1')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },
   { id: 'pastNikka', build: (v) => ({ form: pastStem(v) + '으니까', chain: [pastMark(v), end('-으니까', '«так как, раз уж»', L.reason)] }) },
   { id: 'pastMyeon', build: (v) => ({ form: pastStem(v) + '으면', chain: [pastMark(v), end('-으면', '«если бы, если»')] }) },
-  { id: 'pastNeyo', build: (v) => ({ form: pastStem(v) + '네요', chain: [pastMark(v), end('-네요', 'удивление: «оказывается…»')] }) },
+  { id: 'pastNeyo', build: (v) => ({ form: pastStem(v) + '네요', chain: [pastMark(v), end('-네요', 'удивление: «оказывается…»', 'g2-u10-l2')] }) },
   { id: 'pastJyo', build: (v) => ({ form: pastStem(v) + '죠', chain: [pastMark(v), end('-죠', '«ведь…, правда?»')] }) },
 ];
 

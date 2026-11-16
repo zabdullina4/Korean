@@ -15,10 +15,10 @@ describe('контент', () => {
     for (const u of g1.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
   });
 
-  it('2급: 10 юнитов в программе, юниты 1–7 заполнены', () => {
+  it('2급: 10 юнитов в программе, все юниты заполнены', () => {
     const g2 = GRADES[2];
     expect(g2.units).toHaveLength(10);
-    for (const u of g2.units.slice(0, 7)) expect(u.lessons.length, u.title).toBeGreaterThan(0);
+    for (const u of g2.units) expect(u.lessons.length, u.title).toBeGreaterThan(0);
   });
 
   it('все уроки из программы существуют', () => {

@@ -39,6 +39,15 @@ describe('морфологический разбор', () => {
     expect(forms('돼요')).toContain('되다: 되다 + -어요');
     expect(forms('아파서')).toContain('아프다: 아프다 + -아서');
     expect(forms('걸렸어요')).toContain('걸리다: 걸리다 + -었- + -어요');
+    expect(forms('할게요')).toContain('하다: 하다 + -ㄹ게요');
+    expect(forms('먹을래요')).toContain('먹다: 먹다 + -을래요');
+    expect(forms('드실래요')).toContain('드시다: 드시다 + -ㄹ래요');
+    expect(forms('알겠습니다')).toContain('알다: 알다 + -겠- + -습니다');
+    expect(forms('모르는데요')).toContain('모르다: 모르다 + -는데요');
+    expect(forms('바쁜데요')).toContain('바쁘다: 바쁘다 + -ㄴ데요');
+    expect(forms('맛있는데')).toContain('맛있다: 맛있다 + -는데');
+    expect(forms('잘하네요')).toContain('잘하다: 잘하다 + -네요');
+    expect(forms('읽으셨어요')).toContain('읽다: 읽다 + -으시- + -었- + -어요');
   });
 
   it('нерегулярные и неоднозначные формы', () => {
