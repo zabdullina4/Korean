@@ -1,3 +1,4 @@
+import { GraduationScreen } from '../features/graduation/GraduationScreen';
 import { HashRouter, MemoryRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Toast } from '../components/toast';
 import { CampusScreen } from '../features/campus/CampusScreen';
@@ -28,6 +29,7 @@ export function App() {
           <Route path="/notebook" element={<NotebookScreen />} />
           <Route path="/dictionary" element={<DictionaryScreen />} />
           <Route path="/word/:lemma" element={<WordScreen />} />
+          <Route path="/graduation" element={<GraduationScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       ) : (

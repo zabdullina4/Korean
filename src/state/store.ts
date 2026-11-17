@@ -34,7 +34,12 @@ export interface SchoolState {
   exams: Record<string, ExamAttempt[]>;
   /** Номер класса, в который ученик только что перешёл — для поздравления в кампусе. */
   promoted: number | null;
+  /** Дата выпуска (сдан экзамен последнего класса, 6급) — открывает 졸업식 и аттестат. */
+  graduated: string | null;
 }
+
+/** Последний класс школы: его экзамен выпускной, а не переводной. */
+export const LAST_GRADE = 6;
 
 interface Actions {
   enroll(grade: number): void;
@@ -69,6 +74,7 @@ const initial: SchoolState = {
   reviewsByDay: {},
   newByDay: {},
   exams: {},
+  graduated: null,
   promoted: null,
 };
 
@@ -142,12 +148,16 @@ export const useSchool = create<SchoolState & Actions>()(
             const id = noteKey(examId, m.item);
             notes[id] = notes[id] ? missAgain(notes[id], m.wrong) : createNote(examId, m.item, m.wrong);
           }
-          const promote = attempt.passed && s.grade === grade;
+          const advance = attempt.passed && s.grade === grade;
+          // После выпускного экзамена класс не меняется: ученик становится выпускником.
+          const graduate = advance && grade >= LAST_GRADE;
+          const promote = advance && !graduate;
           return {
             notes,
             exams: { ...s.exams, [examId]: [...(s.exams[examId] ?? []), attempt] },
             grade: promote ? grade + 1 : s.grade,
             promoted: promote ? grade + 1 : s.promoted,
+            graduated: graduate ? (s.graduated ?? attempt.at) : s.graduated,
             ...withAttendance(s),
           };
         }),

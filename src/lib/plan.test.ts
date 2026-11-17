@@ -5,7 +5,7 @@ import { createNote } from './notebook';
 import { buildDay, reviewQueue, stats } from './plan';
 import { newFsrs, Rating, review } from './srs';
 
-const empty: SchoolState = { enrolled: true, grade: 0, bell: true, lessons: {}, words: {}, cards: {}, notes: {}, attendance: [], reviewsByDay: {}, newByDay: {}, exams: {}, promoted: null };
+const empty: SchoolState = { enrolled: true, grade: 0, bell: true, lessons: {}, words: {}, cards: {}, notes: {}, attendance: [], reviewsByDay: {}, newByDay: {}, exams: {}, promoted: null, graduated: null };
 const now = new Date('2026-03-02T09:00:00');
 
 describe('учебный день', () => {
@@ -53,5 +53,16 @@ describe('учебный день', () => {
 
   it('статистика зачётки', () => {
     expect(stats(empty)).toMatchObject({ words: 0, lessonsDone: 0, lessonsTotal: 6 });
+  });
+
+  it('6급: после всех уроков — выпускной экзамен, после выпуска — «Школа окончена»', () => {
+    const lessons = Object.fromEntries(gradeLessons(6).map((l) => [l.id, { completedAt: '2026-01-01T09:00:00', score: 1, attempts: 1 }]));
+    const g6 = { ...empty, grade: 6, lessons };
+    const exam = buildDay(g6, now).find((x) => x.action.type === 'exam');
+    expect(exam?.detail).toMatch(/Выпускной экзамен/);
+    const passed = { ...g6, graduated: '2026-02-01T10:00:00', exams: { 'exam-g6': [{ at: '2026-02-01T10:00:00', seed: 1, correct: 280, total: 300, passed: true, sections: [], wrongNoteIds: [] }] } };
+    const day = buildDay(passed, now);
+    expect(day.some((x) => x.action.type === 'exam')).toBe(false);
+    expect(day.find((x) => x.per === '1교시')?.title).toBe('Школа окончена');
   });
 });

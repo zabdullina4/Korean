@@ -2,7 +2,7 @@
 import { EXAMS, gradeLessons } from '../content/catalog';
 import type { Lesson, SkillKey } from '../content/types';
 import type { SchoolState } from '../state/store';
-import { dayKey, NEW_CARDS_PER_DAY } from '../state/store';
+import { dayKey, LAST_GRADE, NEW_CARDS_PER_DAY } from '../state/store';
 import { isNoteDue, isOpen } from './notebook';
 import { isDue, isMature, State } from './srs';
 
@@ -85,7 +85,7 @@ export function buildDay(s: Snapshot, now = new Date()): Slot[] {
         per,
         time: i ? '09:50' : '09:00',
         title: exam.titleKr,
-        detail: `Переводной экзамен · ${exam.minutes} мин · зачёт от ${Math.round(exam.pass * 100)}%`,
+        detail: `${s.grade >= LAST_GRADE ? 'Выпускной' : 'Переводной'} экзамен · ${exam.minutes} мин · зачёт от ${Math.round(exam.pass * 100)}%`,
         skill: 'read',
         minutes: exam.minutes,
         status: 'todo',
@@ -97,8 +97,8 @@ export function buildDay(s: Snapshot, now = new Date()): Slot[] {
         per,
         time: i ? '09:50' : '09:00',
         // Класс без экзамена (4급 пока наполняется) — ещё не «пройден».
-        title: pending.length === 0 && lessons.length && examDef ? 'Класс пройден' : 'Новые уроки готовятся',
-        detail: 'Скоро в приложении',
+        title: pending.length === 0 && lessons.length && examDef ? (s.grade >= LAST_GRADE && passed ? 'Школа окончена' : 'Класс пройден') : 'Новые уроки готовятся',
+        detail: s.grade >= LAST_GRADE && passed ? 'Повторяйте карточки и уроки любого класса' : 'Скоро в приложении',
         skill: 'read',
         minutes: 15,
         status: 'soon',

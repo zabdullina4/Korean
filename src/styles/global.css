@@ -427,3 +427,47 @@ a{color:inherit}
 .vcard .vr{font-size:14px;color:var(--ink)}
 .vcard .vn{font-size:11.5px;color:var(--ink-2)}
 .vcard.open{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 7%,var(--sheet))}
+
+/* ---------- 졸업식: выпускной и аттестат ---------- */
+.grad-hero{position:relative;overflow:hidden;margin:4px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:var(--board);color:var(--chalk);border-radius:var(--r);padding:22px 18px 18px}
+.grad-hero h1{font-family:var(--f-disp);font-weight:400;font-size:30px;line-height:1.15;margin:0 0 8px;position:relative}
+.grad-hero>p{margin:0 0 14px;color:var(--chalk-2);font-size:14px;position:relative}
+.grad-hero blockquote{margin:0;border-left:3px solid var(--hwang);padding:2px 0 2px 12px;position:relative}
+.grad-hero blockquote p{margin:0 0 6px;font-size:14px}
+.grad-hero blockquote p+p{color:var(--chalk-2);font-size:13px}
+.grad-hero cite{font-style:normal;font-size:12px;color:var(--chalk-2)}
+.petals{position:absolute;inset:0;pointer-events:none}
+.petals i{position:absolute;top:-14px;left:calc(var(--i) * 7.2%);width:10px;height:8px;border-radius:8px 0 8px 0;background:var(--jeok);opacity:.55;animation:petal 7s linear infinite;animation-delay:calc(var(--i) * -.53s)}
+.petals i:nth-child(3n){background:var(--hwang)}
+.petals i:nth-child(4n){background:var(--chalk)}
+@keyframes petal{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(14px,140px) rotate(160deg)}100%{transform:translate(-6px,300px) rotate(330deg)}}
+@media (prefers-reduced-motion: reduce){.petals i{animation:none;top:calc(var(--i) * 6%)}}
+
+.diploma{margin:14px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:var(--sheet);color:var(--ink);border:2px solid var(--hwang);outline:1px solid var(--hwang);outline-offset:-7px;border-radius:6px;padding:22px 20px 18px;position:relative}
+.diploma .d-no{font-size:12px;color:var(--ink-2)}
+.diploma h2{font-family:var(--f-disp);font-weight:400;font-size:34px;letter-spacing:.2em;text-align:center;margin:6px 0 12px}
+.diploma .d-text{font-size:15.5px;line-height:1.7;margin:0 0 4px;text-align:center}
+.diploma .d-ru{font-size:12.5px;color:var(--ink-2);text-align:center;margin:0 0 14px}
+.d-table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.d-table th{font-weight:600;font-size:12px;color:var(--ink-2);text-align:left;border-bottom:1px solid var(--line);padding:4px 6px}
+.d-table td{border-bottom:1px dashed var(--line);padding:5px 6px}
+.d-table th:not(:first-child),.d-table td:not(:first-child){text-align:right}
+.d-skills{display:grid;gap:8px;margin:14px 0 6px}
+.d-note{margin:0;font-size:12px;color:var(--ink-3)}
+.d-level{font-size:13.5px;margin:10px 0 14px;font-weight:600}
+.d-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px;font-size:14px}
+.d-sign{display:inline-flex;align-items:center;gap:8px}
+.seal{font-style:normal;font-family:var(--f-kr);display:inline-grid;place-items:center;width:38px;height:38px;border:2px solid var(--redpen);color:var(--redpen);border-radius:6px;font-size:20px;transform:rotate(-6deg)}
+.grad-next{list-style:none;margin:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));padding:0;display:grid;gap:8px}
+.grad-next li{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;font-size:13.5px;color:var(--ink-2)}
+.grad-next b{color:var(--ink);font-weight:600}
+.grad-card{margin:10px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));width:calc(100% - 2 * max(16px,env(safe-area-inset-left,0px)));text-align:left;font:inherit;cursor:pointer;background:var(--sheet);color:var(--ink);border:2px solid var(--hwang);border-radius:var(--r);padding:12px 14px;display:flex;gap:12px;align-items:center}
+.grad-card b{font-family:var(--f-disp);font-weight:400;font-size:20px;display:block}
+.grad-card small{color:var(--ink-2);font-size:13px}
+.grad-card .seal{flex:none}
+@media print{
+  body{background:var(--sheet)}
+  .no-print{display:none!important}
+  .app.grad{max-width:none;background:var(--sheet)}
+  .diploma{margin:0}
+}

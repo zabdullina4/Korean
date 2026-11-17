@@ -66,9 +66,11 @@ export function ExamScreen() {
           </div>
           <p style={{ textAlign: 'center', margin: '0 0 14px' }}>
             {attempt.passed
-              ? s.promoted === exam.grade + 1
-                ? `Поздравляем! Вы переведены в ${GRADES[exam.grade + 1].name}.`
-                : 'Экзамен сдан.'
+              ? !GRADES[exam.grade + 1] && s.graduated
+                ? 'Поздравляем! Вы окончили школу. Вас ждёт выпускной — 졸업식 и аттестат.'
+                : s.promoted === exam.grade + 1
+                  ? `Поздравляем! Вы переведены в ${GRADES[exam.grade + 1].name}.`
+                  : 'Экзамен сдан.'
               : attempt.writingShort
                 ? `Баллов по сумме хватает, но письменные задания обязательны: за каждое нужно не меньше ${Math.round((exam.minWriting ?? 0) * 100)}% его баллов. ${attempt.wrongNoteIds.length ? 'Отработайте ошибки в 보충수업 — после этого откроется пересдача.' : 'Пересдача доступна сразу.'}`
                 : `Для зачёта нужно ${Math.round(exam.pass * 100)}%${exam.scale ? ` (${Math.round(exam.pass * exam.scale)} из ${exam.scale})` : ''}. Отработайте ошибки в 보충수업 — после этого откроется пересдача с новым вариантом.`}
@@ -157,9 +159,15 @@ export function ExamScreen() {
               보충수업 · отработать {attempt.wrongNoteIds.length}
             </button>
           )}
-          <button className="cta" style={attempt.passed ? undefined : { background: 'var(--board-2)' }} onClick={() => nav('/', { state: { fresh: attempt.passed } })}>
-            В кампус
-          </button>
+          {attempt.passed && !GRADES[exam.grade + 1] && s.graduated ? (
+            <button className="cta" onClick={() => nav('/graduation')}>
+              На выпускной · 졸업식
+            </button>
+          ) : (
+            <button className="cta" style={attempt.passed ? undefined : { background: 'var(--board-2)' }} onClick={() => nav('/', { state: { fresh: attempt.passed } })}>
+              В кампус
+            </button>
+          )}
         </div>
       </div>
     );
@@ -177,7 +185,7 @@ export function ExamScreen() {
           </svg>
         </button>
         <div className="t">
-          <small>{GRADES[exam.grade].name} · переводной экзамен</small>
+          <small>{GRADES[exam.grade].name} · {GRADES[exam.grade + 1] ? 'переводной' : 'выпускной'} экзамен</small>
           <b className="kr">{exam.titleKr}</b>
         </div>
       </header>
@@ -197,7 +205,7 @@ export function ExamScreen() {
             Аудио можно прослушать {exam.plays} раза
           </span>
         </div>
-        <p className="note">Каждая попытка — новый вариант. При сдаче вы переходите в {GRADES[exam.grade + 1]?.name ?? 'следующий класс'}.</p>
+        <p className="note">Каждая попытка — новый вариант. {GRADES[exam.grade + 1] ? `При сдаче вы переходите в ${GRADES[exam.grade + 1].name}.` : 'При сдаче вы оканчиваете школу: выпускной 졸업식 и аттестат.'}</p>
       </section>
       {attempts.length > 0 && (
         <div className="sheetbox" style={{ backgroundImage: 'none' }}>

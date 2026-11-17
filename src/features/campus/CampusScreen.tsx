@@ -123,7 +123,18 @@ export function CampusScreen() {
           <button onClick={s.clearPromoted}>Спасибо</button>
         </div>
       )}
-      <div className="scene-wrap" style={s.promoted !== null ? { marginTop: 10 } : undefined}>
+      {s.graduated && (
+        <button className="grad-card" onClick={() => nav('/graduation')}>
+          <i className="seal" aria-hidden="true">
+            學
+          </i>
+          <span>
+            <b className="kr">졸업생</b>
+            <small>Вы окончили школу. Открыть аттестат и выпускной ›</small>
+          </span>
+        </button>
+      )}
+      <div className="scene-wrap" style={s.promoted !== null || s.graduated ? { marginTop: 10 } : undefined}>
         <CampusScene views={views} current={currentId} selected={sel} fresh={fresh} onSelect={setSel} />
       </div>
       <BuildingInfo id={sel} current={s.grade} />
