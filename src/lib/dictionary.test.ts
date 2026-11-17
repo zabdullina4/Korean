@@ -139,6 +139,30 @@ describe('морфологический разбор', () => {
     expect(forms('보다시피')).toContain('보다: 보다 + -다시피');
     expect(forms('아시다시피')).toContain('알다: 알다 + -시- + -다시피');
     expect(forms('쓰듯이')).toContain('쓰다: 쓰다 + -듯이');
+    // 6급
+    expect(forms('보나')).toContain('보다: 보다 + -나');
+    expect(forms('먹으나')).toContain('먹다: 먹다 + -으나');
+    expect(forms('마나')).toContain('말다: 말다 + -나');
+    expect(forms('왔기에')).toContain('오다: 오다 + -았- + -기에');
+    expect(forms('좋거니와')).toContain('좋다: 좋다 + -거니와');
+    expect(forms('있을진대')).toContain('있다: 있다 + -을진대');
+    expect(forms('사노라')).toContain('살다: 살다 + -노라');
+    expect(forms('왔노라')).toContain('오다: 오다 + -았- + -노라');
+    expect(forms('먹으리라')).toContain('먹다: 먹다 + -으리라');
+    expect(forms('살리라')).toContain('살다: 살다 + -리라');
+    expect(forms('좋도다')).toContain('좋다: 좋다 + -도다');
+    expect(forms('들을지어다')).toContain('듣다: 듣다 + -을지어다');
+    expect(forms('먹소')).toContain('먹다: 먹다 + -소');
+    expect(forms('가오')).toContain('가다: 가다 + -오');
+    expect(forms('앉으시오')).toContain('앉다: 앉다 + -으시오');
+    expect(forms('노세')).toContain('놀다: 놀다 + -세');
+    expect(forms('앉게')).toContain('앉다: 앉다 + -게');
+    expect(forms('좋더니만')).toContain('좋다: 좋다 + -더니만');
+    expect(forms('많음에도')).toContain('많다: 많다 + -(으)ㅁ에도');
+    expect(forms('사나')).toContain('살다: 살다 + -나');
+    expect(forms('커피에다가')).toContain('커피: 커피 + 에다가');
+    expect(forms('조금이나마')).toContain('조금: 조금 + 이나마');
+    expect(forms('밥은커녕')).toContain('밥: 밥 + 은커녕');
   });
 
   it('нерегулярные и неоднозначные формы', () => {

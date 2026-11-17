@@ -133,7 +133,11 @@ export type Form =
   // 5급: книжные конструкции (письменный стиль, формы на -다)
   | 'gimaryeon' | 'lsubakke' | 'gisipsang' | 'lbeophada' | 'eumettara' | 'neunhan' | 'nisang' | 'eumeuro' | 'gie' | 'eumeurosseo'
   | 'neuni' | 'lbaeya' | 'geon' | 'dagibodaV' | 'dagibodaA' | 'gineunkeonyeong' | 'lmangjeong' | 'nsem' | 'ginareum' | 'lttareum'
-  | 'dasipi' | 'nbawa' | 'deusi' | 'deutV' | 'deutA';
+  | 'dasipi' | 'nbawa' | 'deusi' | 'deutV' | 'deutA'
+  // 6급: редкие книжные и литературные окончания, 하오체 и 하게체, академический стиль
+  | 'namana' | 'giemangjeong' | 'geoniwa' | 'pastGeoniwa' | 'ljindae' | 'nora' | 'pastNora' | 'lira' | 'doda' | 'ljieoda'
+  | 'hao' | 'pastHao' | 'hasio' | 'hageSt' | 'hageQ' | 'hageCmd' | 'hageSug' | 'deoniman' | 'eumedo' | 'pastEumedo'
+  | 'dagoV' | 'dagoA' | 'lgeoseuro';
 
 export const addJong = (syl: string, jong: string) => {
   const d = decompose(syl)!;
@@ -581,6 +585,55 @@ export function conj(verb: string, form: Form): string {
       return `${withNeun(verb)} 듯하다`;
     case 'deutA':
       return `${takesNeun(verb) ? withNeun(verb) : withN(verb)} 듯하다`;
+    // ---- 6급 ----
+    case 'namana':
+      return `${stemForEu(verb, 'ㅅ').base}나 마나`;
+    case 'giemangjeong':
+      return `${pastStemOf(verb)}기에 망정이지`;
+    case 'geoniwa':
+      return `${stem}거니와`;
+    case 'pastGeoniwa':
+      return `${pastStemOf(verb)}거니와`;
+    case 'ljindae':
+      return `${withL(verb)}진대`;
+    case 'nora':
+      return `${dropL(verb)}노라`;
+    case 'pastNora':
+      return `${pastStemOf(verb)}노라`;
+    case 'lira':
+      return `${euKeepL(verb)}리라`;
+    case 'doda':
+      return verb === '이다' ? '이로다' : `${stem}도다`;
+    case 'ljieoda':
+      return `${withL(verb)}지어다`;
+    case 'hao':
+      // 하오체: после гласной и ㄹ (выпадает) — -오, после согласной — -소: 가오, 사오, 먹소. 이다 → 이오.
+      if (verb === '이다') return '이오';
+      return s.jong && s.jong !== 'ㄹ' ? `${stem}소` : `${dropL(verb)}오`;
+    case 'pastHao':
+      return `${pastStemOf(verb)}소`;
+    case 'hasio':
+      return `${stemForEu(verb, 'ㅅ').base}시오`;
+    case 'hageSt':
+      return `${dropL(verb)}네`;
+    case 'hageQ':
+      return `${dropL(verb)}나`;
+    case 'hageCmd':
+      return `${stem}게`;
+    case 'hageSug':
+      return `${dropL(verb)}세`;
+    case 'deoniman':
+      return `${stem}더니만`;
+    case 'eumedo':
+      return `${eum(verb)}에도 불구하고`;
+    case 'pastEumedo':
+      return `${pastStemOf(verb)}음에도 불구하고`;
+    case 'dagoV':
+      return `${neunda(verb)}고 볼 수 있다`;
+    case 'dagoA':
+      return `${verb}고 볼 수 있다`;
+    case 'lgeoseuro':
+      return `${withL(verb)} 것으로 보인다`;
   }
 }
 
@@ -1265,6 +1318,79 @@ export function conjDistractors(verb: string, form: Form): string[] {
       break;
     case 'deutA':
       c = takesNeun(verb) ? [`${stem}은 듯하다`, `${info(verb)}는 듯하다`] : [`${stem}는 듯하다`, `${stem}은 듯하다`, `${info(verb)}는 듯하다`];
+      break;
+    // ---- 6급 ----
+    case 'namana':
+      c = [`${stem}기 마나`, vowel ? `${stem}으나 마나` : `${stem}나 마나`, `${withN(verb)} 마나`];
+      break;
+    case 'giemangjeong':
+      // «-기에 망정이지» в настоящем (네가 있기에 망정이지) и синоним «-(으)니 망정이지» грамматичны — не берём.
+      c = [`${pastStemOf(verb)}기 망정이지`, `${withN(verb)}기에 망정이지`];
+      break;
+    case 'geoniwa':
+    case 'pastGeoniwa':
+      c = [`${withNeun(verb)}거니와`, `${withN(verb)}거니와`, `${stem}기니와`];
+      break;
+    case 'ljindae':
+      // 진대 пишется слитно.
+      c = [`${withL(verb)} 진대`, `${withN(verb)}진대`, `${stem}기진대`];
+      break;
+    case 'nora':
+      c = [`${withN(verb)}노라`, `${info(verb)}노라`, `${stem}노다`];
+      break;
+    case 'pastNora':
+      c = [`${pastStemOf(verb)}다노라`, `${withN(verb)}노라`, `${pastStemOf(verb)}노다`];
+      break;
+    case 'lira':
+      c = [vowel || s.jong === 'ㄹ' ? `${stem}으리라` : `${stem}리라`, `${withL(verb)}리라`, `${info(verb)}리라`];
+      break;
+    case 'doda':
+      c = [`${info(verb)}도다`, `${withN(verb)}도다`, `${stem}로다`];
+      break;
+    case 'ljieoda':
+      c = [`${withL(verb)} 지어다`, `${withN(verb)}지어다`, `${stem}기지어다`];
+      break;
+    case 'hao':
+      // «먹으오» — старый, но верный вариант 하오체; после гласной «-소» (하소) встречается в диалектах — не берём.
+      c = [`${stem}습소`, vowel ? `${stem}으오` : `${stem}오`];
+      break;
+    case 'pastHao':
+      c = [`${pastStemOf(verb)}오`, `${pastStemOf(verb)}습소`];
+      break;
+    case 'hasio':
+      c = [`${info(verb)}시오`, vowel ? `${stem}으시오` : `${stem}시오`, `${withN(verb)}시오`];
+      break;
+    case 'hageSt':
+      c = [`${info(verb)}네`, `${withN(verb)}네`, `${stem}습네`];
+      break;
+    case 'hageQ':
+      // «-는가» — тоже вопрос 하게체 (가는가), не берём.
+      c = [`${info(verb)}나`, `${withN(verb)}나`, `${stem}습나`];
+      break;
+    case 'hageCmd':
+      // «-게나» — тоже приказ 하게체 (가게나), не берём.
+      c = [`${info(verb)}게`, `${stem}으게`, `${stem}게세`];
+      break;
+    case 'hageSug':
+      c = [`${info(verb)}세`, `${withN(verb)}세`, `${stem}읍세`];
+      break;
+    case 'deoniman':
+      c = [`${info(verb)}더니만`, `${withN(verb)}더니만`, `${withL(verb)}더니만`];
+      break;
+    case 'eumedo':
+    case 'pastEumedo':
+      // «-는데도 불구하고» — другая верная конструкция, не берём.
+      c = [`${info(verb)}도 불구하고`, `${withN(verb)}에도 불구하고`, `${stem}기에도 불구하고`];
+      break;
+    case 'dagoV':
+      c = [`${verb}고 볼 수 있다`, `${withNeun(verb)}다고 볼 수 있다`, `${withN(verb)}다고 볼 수 있다`];
+      break;
+    case 'dagoA':
+      c = [`${withN(verb)}다고 볼 수 있다`, `${withNeun(verb)}다고 볼 수 있다`];
+      break;
+    case 'lgeoseuro':
+      // «-(으)ㄴ 것으로 보인다» (прошедшее) и «-(으)ㄹ 것으로 본다» грамматичны — не берём.
+      c = [`${stem}기 것으로 보인다`, `${withL(verb)} 것으로써 보인다`];
       break;
     case 'myeonan':
       // «-아/어도 안 돼요» не берём: «даже если…, не годится» — грамматично.

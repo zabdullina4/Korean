@@ -82,7 +82,7 @@ function withJamo(verb: string, jamo: 'ㄹ' | 'ㄴ' | 'ㅂ', rest: string): { fo
 function withC(verb: string, ending: string): string {
   const stem = stemOf(verb);
   const s = decompose(lastSyl(stem))!;
-  if (s.jong === 'ㄹ' && /^[는네느냬]/.test(ending)) return stem.slice(0, -1) + addJong(lastSyl(stem), '') + ending;
+  if (s.jong === 'ㄹ' && /^[는네느냬나노세]/.test(ending)) return stem.slice(0, -1) + addJong(lastSyl(stem), '') + ending;
   return stem + ending;
 }
 
@@ -420,6 +420,33 @@ const T: Template[] = [
   { id: 'dasipi', build: (v) => ({ form: v.slice(0, -1) + '다시피', chain: [end('-다시피', '«как (вы) …»; «почти что»', 'g5-u7-l1')] }) },
   { id: 'honDasipi', build: (v) => { const r = withEu(v, '시다시피'); return { form: r.form, chain: [honor(r.eu), end('-다시피', '«как вы (знаете, видите)»', 'g5-u7-l1')] }; } },
   { id: 'deusi', build: (v) => ({ form: v.slice(0, -1) + '듯이', chain: [end('-듯이', '«словно, как будто»', 'g5-u7-l2')] }) },
+  // ---- 6급: редкие книжные и литературные окончания, 하오체 и 하게체 ----
+  {
+    id: 'euna',
+    build: (v) => {
+      const r = decompose(lastSyl(stemOf(v)))?.jong === 'ㄹ' ? { form: withC(v, '나'), eu: false } : withEu(v, '나');
+      return { form: r.form, chain: [end(eu(r.eu, '나'), 'с 마나 — «что…, что не… — всё равно»; книжное «но»', 'g6-u1-l1')] };
+    },
+  },
+  { id: 'pastGie', build: (v) => ({ form: pastStem(v) + '기에', chain: [pastMark(v), end('-기에', 'с 망정이지 — «хорошо ещё, что…»; книжное «так как»', 'g6-u1-l2')] }) },
+  { id: 'geoniwa', build: (v) => ({ form: v.slice(0, -1) + '거니와', chain: [end('-거니와', 'книжное «мало того что…, ещё и»', 'g6-u2-l1')] }) },
+  { id: 'pastGeoniwa', build: (v) => ({ form: pastStem(v) + '거니와', chain: [pastMark(v), end('-거니와', '«как уже (сказано), …»', 'g6-u2-l1')] }) },
+  { id: 'ljindae', build: (v) => { const r = withJamo(v, 'ㄹ', '진대'); return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '진대'), '«раз уж, коль скоро» (книжн.)', 'g6-u2-l2')] }; } },
+  { id: 'geondae', only: ['v'], build: (v) => ({ form: v.slice(0, -1) + '건대', chain: [end('-건대', '«как я (думаю, вижу, надеюсь)…» (книжн.)', 'g6-u2-l2')] }) },
+  { id: 'nora', only: ['v'], build: (v) => ({ form: withC(v, '노라'), chain: [end('-노라', 'торжественное «я …» (литер.)', 'g6-u3-l1')] }) },
+  { id: 'pastNora', build: (v) => ({ form: pastStem(v) + '노라', chain: [pastMark(v), end('-노라', 'торжественное «я …л» (литер.)', 'g6-u3-l1')] }) },
+  { id: 'lira', build: (v) => { const r = withEu(v, '리라'); return { form: r.form, chain: [end(eu(r.eu, '리라'), '«непременно…; должно быть…» (литер.)', 'g6-u3-l1')] }; } },
+  { id: 'doda', build: (v) => ({ form: v.slice(0, -1) + '도다', chain: [end('-도다', 'книжное восклицание «как же…!»', 'g6-u3-l2')] }) },
+  { id: 'ljieoda', build: (v) => { const r = withJamo(v, 'ㄹ', '지어다'); return { form: r.form, chain: [end(euJ(r.eu, 'ㄹ', '지어다'), '«да будет так; надлежит…» (литер.)', 'g6-u3-l2')] }; } },
+  { id: 'hao', build: (v) => { const f = conj(v, 'hao'); return { form: f, chain: [end(f.endsWith('소') ? '-소' : '-오', '하오체 (старинная вежливая речь)', 'g6-u4-l1')] }; } },
+  { id: 'pastHao', build: (v) => ({ form: pastStem(v) + '소', chain: [pastMark(v), end('-소', '하오체 (старинная вежливая речь)', 'g6-u4-l1')] }) },
+  { id: 'hasio', only: ['v'], build: (v) => { const r = withEu(v, '시오'); return { form: r.form, chain: [end(eu(r.eu, '시오'), 'приказ 하오체 (объявления, таблички)', 'g6-u4-l1')] }; } },
+  { id: 'hageSt', only: ['v'], build: (v) => ({ form: withC(v, '네'), chain: [end('-네', 'утверждение 하게체; восклицание «надо же»', 'g6-u4-l2')] }) },
+  { id: 'hageCmd', only: ['v'], build: (v) => ({ form: v.slice(0, -1) + '게', chain: [end('-게', 'приказ 하게체 (старший — младшему)', 'g6-u4-l2')] }) },
+  { id: 'hageSug', only: ['v'], build: (v) => ({ form: withC(v, '세'), chain: [end('-세', '«давай…» в 하게체', 'g6-u4-l2')] }) },
+  { id: 'deoniman', build: (v) => ({ form: v.slice(0, -1) + '더니만', chain: [end('-더니만', '«было же…, а (теперь)» — усиленное -더니', 'g6-u8-l2')] }) },
+  { id: 'eumedo', build: (v) => { const f = eum(v); return { form: f + '에도', chain: [end('-(으)ㅁ에도', 'с 불구하고 — «несмотря на то что»', 'g6-u7-l1')] }; } },
+  { id: 'pastEumedo', build: (v) => ({ form: pastStem(v) + '음에도', chain: [pastMark(v), end('-음에도', 'с 불구하고 — «несмотря на то что»', 'g6-u7-l1')] }) },
   { id: 'pastGi', build: (v) => ({ form: pastStem(v) + '기', chain: [pastMark(v), end('-기', 'с 때문에 — «потому что (уже случилось)»: 잤기 때문에', 'g2-u7-l2')] }) },
   { id: 'pastGo', build: (v) => ({ form: pastStem(v) + '고', chain: [pastMark(v), end('-고', '«и», «и затем»')] }) },
   { id: 'pastJiman', build: (v) => ({ form: pastStem(v) + '지만', chain: [pastMark(v), end('-지만', '«но, однако»')] }) },
@@ -517,6 +544,25 @@ const P: Particle[] = [
   { form: '보다', after: 'any', gloss: '«чем» (сравнение)' },
   { form: '들', after: 'any', gloss: 'множественное число' },
   { form: '요', after: 'any', gloss: 'вежливость в неполной фразе: 저는요? «а я?»', lessonId: 'g1-u6-l2' },
+  { form: '조차', after: 'any', gloss: '«даже» (с отрицательным оттенком)', lessonId: 'g5-u5-l2' },
+  { form: '마저', after: 'any', gloss: '«даже и последнее»', lessonId: 'g5-u5-l2' },
+  { form: '이야말로', after: 'C', pair: '야말로', gloss: '«именно, вот уж действительно»', lessonId: 'g5-u5-l2' },
+  { form: '야말로', after: 'V', pair: '이야말로', gloss: '«именно, вот уж действительно»', lessonId: 'g5-u5-l2' },
+  { form: '치고', after: 'any', gloss: '«для (кого-то); среди всех…»', lessonId: 'g5-u5-l2' },
+  { form: '에다가', after: 'any', gloss: '«к, в (добавить, положить)»; «вдобавок к»', lessonId: 'g6-u5-l1' },
+  { form: '에다', after: 'any', gloss: 'сокращение от 에다가: «к, в»', lessonId: 'g6-u5-l1' },
+  { form: '이나마', after: 'C', pair: '나마', gloss: '«хоть (немного), пусть и (не лучшее)»', lessonId: 'g6-u5-l1' },
+  { form: '나마', after: 'V', pair: '이나마', gloss: '«хоть (немного), пусть и (не лучшее)»', lessonId: 'g6-u5-l1' },
+  { form: '이라야', after: 'C', pair: '라야', gloss: '«только (если это)…»', lessonId: 'g6-u5-l2' },
+  { form: '라야', after: 'V', pair: '이라야', gloss: '«только (если это)…»', lessonId: 'g6-u5-l2' },
+  { form: '깨나', after: 'any', gloss: '«порядочно, изрядно» (разг.)', lessonId: 'g6-u5-l2' },
+  { form: '커녕', after: 'any', gloss: '«не то что…» (= 은/는커녕)', lessonId: 'g6-u5-l2' },
+  { form: '은커녕', after: 'C', pair: '는커녕', gloss: '«не то что…, даже не»', lessonId: 'g5-u5-l1' },
+  { form: '는커녕', after: 'V', pair: '은커녕', gloss: '«не то что…, даже не»', lessonId: 'g5-u5-l1' },
+  { form: '이로다', after: 'C', pair: '로다', kind: 'copula', gloss: '«вот (это) …!» — книжное восклицание', lessonId: 'g6-u3-l2' },
+  { form: '로다', after: 'V', pair: '이로다', kind: 'copula', gloss: '«вот (это) …!» — книжное восклицание', lessonId: 'g6-u3-l2' },
+  { form: '이오', after: 'C', kind: 'copula', gloss: '«является» — 하오체', lessonId: 'g6-u4-l1' },
+  { form: '이지', after: 'C', kind: 'copula', gloss: '«является ведь»; в 망정이지 — «хорошо ещё, что»' },
   { form: '이에요', after: 'C', pair: '예요', kind: 'copula', gloss: '«является» — связка 해요체', lessonId: L.copula },
   { form: '예요', after: 'V', pair: '이에요', kind: 'copula', gloss: '«является» — связка 해요체', lessonId: L.copula },
   { form: '이었어요', after: 'C', pair: '였어요', kind: 'copula', gloss: '«был, являлся»', lessonId: L.past },
