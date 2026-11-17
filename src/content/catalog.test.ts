@@ -119,4 +119,13 @@ describe('контент', () => {
         }
       }
   });
+
+  it('верный вариант не стоит всегда первым: в каждом классе он на первом месте не чаще чем в 60% заданий', () => {
+    for (const g of GRADES) {
+      const items = LESSONS.filter((l) => l.grade === g.n).flatMap((l) => l.steps.flatMap((s) => (s.kind === 'choice' ? s.items : [])));
+      if (items.length < 20) continue;
+      const first = items.filter((it) => it.answer === 0).length / items.length;
+      expect(first, g.name).toBeLessThan(0.6);
+    }
+  });
 });

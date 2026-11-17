@@ -1,3 +1,4 @@
+import { hash, rng, shuffle } from '../lib/random';
 import { consonantsBasic, consonantsTriples } from './grade0/consonants';
 import { batchim, syllableBlocks } from './grade0/syllables';
 import { vowelsBasic, vowelsY } from './grade0/vowels';
@@ -64,8 +65,27 @@ const G5 = [
   ...[amountsTo, dependsOn, asYouKnow, asIf, idiomsHead, idiomsBody, idioms2, idioms3, hanja3, pressStyles, essayArgument],
 ];
 
+/**
+ * В рукописных заданиях автор обычно ставит верный вариант первым; плеер показывает варианты как есть.
+ * Поэтому порядок перемешивается здесь — детерминированно по тексту задания, чтобы он не менялся между запусками.
+ */
+export function shuffleOptions(l: Lesson): Lesson {
+  const steps = l.steps.map((s) =>
+    s.kind !== 'choice'
+      ? s
+      : {
+          ...s,
+          items: s.items.map((it) => {
+            const options = shuffle(it.options, rng(hash(`${l.id}|${it.prompt}|${it.options.join('|')}`)));
+            return { ...it, options, answer: options.indexOf(it.options[it.answer]) };
+          }),
+        },
+  );
+  return { ...l, steps };
+}
+
 // Каждому уроку добавляется шаг «Новые слова» перед первым заданием на эти слова (см. vocab.ts).
-export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4, ...G5].map(withVocab);
+export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4, ...G5].map(withVocab).map(shuffleOptions);
 
 /** Переводной экзамен каждого класса. */
 export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam, 3: topik3Exam, 4: topik4Exam, 5: topik5Exam };
