@@ -1,0 +1,553 @@
+<title>한국어 학교 · Кампус</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Caveat:wght@500;700&family=Golos+Text:wght@400;500;600;700&family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap">
+<style>
+/* Layout: one phone-width column (a school day on a phone): campus scene → timetable → gradebook; lesson view = chalkboard + paper sheets. */
+:root{
+  --paper:#eceee8; --desk:#d9ddd5; --sheet:#fbfbf8; --line:#cfd4cc;
+  --ink:#1d2327; --ink-2:#59646a; --ink-3:#8b9497;
+  --board:#2d4b3f; --board-2:#365a4b; --chalk:#f2f0e4; --chalk-2:#c9d3c4;
+  --cheong:#2f5f8f; --jeok:#b5412f; --hwang:#c98f17; --baek:#8f8a7a; --heuk:#2a2f33;
+  --redpen:#c8322b; --ok:#2f7a4f;
+  --sky:#cfe1e7; --sky-2:#e8efe9; --hill:#b5c8bd; --hill-2:#9fb6aa; --ground:#d6d9c6; --path:#e6e3d3;
+  --wall:#f7f5ee; --wall-side:#d8d4c7; --win:#b9c9d0; --win-lit:#f1bf45; --roof:#3d4a52; --fog:#e8eee9;
+  --ginkgo:#dfae28; --trunk:#6f5b48; --track:#c98a6b;
+  --f-ui:"Golos Text","Gowun Dodum",system-ui,sans-serif;
+  --f-kr:"Gowun Dodum","Golos Text",sans-serif;
+  --f-disp:"Black Han Sans","Golos Text",sans-serif;
+  --f-chalk:"Caveat","Nanum Pen Script",cursive;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#14191c; --desk:#0d1113; --sheet:#1c2226; --line:#2c353a;
+  --ink:#e8ebe6; --ink-2:#a4aeb0; --ink-3:#6f7a7d;
+  --board:#20372e; --board-2:#2a4639; --chalk:#eeece0; --chalk-2:#a9b8a8;
+  --cheong:#6c9bcb; --jeok:#e0735f; --hwang:#e6b443; --baek:#cfc9b6; --heuk:#c3c9cc;
+  --redpen:#f0675d; --ok:#5cbf86;
+  --sky:#18263a; --sky-2:#22344b; --hill:#1d2d33; --hill-2:#172429; --ground:#1b231f; --path:#262e29;
+  --wall:#3a4247; --wall-side:#2b3237; --win:#222b31; --win-lit:#f5c452; --roof:#11161a; --fog:#1a2530;
+  --ginkgo:#b68b1f; --trunk:#4c3f33; --track:#7a5444;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#14191c; --desk:#0d1113; --sheet:#1c2226; --line:#2c353a;
+  --ink:#e8ebe6; --ink-2:#a4aeb0; --ink-3:#6f7a7d;
+  --board:#20372e; --board-2:#2a4639; --chalk:#eeece0; --chalk-2:#a9b8a8;
+  --cheong:#6c9bcb; --jeok:#e0735f; --hwang:#e6b443; --baek:#cfc9b6; --heuk:#c3c9cc;
+  --redpen:#f0675d; --ok:#5cbf86;
+  --sky:#18263a; --sky-2:#22344b; --hill:#1d2d33; --hill-2:#172429; --ground:#1b231f; --path:#262e29;
+  --wall:#3a4247; --wall-side:#2b3237; --win:#222b31; --win-lit:#f5c452; --roof:#11161a; --fog:#1a2530;
+  --ginkgo:#b68b1f; --trunk:#4c3f33; --track:#7a5444;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--desk);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.45}
+.app{max-width:460px;margin:0 auto;min-height:100%;background:var(--paper);display:flex;flex-direction:column;position:relative}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kr{font-family:var(--f-kr)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--cheong);outline-offset:2px;border-radius:6px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px 8px}
+.date{font-family:var(--f-kr);font-size:13px;color:var(--ink-2)}
+.date b{color:var(--ink);font-weight:400}
+.top-r{display:flex;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink-2);white-space:nowrap}
+.chip b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.iconbtn{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--sheet);display:grid;place-items:center}
+.iconbtn svg{width:16px;height:16px;stroke:var(--ink-2);fill:none;stroke-width:1.8}
+.iconbtn[aria-pressed="false"] svg{opacity:.4}
+
+/* greeting */
+.hello{padding-block:4px 10px}
+.hello h1{font-family:var(--f-disp);font-weight:400;font-size:30px;line-height:1.1;margin:0;letter-spacing:.5px;text-wrap:balance}
+.hello p{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+
+/* scene */
+.scene-wrap{position:relative;margin-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.scene{display:block;width:100%;height:auto}
+.bld{cursor:pointer}
+.bld:focus{outline:none}
+.bld:focus-visible .front,.bld.sel .front{stroke:var(--cheong);stroke-width:2}
+.bld .lbl{font-family:var(--f-kr);font-size:11px;fill:var(--ink)}
+.bld .lbl-bg{fill:var(--sheet);opacity:.92}
+.fogged{opacity:.38}
+.leaf{fill:var(--ginkgo)}
+@media (prefers-reduced-motion: no-preference){
+  .leaf{animation:fall 7s linear infinite}
+  .win.now{animation:pulse 1.8s ease-in-out infinite}
+  .win.fresh{animation:fresh 1.2s ease-out 3}
+}
+@keyframes fall{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(-30px,170px) rotate(320deg);opacity:0}}
+@keyframes pulse{50%{opacity:.35}}
+@keyframes fresh{0%{filter:brightness(2)}100%{filter:none}}
+
+.info{margin:10px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;gap:12px;align-items:center}
+.info .badge{font-family:var(--f-disp);font-size:20px;min-width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:var(--board);color:var(--chalk)}
+.info h3{margin:0;font-size:15px}
+.info p{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+.info .grow{flex:1;min-width:0}
+.meter{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:var(--win-lit)}
+
+/* section heads */
+.sec{padding-block:22px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sec h2{margin:0;font-family:var(--f-disp);font-weight:400;font-size:20px;letter-spacing:.5px}
+.sec span{font-size:12px;color:var(--ink-3)}
+
+/* timetable */
+.tt{list-style:none;margin:0;display:flex;flex-direction:column;gap:0;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding:0}
+.tt li+li{border-top:1px dashed var(--line)}
+.slot{width:100%;display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;padding:12px 14px;background:none;border:0;text-align:left}
+.slot .per{font-family:var(--f-kr);font-size:13px;color:var(--ink-2);line-height:1.15}
+.slot .per small{display:block;font-family:var(--f-ui);font-size:11px;color:var(--ink-3)}
+.slot .what{min-width:0}
+.slot .what b{display:block;font-weight:500;font-size:14.5px}
+.slot .what span{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink-2);margin-top:2px}
+.sk{display:inline-block;font-family:var(--f-kr);font-size:11px;padding:1px 7px;border-radius:5px;color:#fff;background:var(--c)}
+.sk.light{color:var(--ink);background:transparent;border:1px solid var(--c)}
+.slot .st{font-size:12px;color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.slot.done .what b{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-3)}
+.slot.next{background:linear-gradient(90deg,color-mix(in srgb,var(--win-lit) 18%,transparent),transparent 70%)}
+.slot.next .st{color:var(--ink);font-weight:600}
+.go{display:inline-flex;align-items:center;gap:4px;background:var(--board);color:var(--chalk);border-radius:999px;padding:5px 12px;font-size:12.5px}
+.tick{color:var(--ok);font-weight:700}
+
+/* gradebook */
+.gb{margin-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px}
+.gb-row{display:grid;grid-template-columns:78px 1fr 34px;gap:10px;align-items:center;font-size:13px}
+.gb-row .bar{height:10px;border-radius:5px;background:var(--line);position:relative;overflow:hidden}
+.gb-row .bar i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:5px}
+.gb-row .v{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+.gb-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:10px;font-size:13px;color:var(--ink-2)}
+.gb-foot b{color:var(--ink)}
+
+/* tab bar */
+.tabs{position:sticky;bottom:0;margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);background:var(--sheet);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:5}
+.tab{background:none;border:0;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--ink-3)}
+.tab .k{font-family:var(--f-kr);font-size:15px}
+.tab[aria-current="page"]{color:var(--ink)}
+.tab[aria-current="page"] .k{color:var(--jeok)}
+.tab .n{font-size:10px;background:var(--redpen);color:#fff;border-radius:8px;padding:0 5px;margin-left:2px}
+.spacer{height:24px}
+
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:999px;font-size:13px;max-width:calc(100% - 32px);text-align:center;z-index:20}
+
+/* ===== lesson ===== */
+.lhead{display:flex;align-items:center;gap:10px;padding-block:12px}
+.lhead .t{flex:1;min-width:0}
+.lhead .t small{display:block;font-size:12px;color:var(--ink-3)}
+.lhead .t b{font-weight:600;font-size:15px}
+.dots{display:flex;gap:5px;padding-block:0 12px}
+.dots i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.dots i.on{background:var(--board-2)}
+.dots i.cur{background:var(--win-lit)}
+
+.board{margin-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));background:radial-gradient(120% 90% at 30% 20%,var(--board-2),var(--board));border-radius:16px;border:8px solid var(--trunk);color:var(--chalk);padding:18px 16px 20px;position:relative;box-shadow:inset 0 0 40px rgba(0,0,0,.25)}
+.board::after{content:"";position:absolute;left:18px;right:18px;bottom:-8px;height:6px;background:var(--wall-side);border-radius:0 0 4px 4px}
+.board h2{font-family:var(--f-chalk);font-weight:700;font-size:26px;margin:0 0 4px;line-height:1.1;color:var(--chalk)}
+.board .sub{font-size:13px;color:var(--chalk-2);margin:0 0 14px}
+.chalk{font-family:var(--f-chalk);font-size:22px;line-height:1.3}
+.cl{display:block}
+@media (prefers-reduced-motion: no-preference){
+  .cl{animation:write .7s ease-out both;animation-delay:calc(var(--i,0) * .45s)}
+}
+@keyframes write{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.hl-a{color:#9fd0ff}
+.hl-b{color:#ffd37a}
+.no{color:#ff9c8f}
+.yes{color:#a6e3b5}
+
+.sheetbox{margin:14px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:14px;background-image:repeating-linear-gradient(transparent 0 27px,color-mix(in srgb,var(--cheong) 12%,transparent) 27px 28px)}
+.sheetbox h4{margin:0 0 8px;font-size:13px;color:var(--ink-2);font-weight:500}
+
+/* chat (situation) */
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px;align-items:flex-end}
+.msg.me{flex-direction:row-reverse}
+.ava{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-kr);font-size:13px;color:#fff;flex:none}
+.bub{background:color-mix(in srgb,var(--chalk) 12%,transparent);border:1px solid color-mix(in srgb,var(--chalk) 25%,transparent);border-radius:14px;padding:8px 12px;max-width:78%;text-align:left;color:var(--chalk)}
+.bub .k{font-family:var(--f-kr);font-size:17px;display:block}
+.bub .ru{display:block;font-size:12.5px;color:var(--chalk-2);margin-top:3px}
+.who{font-size:11px;color:var(--chalk-2);margin-bottom:2px}
+
+/* options */
+.q{font-family:var(--f-kr);font-size:19px;margin:4px 0 12px;line-height:1.5}
+.q .gap{display:inline-block;min-width:64px;border-bottom:2px solid var(--ink-3);text-align:center;color:var(--cheong)}
+.q .ru{display:block;font-family:var(--f-ui);font-size:13px;color:var(--ink-2)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 10px;font-family:var(--f-kr);font-size:18px;text-align:center}
+.opt.wide{grid-column:1/-1;font-family:var(--f-ui);font-size:14px;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--ink-3)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--sheet))}
+.opt.wrong{border-color:var(--redpen);text-decoration:line-through;text-decoration-color:var(--redpen);color:var(--ink-3)}
+.fb{margin-top:12px;font-size:14px;border-left:3px solid var(--c,var(--ok));padding:4px 0 4px 10px}
+.fb.bad{--c:var(--redpen)}
+.fb .pen{font-family:var(--f-chalk);font-size:20px;color:var(--c,var(--ok));display:block;line-height:1.1}
+.count{font-size:12px;color:var(--ink-3);margin-bottom:6px;font-variant-numeric:tabular-nums}
+
+/* tiles */
+.target{min-height:58px;display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1.5px dashed var(--ink-3);border-radius:12px;margin-bottom:12px;align-items:center}
+.target:empty::before{content:"Нажимайте на блоки по порядку";color:var(--ink-3);font-size:13px;padding-left:4px}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.tile{font-family:var(--f-kr);font-size:18px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);box-shadow:0 2px 0 var(--line)}
+.tile .p{color:var(--jeok)}
+.tile .e{color:var(--cheong)}
+.tile:active{transform:translateY(1px);box-shadow:none}
+
+/* rule table */
+.rtable{width:100%;border-collapse:collapse;font-size:13px;color:var(--chalk)}
+.rtable th,.rtable td{padding:6px 4px;border-bottom:1px solid color-mix(in srgb,var(--chalk) 22%,transparent);text-align:left;vertical-align:top}
+.rtable th{font-weight:500;color:var(--chalk-2);font-size:12px}
+.rtable td.k{font-family:var(--f-kr);font-size:14px}
+
+/* finish */
+.stamp{width:150px;height:150px;border-radius:50%;border:5px solid var(--redpen);color:var(--redpen);display:grid;place-items:center;text-align:center;margin:8px auto 14px;transform:rotate(-12deg);font-family:var(--f-disp);font-size:26px;line-height:1.05;position:relative;background:color-mix(in srgb,var(--redpen) 6%,transparent)}
+.stamp::before{content:"";position:absolute;inset:7px;border-radius:50%;border:2px solid var(--redpen)}
+.stamp small{display:block;font-family:var(--f-ui);font-size:11px;letter-spacing:.06em;margin-top:4px}
+@media (prefers-reduced-motion: no-preference){.stamp{animation:stamp .5s cubic-bezier(.2,1.6,.4,1) both}}
+@keyframes stamp{from{transform:rotate(-12deg) scale(2.2);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.sum div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 4px}
+.sum b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.sum span{font-size:11.5px;color:var(--ink-2)}
+
+.lfoot{position:sticky;bottom:0;margin-top:auto;background:linear-gradient(transparent,var(--paper) 30%);padding-top:22px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5}
+.cta{width:100%;border:0;border-radius:14px;background:var(--board);color:var(--chalk);padding:14px;font-size:16px;font-weight:600}
+.cta:disabled{opacity:.4;cursor:default}
+.hint{font-size:12px;color:var(--ink-3);text-align:center;margin:8px 0 0}
+</style>
+
+<div class="app" id="app"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const app=$('#app');
+const S={lessonDone:false,errors:4,bell:true,sel:'g2',step:0,stepState:{},lessonErrors:0,fresh:false};
+
+/* ---------- sound: 딩동댕 school chime ---------- */
+let ac=null;
+function bell(){
+  if(!S.bell)return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    [784,659,523].forEach((f,i)=>{
+      const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+i*.32;
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+1.1);
+      o.connect(g).connect(ac.destination);o.start(t);o.stop(t+1.2);
+    });
+  }catch(e){}
+}
+let tT;
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2600)}
+
+/* ---------- campus data ---------- */
+const B={
+  prep:{name:'예비반',ru:'Подготовительный · Хангыль',st:'Сдано · 출석 18 дней',units:[1,1,1,1],badge:'0급'},
+  g1:{name:'1급 교실',ru:'Начальная школа · 1 класс',st:'Выпускной экзамен: 136 / 200',units:Array(10).fill(1),badge:'1급'},
+  g2:{name:'2급 교실',ru:'Начальная школа · 2 класс',st:'Юнит 7 «Здоровье» · урок 4 из 10',units:[1,1,1,1,1,1,.5,0,0,0],badge:'2급',cur:true},
+  lib:{name:'도서관',ru:'Библиотека · 38 книг подходят вам',st:'Сейчас читаете «비 오는 날», гл. 2',badge:'책'},
+  club:{name:'동아리관',ru:'Клубы · 드라마, K-pop',st:'Открыт 드라마 동아리 · 3 сцены',badge:'반'},
+  yard:{name:'운동장',ru:'Двор · микро-тренажёры',st:'Числа · 불규칙 · 존댓말 · частицы',badge:'놀'},
+  g3:{name:'3급',ru:'Средняя школа',st:'Закрыто · можно сдать экстерном',badge:'3급',locked:true},
+  g4:{name:'4급',ru:'Средняя школа',st:'Закрыто',badge:'4급',locked:true},
+  g5:{name:'5급',ru:'Старшая школа',st:'Закрыто',badge:'5급',locked:true},
+  g6:{name:'6급',ru:'Старшая школа',st:'Закрыто',badge:'6급',locked:true}
+};
+
+function bld(id,x,y,w,h,cols,rows,opt={}){
+  const d=opt.d||Math.round(w*.18),b=B[id];
+  let s=`<g class="bld${opt.fog?' fogged':''}${S.sel===id?' sel':''}" data-id="${id}" tabindex="0" role="button" aria-label="${b.name}, ${b.ru}">`;
+  s+=`<polygon points="${x+w},${y} ${x+w+d},${y-d*.55} ${x+w+d},${y+h-d*.55} ${x+w},${y+h}" fill="var(--wall-side)"/>`;
+  s+=`<polygon points="${x-3},${y} ${x+w+3},${y} ${x+w+d+2},${y-d*.55} ${x+d-1},${y-d*.55}" fill="var(--roof)"/>`;
+  s+=`<rect class="front" x="${x}" y="${y}" width="${w}" height="${h}" fill="var(--wall)"/>`;
+  const pw=(w-12)/cols, ph=(h-(opt.door?22:10))/rows;
+  let k=0;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const u=b.units?b.units[k]:(opt.lit&&opt.lit.includes(k)?1:0);
+    let cls='win',fill='var(--win)';
+    if(u===1){fill='var(--win-lit)'}
+    if(u===.5){fill='var(--win-lit)';cls+=S.fresh?' fresh':' now'}
+    s+=`<rect class="${cls}" x="${(x+6+c*pw+pw*.16).toFixed(1)}" y="${(y+6+r*ph+ph*.18).toFixed(1)}" width="${(pw*.68).toFixed(1)}" height="${(ph*.6).toFixed(1)}" rx="1.5" fill="${fill}"/>`;
+    k++;
+  }
+  if(opt.door)s+=`<rect x="${x+w/2-8}" y="${y+h-16}" width="16" height="16" fill="var(--roof)"/>`;
+  if(opt.clock)s+=`<circle cx="${x+w/2}" cy="${y-12}" r="9" fill="var(--wall)" stroke="var(--roof)" stroke-width="2"/><path d="M${x+w/2} ${y-12}v-5M${x+w/2} ${y-12}h4" stroke="var(--roof)" stroke-width="1.6"/>`;
+  if(opt.flag)s+=`<path d="M${x+w+d+10} ${y+h-d*.55}V${y-34}" stroke="var(--ink-2)" stroke-width="1.5"/><path d="M${x+w+d+10} ${y-34}h18l-4 6 4 6h-18z" fill="var(--jeok)"/>`;
+  const lw=b.name.length*11+14, lx=x+w/2-lw/2, ly=y+h+5;
+  s+=`<rect class="lbl-bg" x="${lx}" y="${ly}" width="${lw}" height="17" rx="8.5"/><text class="lbl" x="${x+w/2}" y="${ly+12.5}" text-anchor="middle">${b.name}</text>`;
+  return s+'</g>';
+}
+function tree(x,y,s=1){
+  return `<g><rect x="${x-2*s}" y="${y}" width="${4*s}" height="${16*s}" fill="var(--trunk)"/><path d="M${x} ${y-30*s} C ${x+20*s} ${y-24*s}, ${x+18*s} ${y+4*s}, ${x} ${y+4*s} C ${x-18*s} ${y+4*s}, ${x-20*s} ${y-24*s}, ${x} ${y-30*s}Z" fill="var(--ginkgo)"/></g>`;
+}
+function scene(){
+  let s=`<svg class="scene" viewBox="0 0 400 360" role="group" aria-label="Карта школьного кампуса">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sky)"/><stop offset="1" stop-color="var(--sky-2)"/></linearGradient></defs>
+  <rect width="400" height="360" fill="url(#sky)"/>
+  <circle cx="335" cy="44" r="16" fill="var(--win-lit)" opacity=".85"/>
+  <path d="M0 132 L60 92 L110 118 L170 72 L240 116 L300 84 L360 112 L400 96 V170 H0Z" fill="var(--hill-2)"/>
+  <path d="M0 150 L80 118 L150 140 L230 110 L320 142 L400 124 V190 H0Z" fill="var(--hill)"/>`;
+  // fogged upper school, back row
+  s+=bld('g6',214,74,34,40,2,3,{fog:1,d:8});
+  s+=bld('g5',258,82,34,36,2,3,{fog:1,d:8});
+  s+=bld('g4',120,86,40,40,3,3,{fog:1,d:8});
+  s+=bld('g3',168,90,40,40,3,3,{fog:1,d:8});
+  s+=`<rect x="0" y="150" width="400" height="210" fill="var(--ground)"/>
+  <path d="M190 360 C 200 300, 150 260, 190 222" stroke="var(--path)" stroke-width="22" fill="none"/>`;
+  // yard (running track)
+  s+=`<g class="bld${S.sel==='yard'?' sel':''}" data-id="yard" tabindex="0" role="button" aria-label="운동장, микро-тренажёры">
+     <ellipse class="front" cx="318" cy="306" rx="66" ry="30" fill="var(--track)"/><ellipse cx="318" cy="306" rx="48" ry="18" fill="var(--hill)"/>
+     <rect class="lbl-bg" x="290" y="341" width="56" height="17" rx="8.5"/><text class="lbl" x="318" y="353.5" text-anchor="middle">운동장</text></g>`;
+  s+=bld('club',292,150,64,40,4,2,{d:12,lit:[1,2]});
+  s+=bld('g1',26,196,78,52,4,2,{door:1});
+  s+=bld('g2',124,166,104,70,5,2,{door:1,clock:1,flag:1});
+  s+=bld('lib',258,224,62,44,3,2,{door:1,lit:[0,1,2,4]});
+  s+=bld('prep',30,280,52,34,3,1,{d:10});
+  s+=tree(108,262,1.1)+tree(248,186,.9)+tree(14,180,.8)+tree(380,196,.9)+tree(118,320,1);
+  const leaves=[[120,230,0],[250,160,2.2],[30,170,4.1],[370,180,1.4],[200,140,5.3],[90,200,3.1]];
+  leaves.forEach(([x,y,dl])=>{s+=`<ellipse class="leaf" cx="${x}" cy="${y}" rx="3" ry="1.8" style="animation-delay:${dl}s;transform-box:fill-box"/>`});
+  return s+'</svg>';
+}
+function infoCard(){
+  const b=B[S.sel];
+  let m='';
+  if(b.units){const p=b.units.reduce((a,c)=>a+c,0)/b.units.length;m=`<div class="meter" aria-label="Пройдено ${Math.round(p*100)}%"><i style="width:${p*100}%"></i></div>`}
+  return `<div class="info" id="info"><div class="badge kr">${b.badge}</div><div class="grow"><h3><span class="kr">${b.name}</span> · ${b.ru}</h3><p>${b.st}</p>${m}</div></div>`;
+}
+
+const slots=()=>[
+  {per:'조회',tm:'08:40',t:'Повторение слов',d:'32 карточки FSRS',sk:['어휘','var(--heuk)'],min:7,st:'done'},
+  {per:'1교시',tm:'09:00',t:'-아/어서 и -(으)니까',d:'Грамматика · юнит 7',sk:['문법','var(--heuk)'],min:12,st:S.lessonDone?'done':'next',lesson:1},
+  {per:'2교시',tm:'09:50',t:'«비 오는 날», глава 2',d:'Покрытие 96%',sk:['읽기','var(--hwang)'],min:10,st:S.lessonDone?'next':''},
+  {per:'3교시',tm:'10:40',t:'Перевод РУ → КР, 5 фраз',d:'По материалу урока',sk:['쓰기','var(--baek)',1],min:8,st:''},
+  {per:'쉬는 시간',tm:'',t:'Блиц: числительные',d:'운동장',sk:['말하기','var(--jeok)'],min:3,st:''},
+  {per:'종례',tm:'12:30',t:'Тетрадь ошибок',d:`오답노트 · ${S.errors} записей`,sk:['듣기','var(--cheong)'],min:5,st:''}
+];
+
+function campus(){
+  const today=slots();
+  const left=today.filter(x=>x.st!=='done').reduce((a,c)=>a+c.min,0);
+  app.innerHTML=`
+  <header class="top pad">
+    <div class="date"><b>11월 18일 수요일</b> · 2학기 · 12주차</div>
+    <div class="top-r"><span class="chip">출석 <b>47</b> дн.</span>
+      <button class="iconbtn" id="bellBtn" aria-pressed="${S.bell}" aria-label="Школьный звонок"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></button></div>
+  </header>
+  <div class="hello pad">
+    <h1 class="kr">좋은 아침이에요!</h1>
+    <p>2급 · 3반 · сегодня осталось ${left} мин</p>
+  </div>
+  <div class="scene-wrap">${scene()}</div>
+  ${infoCard()}
+  <div class="sec pad"><h2 class="kr">오늘의 시간표</h2><span>расписание на сегодня</span></div>
+  <ul class="tt">${today.map((x,i)=>`<li><button class="slot ${x.st}" data-i="${i}">
+     <div class="per">${x.per}<small>${x.tm||'&nbsp;'}</small></div>
+     <div class="what"><b>${x.t}</b><span><i class="sk${x.sk[2]?' light':''}" style="--c:${x.sk[1]}">${x.sk[0]}</i>${x.d}</span></div>
+     <div class="st">${x.st==='done'?'<span class="tick" aria-label="Готово">✓</span>':x.st==='next'?(x.lesson?'<span class="go">Начать ›</span>':'<span class="go">Дальше ›</span>'):x.min+' мин'}</div>
+  </button></li>`).join('')}</ul>
+  <div class="sec pad"><h2 class="kr">성적표</h2><span>зачётка · 2급</span></div>
+  <div class="gb">
+    ${[['읽기','Чтение',2.4,'var(--hwang)'],['듣기','Аудирование',2.1,'var(--cheong)'],['쓰기','Письмо',1.8,'var(--baek)'],['말하기','Речь',1.6,'var(--jeok)'],['어휘·문법','Основа',S.lessonDone?2.4:2.3,'var(--heuk)']]
+      .map(r=>`<div class="gb-row"><span><span class="kr">${r[0]}</span></span><div class="bar" role="img" aria-label="${r[1]}: ${r[2]} из 3"><i style="--c:${r[3]};width:${(r[2]-1)/2*100}%"></i></div><span class="v">${r[2].toFixed(1)}</span></div>`).join('')}
+    <div class="gb-foot"><span>Шкала: 1.0 → 3.0 (переход в 3급)</span><span>Прогноз TOPIK I: <b>2급 · ${S.lessonDone?131:128}/200</b></span></div>
+  </div>
+  <div class="spacer"></div>
+  <nav class="tabs" aria-label="Разделы">
+    <button class="tab" aria-current="page"><span class="k">학교</span>Школа</button>
+    <button class="tab" data-soon="Библиотека"><span class="k">도서관</span>Библиотека</button>
+    <button class="tab" data-soon="Словарь"><span class="k">사전</span>Словарь</button>
+    <button class="tab" data-soon="Тетрадь ошибок"><span class="k">오답노트<span class="n">${S.errors}</span></span>Ошибки</button>
+  </nav>`;
+  app.querySelectorAll('.bld').forEach(g=>{
+    const pick=()=>{S.sel=g.dataset.id;app.querySelectorAll('.bld').forEach(x=>x.classList.toggle('sel',x===g));$('#info').outerHTML=infoCard();};
+    g.addEventListener('click',pick);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+  });
+  app.querySelectorAll('.slot').forEach(b=>b.addEventListener('click',()=>{
+    const x=today[+b.dataset.i];
+    if(x.lesson){if(S.lessonDone){toast('Урок уже пройден. Повтор появится в карточках.');return}startLesson()}
+    else if(x.st==='done')toast('Сделано утром: 32 карточки, 29 верно');
+    else toast(`«${x.t}» — этот блок не входит в прототип`);
+  }));
+  app.querySelectorAll('[data-soon]').forEach(b=>b.addEventListener('click',()=>toast(`Раздел «${b.dataset.soon}» не входит в прототип`)));
+  $('#bellBtn').addEventListener('click',e=>{S.bell=!S.bell;e.currentTarget.setAttribute('aria-pressed',S.bell);if(S.bell)bell()});
+  if(S.fresh){setTimeout(()=>toast('2급 · юнит 7: урок 4 из 10 пройден. Окно зажглось ярче.'),400);S.fresh=false}
+}
+
+/* ---------- lesson ---------- */
+const STEPS=['Ситуация','Наблюдение','Правило','Практика','Сборка','Итог'];
+function startLesson(){S.step=0;S.stepState={};S.lessonErrors=0;bell();location.hash='lesson'}
+
+function lessonShell(inner,{next='Дальше',enabled=true,hint=''}={}){
+  app.innerHTML=`
+  <header class="lhead pad">
+    <button class="iconbtn" id="back" aria-label="Вернуться в кампус"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="t"><small>1교시 · 문법 · 2급, юнит 7</small><b><span class="kr">-아/어서</span> и <span class="kr">-(으)니까</span></b></div>
+    <span class="chip">${S.step+1} / ${STEPS.length}</span>
+  </header>
+  <div class="dots pad" aria-label="Этап: ${STEPS[S.step]}">${STEPS.map((_,i)=>`<i class="${i<S.step?'on':i===S.step?'cur':''}"></i>`).join('')}</div>
+  ${inner}
+  <div class="lfoot pad"><button class="cta" id="next" ${enabled?'':'disabled'}>${next}</button>${hint?`<p class="hint">${hint}</p>`:''}</div>`;
+  $('#back').addEventListener('click',()=>{location.hash='campus'});
+  $('#next').addEventListener('click',()=>{
+    if(S.step===STEPS.length-1){S.lessonDone=true;S.fresh=true;B.g2.units[6]=.5;B.g2.st='Юнит 7 «Здоровье» · урок 5 из 10';S.sel='g2';location.hash='campus';return}
+    S.step++;S.stepState={};renderStep();window.scrollTo(0,0);
+  });
+}
+function enableNext(){const n=$('#next');if(n)n.disabled=false;const h=app.querySelector('.hint');if(h)h.remove()}
+
+function renderStep(){[stepSituation,stepNotice,stepRule,stepPractice,stepBuild,stepDone][S.step]()}
+
+function stepSituation(){
+  const lines=[
+    ['지아','var(--cheong)','민수 씨, 왜 늦었어요?','Минсу, почему вы опоздали?'],
+    ['민수','var(--jeok)','죄송해요. 비가 <span class="hl-a">와서</span> 버스가 늦게 왔어요.','Извините. Из-за дождя автобус пришёл поздно.',1],
+    ['지아','var(--cheong)','오후에도 비가 온대요.','Говорят, днём тоже будет дождь.'],
+    ['지아','var(--cheong)','비가 <span class="hl-b">오니까</span> 우산을 가져가세요.','Раз идёт дождь, возьмите зонт.']
+  ];
+  lessonShell(`<section class="board" aria-label="Доска">
+    <h2>Утро в школе</h2><p class="sub">Минсу опоздал на урок. Нажмите на реплику, чтобы увидеть перевод.</p>
+    <div class="chat">${lines.map((l,i)=>`<div class="msg${l[4]?' me':''}"><div class="ava" style="background:${l[1]}">${l[0][0]}</div>
+      <button class="bub" data-i="${i}"><span class="who">${l[0]}</span><span class="k">${l[2]}</span><span class="ru" hidden>${l[3]}</span></button></div>`).join('')}</div>
+  </section>
+  <div class="sheetbox"><h4>Заметьте</h4>Обе выделенные формы переводятся как «потому что / так как». Зачем корейскому две?</div>`);
+  app.querySelectorAll('.bub').forEach(b=>b.addEventListener('click',()=>{const r=b.querySelector('.ru');r.hidden=!r.hidden}));
+}
+
+function stepNotice(){
+  const st=S.stepState;
+  const opts=[['Во второй части стоит просьба или совет: -(으)세요',1],['Во второй части стоит прошедшее время',0],['Разницы нет, формы взаимозаменяемы',0]];
+  lessonShell(`<section class="board">
+    <h2>Сравните</h2><p class="sub">Посмотрите, что стоит после выделенной формы.</p>
+    <div class="chalk"><span class="cl" style="--i:0"><span class="kr">비가 <span class="hl-a">와서</span> 버스가 늦게 왔어요.</span></span>
+    <span class="cl" style="--i:1;font-size:16px;color:var(--chalk-2)">причина → <u>факт</u></span>
+    <span class="cl" style="--i:2"><span class="kr">비가 <span class="hl-b">오니까</span> 우산을 가져가세요.</span></span>
+    <span class="cl" style="--i:3;font-size:16px;color:var(--chalk-2)">причина → <u>?</u></span></div>
+  </section>
+  <div class="sheetbox"><h4>Чем отличается вторая часть предложений?</h4>
+    <div class="opts">${opts.map((o,i)=>`<button class="opt wide" data-i="${i}">${o[0]}</button>`).join('')}</div><div id="fb"></div></div>`,
+    {enabled:!!st.ok,hint:st.ok?'':'Выберите ответ'});
+  app.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+    const ok=opts[+b.dataset.i][1];
+    if(ok){b.classList.add('right');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);st.ok=1;
+      $('#fb').innerHTML=`<div class="fb"><span class="pen">맞아요!</span>Верно. Перед просьбой, советом или предложением используют <b class="kr">-(으)니까</b>.</div>`;enableNext()}
+    else{b.classList.add('wrong');b.disabled=true;S.lessonErrors++;
+      $('#fb').innerHTML=`<div class="fb bad"><span class="pen">다시 보세요</span>Посмотрите на окончания второй части: <span class="kr">왔어요</span> и <span class="kr">가져가세요</span>.</div>`}
+  }));
+}
+
+function stepRule(){
+  lessonShell(`<section class="board">
+    <h2>Правило</h2><p class="sub">Учитель пишет на доске</p>
+    <div class="chalk">
+      <span class="cl" style="--i:0">A/V + <span class="hl-a kr">-아/어서</span> = причина-факт</span>
+      <span class="cl kr" style="--i:1;font-size:19px">가다 → 가서 · 먹다 → 먹어서 · 하다 → 해서</span>
+      <span class="cl" style="--i:2"><span class="no">✗</span> нельзя перед <span class="kr">-(으)세요, -(으)ㅂ시다, -(으)ㄹ까요</span></span>
+      <span class="cl" style="--i:3"><span class="no">✗</span> нельзя с прошедшим: <span class="kr no">왔어서</span></span>
+      <span class="cl" style="--i:4;margin-top:10px">A/V + <span class="hl-b kr">-(으)니까</span> = обоснование</span>
+      <span class="cl kr" style="--i:5;font-size:19px">가다 → 가니까 · 먹다 → 먹으니까 · 춥다 → 추우니까</span>
+      <span class="cl" style="--i:6"><span class="yes">✓</span> можно с просьбой и предложением</span>
+    </div>
+  </section>
+  <div class="sheetbox" style="background:var(--board);background-image:none;border:0">
+    <table class="rtable"><thead><tr><th>Вторая часть</th><th class="kr">-아/어서</th><th class="kr">-(으)니까</th></tr></thead>
+    <tbody><tr><td>Факт: <span class="kr">늦었어요</span></td><td class="yes">✓</td><td class="yes">✓</td></tr>
+    <tr><td>Просьба: <span class="kr">-(으)세요</span></td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Предложение: <span class="kr">-(으)ㅂ시다</span></td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Устойчивое: <span class="kr">만나서 반가워요</span></td><td class="yes">✓</td><td class="no">✗</td></tr></tbody></table>
+  </div>`,{next:'Понятно, к практике'});
+}
+
+const PRACT=[
+  {q:'시간이 ___ 택시를 탑시다.',ru:'Времени нет, давайте поедем на такси.',o:['없어서','없으니까'],a:1,why:'Во второй части предложение <span class="kr">-(으)ㅂ시다</span>, поэтому только <span class="kr">-(으)니까</span>.'},
+  {q:'늦게 ___ 죄송합니다.',ru:'Простите, что поздно встал.',o:['일어나서','일어나니까'],a:0,why:'Извинение <span class="kr">-아서 죄송합니다</span> — устойчивая модель. <span class="kr">-(으)니까</span> здесь звучит как оправдание.'},
+  {q:'날씨가 ___ 따뜻하게 입으세요.',ru:'Холодно, одевайтесь тепло.',o:['추워서','추우니까'],a:1,why:'Совет <span class="kr">-(으)세요</span> → <span class="kr">-(으)니까</span>. И нерегулярность ㅂ: <span class="kr">춥다 → 추우니까</span>.'},
+  {q:'처음 ___ 반가워요.',ru:'Рад познакомиться.',o:['만나서','만나니까'],a:0,why:'<span class="kr">만나서 반가워요</span> — устойчивое выражение с <span class="kr">-아서</span>.'}
+];
+function stepPractice(){
+  const st=S.stepState;st.i=st.i||0;st.right=st.right||0;
+  const p=PRACT[st.i],answered=st.ans!==undefined;
+  const fin=st.i===PRACT.length-1&&answered;
+  lessonShell(`<section class="board" style="padding-bottom:14px"><h2>Практика</h2><p class="sub" style="margin:0">Выберите форму. Ошибки попадут в 오답노트.</p></section>
+  <div class="sheetbox">
+    <div class="count">Задание ${st.i+1} из ${PRACT.length} · верно ${st.right}</div>
+    <p class="q">${p.q.replace('___',`<span class="gap">${answered?p.o[p.a]:'&nbsp;'}</span>`)}<span class="ru">${p.ru}</span></p>
+    <div class="opts">${p.o.map((o,i)=>`<button class="opt ${answered?(i===p.a?'right':i===st.ans?'wrong':''):''}" data-i="${i}" ${answered?'disabled':''}>${o}</button>`).join('')}</div>
+    <div id="fb">${answered?(st.ans===p.a?`<div class="fb"><span class="pen">잘했어요!</span>${p.why}</div>`:`<div class="fb bad"><span class="pen">→ ${p.o[p.a]}</span>${p.why}<br><small style="color:var(--ink-3)">Добавлено в 오답노트 · вернётся через 1 день</small></div>`):''}</div>
+  </div>`,{next:fin?'К сборке предложения':answered?'Следующее задание':'Дальше',enabled:answered,hint:answered?'':'Выберите вариант'});
+  app.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+    st.ans=+b.dataset.i;if(st.ans===p.a)st.right++;else{S.lessonErrors++;S.errors++}
+    stepPractice();
+  }));
+  if(answered&&!fin){
+    const n=$('#next'),clone=n.cloneNode(true);n.replaceWith(clone);
+    clone.addEventListener('click',()=>{st.i++;delete st.ans;stepPractice()});
+  }
+}
+
+const BUILD={ru:'Урок скоро начнётся, давайте поторопимся.',target:['수업이','곧','시작하니까','서두릅시다'],
+  pool:['서두릅시다','시작해서','곧','수업이','시작하니까','수업을'],
+  html:{'수업이':'수업<span class="p">이</span>','수업을':'수업<span class="p">을</span>','시작하니까':'시작하<span class="e">니까</span>','시작해서':'시작해<span class="e">서</span>','서두릅시다':'서두릅<span class="e">시다</span>','곧':'곧'}};
+function stepBuild(){
+  const st=S.stepState;st.ans=st.ans||[];
+  const pool=BUILD.pool.filter(w=>!st.ans.includes(w));
+  lessonShell(`<section class="board" style="padding-bottom:14px"><h2>Соберите предложение</h2><p class="sub" style="margin:0">Порядок слов в корейском: подлежащее, обстоятельство, сказуемое в конце. Лишние блоки есть.</p></section>
+  <div class="sheetbox">
+    <p class="q" style="font-family:var(--f-ui);font-size:16px">${BUILD.ru}</p>
+    <div class="target" id="target">${st.ans.map(w=>`<button class="tile" data-w="${w}">${BUILD.html[w]}</button>`).join('')}</div>
+    <div class="pool">${pool.map(w=>`<button class="tile" data-w="${w}" ${st.ok?'disabled':''}>${BUILD.html[w]}</button>`).join('')}</div>
+    <div id="fb">${st.fb||''}</div>
+  </div>`,{next:st.ok?'Завершить урок':'Проверить',enabled:st.ok||st.ans.length>0});
+  if(!st.ok){
+    app.querySelectorAll('.pool .tile').forEach(b=>b.addEventListener('click',()=>{st.ans.push(b.dataset.w);st.fb='';stepBuild()}));
+    app.querySelectorAll('#target .tile').forEach(b=>b.addEventListener('click',()=>{st.ans.splice(st.ans.indexOf(b.dataset.w),1);st.fb='';stepBuild()}));
+    const n=$('#next'),c=n.cloneNode(true);n.replaceWith(c);
+    c.addEventListener('click',()=>{
+      const a=st.ans.join(' '),t=BUILD.target.join(' ');
+      if(a===t){st.ok=1;st.fb=`<div class="fb"><span class="pen">참 잘했어요!</span><span class="kr">수업이 곧 시작하니까 서두릅시다.</span></div>`}
+      else{
+        S.lessonErrors++;
+        let why='Проверьте порядок: сказуемое всегда в конце.';
+        if(st.ans.includes('시작해서'))why='<span class="kr">시작해서</span> не сочетается с <span class="kr">서두릅시다</span>: перед предложением «давайте» нужен <span class="kr">-(으)니까</span>.';
+        else if(st.ans.includes('수업을'))why='<span class="kr">수업</span> здесь подлежащее (урок начинается сам), поэтому частица <span class="kr">이/가</span>, а не <span class="kr">을/를</span>.';
+        else if(st.ans.length<4)why='Не хватает блоков.';
+        st.fb=`<div class="fb bad"><span class="pen">거의 다 왔어요</span>${why}</div>`;
+      }
+      stepBuild();
+    });
+  }
+}
+
+function stepDone(){
+  const score=Math.max(60,100-S.lessonErrors*8);
+  lessonShell(`<section class="board" style="text-align:center"><h2>수업 끝!</h2><p class="sub" style="margin:0">Урок окончен. Учитель ставит печать.</p></section>
+  <div class="sheetbox" style="background-image:none">
+    <div class="stamp">참<br>잘했어요<small>${score} баллов</small></div>
+    <div class="sum">
+      <div><b>3</b><span>новых карточки<br>в 단어장</span></div>
+      <div><b>${S.lessonErrors}</b><span>ошибок<br>в 오답노트</span></div>
+      <div><b>+0.1</b><span>к основе<br>어휘·문법</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-2);margin:14px 0 0">Через 1 день FSRS вернёт <span class="kr">-(으)니까</span> в 조회 с новыми предложениями. Контраст с <span class="kr">-기 때문에</span> будет в уроке 6.</p>
+  </div>`,{next:'В кампус · 2교시'});
+  bell();
+}
+
+/* ---------- routing ---------- */
+function route(){
+  if(location.hash==='#lesson'){if(S.step===undefined)S.step=0;renderStep()}
+  else campus();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
