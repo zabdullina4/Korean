@@ -26,6 +26,9 @@ import { deoniAtdeoni, dorokGoja, geodeunJana, gyeom, ifOnly, supposeIf, tendeGe
 import { degree, essay54, essayPlan, gimanHamyeon, hanjaCulture, hanjaSociety, idioms, proverbs } from './grade4/unit7-10';
 import { accordingTo, aslongas, bookReason, byMeans, likely, naturally, ratherThan, whetherOr } from './grade5/unit1-4';
 import { amountsTo, asIf, asYouKnow, dependsOn, evenParticles, letAlone } from './grade5/unit5-7';
+import { geoniwa, doda, haoche, hageche, ljindae, luckily, namana, nora } from './grade6/unit1-4';
+import { academic, despite, edaga, raya, synChange, synThink } from './grade6/unit5-7';
+import { essay6, essayStyle, hanja4, idioms4, poetry, prose } from './grade6/unit8-10';
 import { essayArgument, hanja3, idioms2, idioms3, idiomsBody, idiomsHead, pressStyles } from './grade5/unit8-10';
 import type { ExamDef } from './exam';
 import { prepExam } from './exams/prep';
@@ -65,6 +68,11 @@ const G5 = [
   ...[amountsTo, dependsOn, asYouKnow, asIf, idiomsHead, idiomsBody, idioms2, idioms3, hanja3, pressStyles, essayArgument],
 ];
 
+const G6 = [
+  ...[namana, luckily, geoniwa, ljindae, nora, doda, haoche, hageche, edaga, raya],
+  ...[synChange, synThink, despite, academic, poetry, prose, idioms4, hanja4, essayStyle, essay6],
+];
+
 /**
  * В рукописных заданиях автор обычно ставит верный вариант первым; плеер показывает варианты как есть.
  * Поэтому порядок перемешивается здесь — детерминированно по тексту задания, чтобы он не менялся между запусками.
@@ -85,7 +93,7 @@ export function shuffleOptions(l: Lesson): Lesson {
 }
 
 // Каждому уроку добавляется шаг «Новые слова» перед первым заданием на эти слова (см. vocab.ts).
-export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4, ...G5].map(withVocab).map(shuffleOptions);
+export const LESSONS: Lesson[] = [...G0, ...G1, ...G2, ...G3, ...G4, ...G5, ...G6].map(withVocab).map(shuffleOptions);
 
 /** Переводной экзамен каждого класса. */
 export const EXAMS: Record<number, ExamDef> = { 0: prepExam, 1: topik1Exam, 2: topik2Exam, 3: topik3Exam, 4: topik4Exam, 5: topik5Exam };
@@ -189,7 +197,23 @@ export const GRADES: Grade[] = [
       { grade: 5, n: 10, title: 'Стиль и эссе', titleKr: '문체와 쓰기', lessons: [pressStyles.id, essayArgument.id] },
     ],
   },
-  { n: 6, name: '6급', ru: 'Старшая школа · 2 класс', units: [] },
+  {
+    n: 6,
+    name: '6급',
+    ru: 'Старшая школа · 2 класс · TOPIK II',
+    units: [
+      { grade: 6, n: 1, title: '«Бесполезно» и «хорошо ещё, что»', titleKr: '헛됨과 다행', lessons: [namana.id, luckily.id] },
+      { grade: 6, n: 2, title: 'Книжные связки', titleKr: '문어 연결', lessons: [geoniwa.id, ljindae.id] },
+      { grade: 6, n: 3, title: 'Литературные окончания', titleKr: '문학 어미', lessons: [nora.id, doda.id] },
+      { grade: 6, n: 4, title: '하오체 и 하게체', titleKr: '하오체·하게체', lessons: [haoche.id, hageche.id] },
+      { grade: 6, n: 5, title: 'Частицы 6급', titleKr: '조사', lessons: [edaga.id, raya.id] },
+      { grade: 6, n: 6, title: 'Тонкие синонимы', titleKr: '유의어', lessons: [synChange.id, synThink.id] },
+      { grade: 6, n: 7, title: 'Академический стиль', titleKr: '학술 문체', lessons: [despite.id, academic.id] },
+      { grade: 6, n: 8, title: 'Литература', titleKr: '문학', lessons: [poetry.id, prose.id] },
+      { grade: 6, n: 9, title: '사자성어 и ханча 4', titleKr: '사자성어·한자 4', lessons: [idioms4.id, hanja4.id] },
+      { grade: 6, n: 10, title: 'Эссе на высокий балл', titleKr: '고급 쓰기', lessons: [essayStyle.id, essay6.id] },
+    ],
+  },
 ];
 
 /** Уроки класса в порядке программы. */
